@@ -1,0 +1,59 @@
+Step 1: Prepare Your Excel File
+Open your Excel file and ensure that your roll numbers are listed in one column, say Column A.
+Create a new sheet named "Marks" where marks will be entered.
+
+Step 2: Enable Developer Tab
+Go to File > Options > Customize Ribbon.
+Check Developer in the right panel and click OK.
+
+Step 3: Create the Form
+Go to the Developer tab and click on Visual Basic.
+In the VBA editor, click Insert > UserForm to create a new form.
+
+Step 4: Design the Form
+Add a TextBox for entering the roll number.
+Add another TextBox for entering the marks.
+Add a Button labeled "Submit".
+Add a Label to display messages.
+
+Step 5: Write the VBA Code
+Here's a sample VBA code to achieve this functionality:
+
+Private Sub CommandButton1_Click()
+    Dim ws As Worksheet
+    Dim rollNumber As String
+    Dim mark As String
+    Dim found As Range
+    
+    ' Set the worksheet where roll numbers are stored
+    Set ws = ThisWorkbook.Sheets("Sheet1") ' Change "Sheet1" to your sheet name
+    rollNumber = RollNumberTextBox.Text
+    mark = MarksTextBox.Text
+    
+    ' Search for the roll number
+    Set found = ws.Range("A:A").Find(rollNumber, LookIn:=xlValues, LookAt:=xlWhole)
+    
+    If Not found Is Nothing Then
+        ' Roll number found, enter marks
+        ws.Cells(found.Row, 2).Value = mark ' Change 2 to the column where marks are to be entered
+        MessageLabel.Caption = "Roll - " + rollNumber + "| Mark - " + mark + " inserted!"
+        RollNumberTextBox.Text = ""
+        MarksTextBox.Text = ""
+    Else
+        ' Roll number not found, show error message
+        MessageLabel.Caption = "Please check the roll number " + rollNumber + " and try again."
+        RollNumberTextBox.Text = ""
+        MarksTextBox.Text = ""
+    End If
+End Sub
+
+Step 6: Link the VBA Code to Your Form
+Right-click on the "Submit" button and select View Code.
+Paste the VBA code from Step 5 into the code editor.
+Make sure your TextBox and Label names (RollNumberTextBox, MarksTextBox, MessageLabel) match those in your form.
+
+Step 7: Test Your Form
+Close the VBA editor and go back to your Excel file.
+Press F5 or click Run in the VBA editor to test your form.
+
+This setup will check the entered roll number against those available in your Excel sheet and display appropriate messages based on whether the roll number is found or not.

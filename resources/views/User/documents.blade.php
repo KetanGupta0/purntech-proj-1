@@ -166,14 +166,14 @@
                         isApproved = `<span class="text-warning">Pending</span>`;
                     }else if(val.udc_status == 2){
                         isApproved = `<span class="text-success">Verified</span>`;
-                    }else if(val.udc_status == 0){
+                    }else if(val.udc_status == 3){
                         isApproved = `<span class="text-danger">Rejected</span>`;
                     }
                     switch(val.udc_doc_type){
                         case 1: 
                             $('#af_upload_status').html(isUploaded);
                             $('#af_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#af_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="af_upload" data-id="1"></i>`);
                             }else{
                                 $('#af_btn').html(`No Action Required`);
@@ -182,7 +182,7 @@
                         case 2:
                             $('#ab_upload_status').html(isUploaded);
                             $('#ab_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#ab_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="ab_upload" data-id="2"></i>`);
                             }else{
                                 $('#ab_btn').html(`No Action Required`);
@@ -191,7 +191,7 @@
                         case 3:
                             $('#pan_upload_status').html(isUploaded);
                             $('#pan_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#pan_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="pan_upload" data-id="3"></i>`);
                             }else{
                                 $('#pan_btn').html(`No Action Required`);
@@ -200,7 +200,7 @@
                         case 4:
                             $('#chk_upload_status').html(isUploaded);
                             $('#chk_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#chk_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="chk_upload" data-id="4"></i>`);
                             }else{
                                 $('#chk_btn').html(`No Action Required`);
@@ -209,7 +209,7 @@
                         case 5:
                             $('#dl_upload_status').html(isUploaded);
                             $('#dl_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#dl_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="dl_upload" data-id="5"></i>`);
                             }else{
                                 $('#dl_btn').html(`No Action Required`);
@@ -218,7 +218,7 @@
                         case 6:
                             $('#lan_upload_status').html(isUploaded);
                             $('#lan_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#lan_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="lan_upload" data-id="6"></i>`);
                             }else{
                                 $('#lan_btn').html(`No Action Required`);
@@ -227,7 +227,7 @@
                         case 7:
                             $('#lan_pic_upload_status').html(isUploaded);
                             $('#lan_pic_kyc_status').html(isApproved);
-                            if(val.udc_status == 0){
+                            if(val.udc_status == 3){
                                 $('#lan_pic_btn').html(`<i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="lan_pic_upload" data-id="7"></i>`);
                             }else{
                                 $('#lan_pic_btn').html(`No Action Required`);

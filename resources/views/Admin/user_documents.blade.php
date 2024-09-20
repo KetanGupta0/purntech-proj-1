@@ -40,10 +40,14 @@
                         <th>
                             @php
                                 $totalDocuments = 0;
+                                $rejectedDocument = [];
                                 // Count only valid uploaded documents
                                 foreach ($details['documents'] as $document) {
                                     if ($document->udc_status != '0' && $document->udc_status != '3') {
                                         $totalDocuments++;
+                                    }
+                                    if($document->udc_status == '3'){
+                                        $rejectedDocument[] = $document;
                                     }
                                 }
                                 // Calculate percentage based on total (assuming 7 required documents)
@@ -59,15 +63,40 @@
                         <th>
                             @php
                                 $isVerified = 'verified';
+
                                 if ($totalDocuments > 0) {
+                                    $pendingDocuments = [];
+                                    $verifiedDocuments = [];
+                                    $rejectedDocuments = [];
+                                    $requiredDocumentTypes = range(1, 7); // Document types 1 through 7
+                                    $documentStatus = [];
+
                                     foreach ($details['documents'] as $document) {
-                                        if ($document->udc_status != '2') {
-                                            if ($document->udc_status == '1') {
-                                                $isVerified = 'pending';
-                                            } elseif ($document->udc_status == '3') {
-                                                $isVerified = 'rejected';
-                                            }
+                                        $type = $document->udc_doc_type;
+                                        if ($document->udc_status == '3') {
+                                            // Collect rejected documents
+                                            $rejectedDocuments[$type] = $document;
+                                        } elseif ($document->udc_status == '1') {
+                                            // Collect pending documents
+                                            $pendingDocuments[$type] = $document;
+                                        } elseif ($document->udc_status == '2') {
+                                            // Collect verified documents
+                                            $verifiedDocuments[$type] = $document;
                                         }
+                                    }
+
+                                    // Determine status based on documents
+                                    foreach ($requiredDocumentTypes as $type) {
+                                        if (isset($pendingDocuments[$type])) {
+                                            $isVerified = 'pending'; // At least one document of this type is pending
+                                        } elseif (isset($rejectedDocuments[$type]) && !isset($pendingDocuments[$type])) {
+                                            $isVerified = 'rejected'; // No other document of this type and a rejected one is present
+                                        }
+                                    }
+
+                                    // If no pending documents and all required types are verified
+                                    if ($isVerified !== 'pending' && count($verifiedDocuments) === count($requiredDocumentTypes)) {
+                                        $isVerified = 'verified';
                                     }
                                 } else {
                                     $isVerified = '-';
@@ -117,42 +146,6 @@
         </tbody>
     </table>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        @if ($errors->any())
-            Swal.fire({
-                title: 'Error!',
-                icon: 'error',
-                html: `<ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>`,
-                confirmButtonText: 'OK'
-            });
-        @endif
-    });
-</script>
-@if (Session::has('success'))
-    <script>
-        $(document).ready(function() {
-            Swal.fire({
-                icon: "success",
-                title: "{{ Session::get('success') }}"
-            });
-        });
-    </script>
-@elseif(Session::has('error'))
-    <script>
-        $(document).ready(function() {
-            Swal.fire({
-                icon: "error",
-                title: "Error",
-                html: "{{ Session::get('error') }}"
-            });
-        });
-    </script>
-@endif
 <script>
     $(document).ready(function() {
         $('#user_table').DataTable();

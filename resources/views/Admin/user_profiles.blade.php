@@ -82,26 +82,6 @@
         </tbody>
     </table>
 </div>
-@if (Session::has("success"))
-<script>
-    $(document).ready(function(){
-        Swal.fire({
-            icon: "success",
-            title: "{{Session::get('success')}}"
-        });
-    });
-</script>
-@elseif(Session::has("error"))
-<script>
-    $(document).ready(function(){
-        Swal.fire({
-            icon: "error",
-            title: "Error",
-            html: "{{Session::get('error')}}"
-        });
-    });
-</script>
-@endif
 <script>
     $(document).ready(function(){
         $('#useer_profile_table').DataTable();

@@ -258,6 +258,87 @@ class AdminController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+    public function verifyNowDocumentCommand(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric',
+            'doc_id' => 'required|numeric'
+        ], [
+            'uid.required' => 'Unable to process your request right now!',
+            'uid.numeric' => 'Unable to process your request right now!',
+            'doc_id.required' => 'Unable to process your request right now!',
+            'doc_id.numeric' => 'Unable to process your request right now!'
+        ]);
+        try {
+            $user = WebUser::find($request->uid);
+            $doc = UserDocuments::find($request->doc_id);
+            if ($user && $doc) {
+                $doc->udc_status = 2;
+                if($doc->save()){
+                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>true]);
+                }else{
+                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
+                }
+            } else {
+                return redirect()->back()->with('error', 'Something went wrong!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function rejectNowDocumentCommand(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric',
+            'doc_id' => 'required|numeric'
+        ], [
+            'uid.required' => 'Unable to process your request right now!',
+            'uid.numeric' => 'Unable to process your request right now!',
+            'doc_id.required' => 'Unable to process your request right now!',
+            'doc_id.numeric' => 'Unable to process your request right now!'
+        ]);
+        try {
+            $user = WebUser::find($request->uid);
+            $doc = UserDocuments::find($request->doc_id);
+            if ($user && $doc) {
+                $doc->udc_status = 3;
+                if($doc->save()){
+                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>true]);
+                }else{
+                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
+                }
+            } else {
+                return redirect()->back()->with('error', 'Something went wrong!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function deleteNowDocumentCommand(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric',
+            'doc_id' => 'required|numeric'
+        ], [
+            'uid.required' => 'Unable to process your request right now!',
+            'uid.numeric' => 'Unable to process your request right now!',
+            'doc_id.required' => 'Unable to process your request right now!',
+            'doc_id.numeric' => 'Unable to process your request right now!'
+        ]);
+        try {
+            $user = WebUser::find($request->uid);
+            $doc = UserDocuments::find($request->doc_id);
+            if ($user && $doc) {
+                $doc->udc_status = 0;
+                if($doc->save()){
+                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>true]);
+                }else{
+                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
+                }
+            } else {
+                return redirect()->back()->with('error', 'Something went wrong!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 
     public function makeFirstAdmin()
     {

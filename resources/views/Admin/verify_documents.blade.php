@@ -15,6 +15,7 @@
         </div>
     </div>
 </div>
+
 <!-- end page title -->
 <!-- Check if data exists -->
 @if (isset($data))
@@ -94,7 +95,7 @@
                         <th>{{ $index + 1 }}</th>
                         <th><a href="{{ asset('public/assets/img/uploads/documents') }}/{{ $document->udc_name }}"
                                target="_blank">{{ getFileName($document->udc_doc_type) }}</a></th>
-                        <th></th>
+                        <th>{{ $document->created_at->format('d M Y \a\t h:i A') }}</th>
                         <th>
                             @if ($document->udc_status == 1)
                                 <span class="text-warning">Pending</span>
@@ -108,19 +109,27 @@
                             <!-- Add actions like verify/reject here -->
                             <div class="d-flex">
                                 @if ($document->udc_status != 3)
-                                    <form action="{{ url('/admin/user-documents/verify-documents/reject-now', $document->udc_id) }}" method="post">
+                                    <form action="{{ url('/admin/user-documents/verify-documents/reject-now') }}" method="post">
                                         @csrf
-                                        <input type="submit" class="mx-1 btn btn-sm btn-danger" value="Reject">
+                                        <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
+                                        <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
+                                        <input type="submit" class="mx-1 btn btn-sm btn-warning" value="Reject">
                                     </form>
                                 @endif
-                                @if ($document->udc_status == 1)
-                                    <form action="{{ url('/admin/user-documents/verify-documents/verify-now', $document->udc_id) }}" method="post">
+                                @if ($document->udc_status == 1 || $document->udc_status == 3)
+                                    <form action="{{ url('/admin/user-documents/verify-documents/verify-now') }}" method="post">
                                         @csrf
+                                        <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
+                                        <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
                                         <input type="submit" class="mx-1 btn btn-sm btn-success" value="Verify">
                                     </form>
-                                @elseif($document->udc_status == 3)
-                                    N/A
                                 @endif
+                                <form action="{{ url('/admin/user-documents/verify-documents/delete-now') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
+                                    <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
+                                    <input type="button" class="mx-1 btn btn-sm btn-danger usr_del" value="Delete">
+                                </form>
                             </div>
                         </th>
                     </tr>
@@ -135,5 +144,21 @@
 <script>
     $(document).ready(function() {
         $('#verification_table').DataTable();
+        $(document).on('click','.usr_del',function(){
+            let form = $(this).closest('form');
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You won't be able to revert this!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+        });
     });
 </script>

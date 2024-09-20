@@ -37,7 +37,42 @@
     <i class="ri-arrow-up-line"></i>
 </button>
 <!--end back-to-top-->
-
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if ($errors->any())
+            Swal.fire({
+                title: 'Error!',
+                icon: 'error',
+                html: `<ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>`,
+                confirmButtonText: 'OK'
+            });
+        @endif
+    });
+</script>
+@if (Session::has('success'))
+    <script>
+        $(document).ready(function() {
+            Swal.fire({
+                icon: "success",
+                title: "{{ Session::get('success') }}"
+            });
+        });
+    </script>
+@elseif(Session::has('error'))
+    <script>
+        $(document).ready(function() {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                html: "{{ Session::get('error') }}"
+            });
+        });
+    </script>
+@endif
 <!--preloader-->
 <div id="preloader">
     <div id="status">

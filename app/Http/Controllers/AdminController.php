@@ -26,7 +26,7 @@ class AdminController extends Controller
     }
     public function userProfileView()
     {
-        $data = WebUser::where('usr_profile_status', '!=', 0)->get();
+        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at','DESC')->get();
         return view('Admin.header') . view('Admin.user_profiles', compact('data')) . view('Admin.footer');
     }
     public function userDocumentsView()
@@ -43,6 +43,7 @@ class AdminController extends Controller
                     'user_documents.*'
                 )
                 ->where('web_users.usr_profile_status','!=',0)
+                ->orderBy('web_users.created_at','DESC')
                 ->get();
 
             // Group by user and create a new collection
@@ -87,6 +88,7 @@ class AdminController extends Controller
                     'user_bank_details.*'
                 )
                 ->where('web_users.usr_profile_status','!=',0)
+                ->orderBy('web_users.created_at','DESC')
                 ->get();
             // dd($results);
             return view('Admin.header') . view('Admin.user_bank_details',compact('results')) . view('Admin.footer');

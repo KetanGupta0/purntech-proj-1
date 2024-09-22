@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -40,6 +42,7 @@ class AdminController extends Controller
                     'web_users.usr_mobile',
                     'user_documents.*'
                 )
+                ->where('web_users.usr_profile_status','!=',0)
                 ->get();
 
             // Group by user and create a new collection
@@ -72,7 +75,24 @@ class AdminController extends Controller
     }
     public function userBankDetailsView()
     {
-        return view('Admin.header') . view('Admin.user_bank_details') . view('Admin.footer');
+        try{
+            $results = DB::table('web_users')
+                ->leftJoin('user_bank_details', 'web_users.usr_id', '=', 'user_bank_details.ubd_usr_id')
+                ->select(
+                    'web_users.usr_id',
+                    'web_users.usr_first_name',
+                    'web_users.usr_last_name',
+                    'web_users.usr_email',
+                    'web_users.usr_mobile',
+                    'user_bank_details.*'
+                )
+                ->where('web_users.usr_profile_status','!=',0)
+                ->get();
+            // dd($results);
+            return view('Admin.header') . view('Admin.user_bank_details',compact('results')) . view('Admin.footer');
+        }catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
     public function userInvoicesPageView()
     {
@@ -279,10 +299,10 @@ class AdminController extends Controller
                     return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
                 }
             } else {
-                return redirect()->back()->with('error', 'Something went wrong!');
+                return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
             }
         } catch (Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
         }
     }
     public function rejectNowDocumentCommand(Request $request){
@@ -306,10 +326,10 @@ class AdminController extends Controller
                     return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
                 }
             } else {
-                return redirect()->back()->with('error', 'Something went wrong!');
+                return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
             }
         } catch (Exception $e) {
-            return redirect()->back()->with('error', $e->getMessage());
+            return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
         }
     }
     public function deleteNowDocumentCommand(Request $request){
@@ -337,6 +357,56 @@ class AdminController extends Controller
             }
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function viewUserBankDetailsCommand(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric'
+        ],[
+            'uid.required' => 'Unable to process your request right now!',
+            'uid.numeric' => 'Unable to process your request right now!'
+        ]);
+        try{
+            $user = WebUser::find($request->uid);
+            $bankDetails = UserBankDetail::where('ubd_usr_id','=',$request->uid)->where('ubd_user_kyc_status','!=',0)->first();
+            if ($user && $bankDetails) {
+                return view('Admin.header') . view('Admin.user_bank_details_view',compact('user','bankDetails')) . view('Admin.footer');
+            }else{
+                return redirect()->back()->with('error','Details not updated!');
+            }
+        }catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function updateUserBankDetailsKYCCommand(Request $request){
+        try{
+            $req = $request->ubd_user_kyc_status;
+            if($req == ""){
+                return view('Admin.goToUserBankDetails',['code' => 404, 'uid' => $request->uid]);
+            }
+            if(!is_numeric($req)){
+                return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+            }
+            if($req >= 1 && $req <= 4){
+                $user = WebUser::find($request->uid);
+                $bankDetails = UserBankDetail::find($request->ubdid);
+                if($user && $bankDetails){
+                    $bankDetails->ubd_user_kyc_status = $request->ubd_user_kyc_status;
+                    if($bankDetails->save()){
+                        return view('Admin.goToUserBankDetails',['code' => 402, 'uid' => $request->uid]);
+                    }else{
+                        return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+                    }
+                }else{
+                    return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+                }
+            }else{
+                return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+            }
+        }catch(Exception $e){
+            return view('Admin.goToUserBankDetails',['code' => 405, 'uid' => $request->uid, 'msg' => $e->getMessage()]);
         }
     }
 

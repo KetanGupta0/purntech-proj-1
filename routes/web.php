@@ -65,7 +65,9 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-documents/verify-documents/verify-now', [AdminController::class, 'verifyNowDocumentCommand']);
     Route::post('/admin/user-documents/verify-documents/reject-now', [AdminController::class, 'rejectNowDocumentCommand']);
     Route::post('/admin/user-documents/verify-documents/delete-now', [AdminController::class, 'deleteNowDocumentCommand']);
-
+    
+    Route::post('/admin/user-bank-details/view-user-bank-details', [AdminController::class, 'viewUserBankDetailsCommand']);
+    Route::post('/admin/user-bank-details/update-status', [AdminController::class, 'updateUserBankDetailsKYCCommand']);
     // AJAX Calls
 
 });

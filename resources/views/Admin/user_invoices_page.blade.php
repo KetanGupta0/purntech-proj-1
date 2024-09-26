@@ -54,3 +54,6 @@
         </tbody>
     </table>
 </div>
+<script>
+    $('#useer_profile_table').DataTable();
+</script>

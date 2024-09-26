@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Invoice;
+use App\Models\InvoiceDescriptionAmount;
+use App\Models\InvoiceLogo;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
@@ -98,7 +100,8 @@ class AdminController extends Controller
     }
     public function userInvoicesPageView()
     {
-        return view('Admin.header') . view('Admin.user_invoices_page') . view('Admin.footer');
+        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at','DESC')->get();
+        return view('Admin.header') . view('Admin.user_invoices_page',compact('data')) . view('Admin.footer');
     }
     public function userDownloadView()
     {
@@ -412,6 +415,184 @@ class AdminController extends Controller
         }
     }
 
+    public function raiseNewInvoiceCommand(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric'
+        ],[
+            'uid.required' => 'Something went wrong. Please try again later!',
+            'uid.numeric' => 'Something went wrong. Please try again later!'
+        ]);
+        try{
+            $user = WebUser::find($request->uid);
+            if($user){
+                return view('Admin.header').view('Admin.newInvoice',compact('user')).view('Admin.footer');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with(['error'=>$e->getMessage()]);
+        }
+    }
+
+    public function viewUserInvoiceList(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric'
+        ],[
+            'uid.required' => 'Something went wrong. Please try again later!',
+            'uid.numeric' => 'Something went wrong. Please try again later!'
+        ]);
+        try{
+            $user = WebUser::find($request->uid);
+            if($user){
+                return view('Admin.header').view('Admin.viewInvoiceList',compact('user')).view('Admin.footer');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with(['error'=>$e->getMessage()]);
+        }
+    }
+
+    public function raiseNewInvoiceFormSubmitCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_date_input = $request->inv_date;
+            $due_date_input = $request->due_date;
+            $customer_name = $request->customer_name;
+            $customer_phone1 = $request->customer_phone1;
+            $customer_phone2 = $request->customer_phone2;
+            $customer_address1 = $request->customer_address1;
+            $customer_address2 = $request->customer_address2;
+            $customer_message = $request->customer_message;
+
+            if($uid == 0){
+                return redirect()->to('/admin/user-invoices-page')->with(['error' => 'Something went wrong. Please try again later!']);
+            }
+
+            if($inv_date_input == ''){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Invoice date is required!']);
+            }
+            if($due_date_input == ''){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Due date is required!']);
+            }
+            if ($due_date_input < $inv_date_input) {
+                return view('Admin.goToRaiseNewInvoice', ['uid'=>$uid, 'code' => 400, 'msg'=> 'Due date cannot be earlier than invoice date!']);
+            }
+            // Validate invoice date
+            try {
+                $inv_date = new \DateTime($inv_date_input);
+                $inv_date = $inv_date->format('Y-m-d'); // Save in MySQL format
+            } catch (Exception $e) {
+                return view('Admin.goToRaiseNewInvoice', [
+                    'uid' => $uid,
+                    'code' => 400,
+                    'msg' => 'Invalid invoice date provided!'
+                ]);
+            }
+
+            // Validate due date
+            try {
+                $due_date = new \DateTime($due_date_input);
+                $due_date = $due_date->format('Y-m-d'); // Save in MySQL format
+            } catch (Exception $e) {
+                return view('Admin.goToRaiseNewInvoice', [
+                    'uid' => $uid,
+                    'code' => 400,
+                    'msg' => 'Invalid due date provided!'
+                ]);
+            }
+
+            if($customer_name == ''){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Name is required!']);
+            }
+
+            if($customer_phone1 == ''){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Phone 1 is required!']);
+            }elseif(!is_numeric($customer_phone1) || strlen($customer_phone1) != 10){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Invalid phone 1 provided!']);
+            }
+
+            if($customer_phone2 != ''){
+                if(!is_numeric($customer_phone2) || strlen($customer_phone2) != 10){
+                    return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Invalid phone 2 provided!']);
+                }
+            }
+
+            if($customer_address1 == ''){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Address Line 1 is required!']);
+            }
+            if($customer_address2 == ''){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Address Line 2 is required!']);
+            }
+
+            $invoice_number = 'BIWTS/'.date('d/m/Y');
+            
+            $name = explode(' ', $request->customer_name);
+            $last_four_digits = substr($customer_phone1, -4);
+
+            if (count($name) > 1) {
+                $invoice_number .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[1][0]) . $last_four_digits;
+            } elseif (count($name) == 1) {
+                $invoice_number .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[0][1]) . $last_four_digits;
+            }
+
+            $count = 0;
+            $temp = $invoice_number;
+            while(Invoice::where('inv_number','=',$temp)->exists()){
+                $count++;
+                $temp = $invoice_number.'/'.$count;
+            }
+            $invoice_number = $temp;
+            // dd($temp);
+            $inv_amount = 0.00;
+            foreach ($request->inv_amount as $amount) {
+                if($amount == '' || $amount == null){
+                    continue;
+                }elseif (!is_numeric($amount) || $amount <= 0) {
+                    return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Invalid amount provided!']);
+                }
+                $inv_amount += (float)$amount;
+            }
+            
+            $invoice = new Invoice();
+
+            $invoice->inv_number = $invoice_number;
+            $invoice->inv_party_id = $uid;
+            $invoice->inv_party_name = $customer_name;
+            $invoice->inv_party_address_1 = $customer_address1;
+            $invoice->inv_party_address_2 = $customer_address2;
+            $invoice->inv_party_mobile1 = $customer_phone1;
+            $invoice->inv_party_mobile2 = $customer_phone2;
+            $invoice->inv_message = $customer_message;
+            $invoice->inv_amount = $inv_amount;
+            $invoice->inv_date = $inv_date;
+            $invoice->inv_due_date = $due_date;
+            $invoice->inv_created_by = Session::get('uid');
+            if(!$invoice->save()){
+                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Something went wrong while saving invoice. Please try again after sometimes!']);
+            }else{
+                if (count($request->inv_desc_title) !== count($request->inv_amount)) {
+                    return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Mismatch between descriptions and amounts!']);
+                }
+                foreach($request->inv_desc_title as $key=>$description){
+                    $invoiceDescription = new InvoiceDescriptionAmount();
+                    if($description == "" || $description == null){
+                        continue;
+                    }else{
+                        $invoiceDescription->ida_inv_id = $invoice->inv_id;
+                        $invoiceDescription->ida_inv_no = $invoice_number;
+                        $invoiceDescription->ida_description = $description;
+                        $invoiceDescription->ida_amount = $request->inv_amount[$key];
+                        $invoiceDescription->save();
+                    }
+                }
+                return view('Admin.goToRaiseNewInvoice',['uid' => $uid, 'code'=> 200, 'msg'=> 'Invoice Raised Successfully']);
+
+            }
+        }catch(Exception $e){
+            if($uid == 0){
+                return redirect()->to('/admin/user-invoices-page')->with(['error' => $e->getMessage()]);
+            }
+            return view('Admin.goToRaiseNewInvoice',['uid' => $uid, 'code' => 400, 'msg'=> $e->getMessage()]);
+        }
+    }
+
     public function makeFirstAdmin()
     {
         $adm_first_name = "Super";
@@ -431,7 +612,7 @@ class AdminController extends Controller
         $admin->adm_password = $adm_password;
         $admin->adm_visible_password = $adm_visible_password;
         if ($admin->save()) {
-            echo "Admin Created Username -> " . $adm_username . " | Password -> " . $adm_visible_password;
+            echo "Admin Created Email -> " . $adm_email . " | Password -> " . $adm_visible_password;
         } else {
             echo "Something went wrong!";
         }

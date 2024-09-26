@@ -68,6 +68,11 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     
     Route::post('/admin/user-bank-details/view-user-bank-details', [AdminController::class, 'viewUserBankDetailsCommand']);
     Route::post('/admin/user-bank-details/update-status', [AdminController::class, 'updateUserBankDetailsKYCCommand']);
+
+    Route::post('/admin/user-invoices-page/raise-new-invoice',[AdminController::class, 'raiseNewInvoiceCommand']);
+    Route::post('/admin/user-invoices-page/raise-new-invoice/form-submit',[AdminController::class, 'raiseNewInvoiceFormSubmitCommand']);
+
+    Route::post('/admin/user-invoices-page/view-invoice-list',[AdminController::class, 'viewUserInvoiceList']);
     // AJAX Calls
 
 });

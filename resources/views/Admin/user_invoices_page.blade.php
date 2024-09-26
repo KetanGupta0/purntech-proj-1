@@ -15,3 +15,42 @@
     </div>
 </div>
 <!-- end page title -->
+<div class="table-responsive">
+    <table class="table" id="useer_profile_table">
+        <thead>
+            <tr>
+                <th>S. No.</th>
+                <th>Name</th>
+                <th>Primary Email</th>
+                <th>Primary Contact</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(isset($data))
+                @foreach ($data as $user)
+                    <tr>
+                        <th>{{$loop->index+1}}</th>
+                        <th>{{$user->usr_first_name}} {{$user->usr_last_name}}</th>
+                        <th>{{$user->usr_email}}</th>
+                        <th>{{$user->usr_mobile}}</th>
+                        <th>
+                            <div class="d-flex">
+                                <form action="{{url('/admin/user-invoices-page/raise-new-invoice')}}" class="mx-1" class="del_user_form" method="post">
+                                    @csrf
+                                    <input type="hidden" name="uid" value="{{$user->usr_id}}">
+                                    <input type="submit" class="btn btn-sm btn-primary" value="Raise">
+                                </form>
+                                <form action="{{url('/admin/user-invoices-page/view-invoice-list')}}" class="mx-1" class="del_user_form" method="post">
+                                    @csrf
+                                    <input type="hidden" name="uid" value="{{$user->usr_id}}">
+                                    <input type="submit" class="btn btn-sm btn-secondary" value="View">
+                                </form>
+                            </div>
+                        </th>
+                    </tr>
+                @endforeach
+            @endif
+        </tbody>
+    </table>
+</div>

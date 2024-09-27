@@ -56,6 +56,7 @@
                                 <form action="{{ url('/user/invoices/invoice-view') }}" method="post">
                                     @csrf
                                     <input type="hidden" name="uid" value="{{ $inv->inv_party_id }}">
+                                    <input type="hidden" name="inv_id" value="{{ $inv->inv_id }}">
                                     <input type="submit" class="btn btn-sm btn-primary" value="View">
                                 </form>
                             </th>
@@ -63,15 +64,6 @@
                     @endforeach
                 @endif
             @endif
-            <tr>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
         </tbody>
     </table>
 </section>

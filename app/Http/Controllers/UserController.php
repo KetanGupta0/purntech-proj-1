@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CompanyInfo;
 use App\Models\Invoice;
+use App\Models\InvoiceDescriptionAmount;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
@@ -177,7 +179,11 @@ class UserController extends Controller
             $user = WebUser::find(Session::get('uid'));
             if(!$user) $this->revokeUserAccess();
             else{
-                $userBankDetail = new UserBankDetail();
+                if(UserBankDetail::where('ubd_usr_id','=',$user->usr_id)->where('ubd_user_kyc_status','!=', 0)->exists()){
+                    $userBankDetail = UserBankDetail::where('ubd_usr_id','=',$user->usr_id)->where('ubd_user_kyc_status','!=', 0)->first();
+                }else{
+                    $userBankDetail = new UserBankDetail();
+                }
                 $userBankDetail->ubd_usr_id = Session::get('uid');
                 $userBankDetail->ubd_user_name = $request->user_name;
                 $userBankDetail->ubd_user_pan = $request->user_pan;
@@ -186,6 +192,7 @@ class UserController extends Controller
                 $userBankDetail->ubd_user_bank_name_other = $request->user_bank_name_other;
                 $userBankDetail->ubd_user_bank_acc = $request->user_bank_acc;
                 $userBankDetail->ubd_user_ifsc = $request->user_ifsc;
+                $userBankDetail->ubd_user_kyc_status = 3;
                 if ($request->hasFile('user_bank_proof')) {
                     $file = $request->file('user_bank_proof');
                     $fileName = time() . '-' . $file->getClientOriginalName();
@@ -207,15 +214,21 @@ class UserController extends Controller
 
     public function viewUserInvoiceCommand(Request $request){
         $request->validate([
-            'uid' => 'required|numeric'
+            'uid' => 'required|numeric',
+            'inv_id' => 'required|numeric'
         ],[
             'uid.required' => 'Something went wrong. Please try again later!',
             'uid.numeric' => 'Something went wrong. Please try again later!',
+            'inv_id.required' => 'Something went wrong. Please try again later!',
+            'inv_id.numeric' => 'Something went wrong. Please try again later!'
         ]);
         try{
             $user = WebUser::find($request->uid);
-            if($user && $user->usr_profile_status != 0){
-                //
+            $invoice = Invoice::find($request->inv_id);
+            $company = CompanyInfo::find(1);
+            if(($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0)){
+                $invoiceDescriptions = InvoiceDescriptionAmount::where('ida_inv_no','=',$invoice->inv_number)->where('ida_status','!=', 0)->get();
+                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company'));
             }else{
                 return redirect()->back()->with('error','Ssomething went wrong. Please try after sometimes!');
             }

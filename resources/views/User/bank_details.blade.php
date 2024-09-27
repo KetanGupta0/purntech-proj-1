@@ -126,12 +126,12 @@
                         <label for="user_bank_name">Bank Name</label>
                         <select class="form-control" value="{{$data->ubd_user_bank_name}}" disabled>
                             <option value="">Select</option>
-                            <option value="Bank 1">Bank 1</option>
-                            <option value="Bank 2">Bank 2</option>
-                            <option value="Bank 3">Bank 3</option>
-                            <option value="Bank 4">Bank 4</option>
-                            <option value="Bank 5">Bank 5</option>
-                            <option value="Other">Other</option>
+                            <option value="Bank 1" {{ $data->ubd_user_bank_name == "Bank 1" ? "selected": "" }}>Bank 1</option>
+                            <option value="Bank 2" {{ $data->ubd_user_bank_name == "Bank 2" ? "selected": "" }}>Bank 2</option>
+                            <option value="Bank 3" {{ $data->ubd_user_bank_name == "Bank 3" ? "selected": "" }}>Bank 3</option>
+                            <option value="Bank 4" {{ $data->ubd_user_bank_name == "Bank 4" ? "selected": "" }}>Bank 4</option>
+                            <option value="Bank 5" {{ $data->ubd_user_bank_name == "Bank 5" ? "selected": "" }}>Bank 5</option>
+                            <option value="Other" {{ $data->ubd_user_bank_name == "Other" ? "selected": "" }}>Other</option>
                         </select>
                     </div>
                 </div>
@@ -171,15 +171,20 @@
                             let value = $(this).attr('data-id');
                             if(value == 1){
                                 Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Pending',
+                                    icon: 'success',
+                                    title: 'Verified',
                                 });
                             }else if(value == 2){
                                 Swal.fire({
-                                    icon: 'success',
-                                    title: 'Verified'
+                                    icon: 'warning',
+                                    title: 'Processing'
                                 });
                             }else if(value == 3){
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Pending'
+                                });
+                            }else if(value == 4){
                                 Swal.fire({
                                     title: "Rejected",
                                     text: "Do you want to submit your details again?",
@@ -359,14 +364,16 @@
                 $('#user_bank_name').addClass('is-invalid');
             }else{
                 $('#user_bank_name').removeClass('is-invalid');
+                if($('#user_bank_name').val() == "Other"){
+                    if($('#user_bank_name_other').val() == ''){
+                        e.preventDefault();
+                        $('#user_bank_name_other').addClass('is-invalid');
+                    }else{
+                        $('#user_bank_name_other').removeClass('is-invalid');
+                    }
+                }
             }
 
-            if($('#user_bank_name_other').val() == ''){
-                e.preventDefault();
-                $('#user_bank_name_other').addClass('is-invalid');
-            }else{
-                $('#user_bank_name_other').removeClass('is-invalid');
-            }
 
             if($('#user_bank_acc').val() == ''){
                 e.preventDefault();

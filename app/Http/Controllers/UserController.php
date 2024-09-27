@@ -205,6 +205,25 @@ class UserController extends Controller
         }
     }
 
+    public function viewUserInvoiceCommand(Request $request){
+        $request->validate([
+            'uid' => 'required|numeric'
+        ],[
+            'uid.required' => 'Something went wrong. Please try again later!',
+            'uid.numeric' => 'Something went wrong. Please try again later!',
+        ]);
+        try{
+            $user = WebUser::find($request->uid);
+            if($user && $user->usr_profile_status != 0){
+                //
+            }else{
+                return redirect()->back()->with('error','Ssomething went wrong. Please try after sometimes!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
     private function revokeUserAccess(){
         Session::flush();
         return redirect('/');

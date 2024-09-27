@@ -23,8 +23,8 @@
                 <th>S. No.</th>
                 <th>Invoice Number</th>
                 <th>Invoice Date</th>
-                <th>Amount</th>
                 <th>Due Date</th>
+                <th>Amount</th>
                 <th>Invoice Status</th>
                 <th>Action</th>
             </tr>
@@ -36,31 +36,28 @@
                         <tr>
                             <th>{{$loop->index+1}}</th>
                             <th>{{$inv->inv_number}}</th>
-                            <th>{{$inv->inv_date}}</th>
-                            <th>{{$inv->inv_amount}}</th>
+                            <th>{{date("d M Y", strtotime($inv->inv_date))}}</th>
+                            <th>{{date("d M Y", strtotime($inv->inv_due_date))}}</th>
+                            <th>₹ {{sprintf("%.2f",$inv->inv_amount)}}</th>
                             <th>
-                                @if ($inv->inv_status == 1)
+                                @if($inv->inv_status == 1)
+                                    <span class="text-warning">Not Paid</span>
+                                @elseif($inv->inv_status == 2)
+                                    <span class="text-warning">Partial Paid</span>
+                                @elseif($inv->inv_status == 3)
+                                    <span class="text-warning">Refuded</span>
+                                @elseif($inv->inv_status == 4)
                                     <span class="text-warning">Pending</span>
-                                @elseif ($inv->inv_status == 2)
-                                    <span class="text-success">Completed</span>
-                                @elseif ($inv->inv_status == 3)
-                                    <span class="text-danger">Rejected/Expired</span>
+                                @elseif($inv->inv_status == 5)
+                                    <span class="text-success">Paid</span>
                                 @endif
                             </th>
-                            <th>{{$inv->inv_number}}</th>
                             <th>
-                                @if ($inv->inv_status == 1)
-                                    @if($inv->inv_paid_amt == NULL || $inv->inv_paid_amt == '')
-                                        <div class="btn btn-success">Submit Payment Details</div>
-                                        <div class="btn btn-primary">View</div>
-                                    @else
-                                        <div class="btn btn-primary">View</div>
-                                    @endif
-                                @elseif ($inv->inv_status == 2)
-                                    <div class="btn btn-primary">View</div>
-                                @elseif ($inv->inv_status == 3)
-                                    <span>-</span>
-                                @endif
+                                <form action="{{ url('/user/invoices/invoice-view') }}" method="post">
+                                    @csrf
+                                    <input type="hidden" name="uid" value="{{ $inv->inv_party_id }}">
+                                    <input type="submit" class="btn btn-sm btn-primary" value="View">
+                                </form>
                             </th>
                         </tr>
                     @endforeach

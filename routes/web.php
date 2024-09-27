@@ -35,6 +35,8 @@ Route::middleware([UserAuthCheck::class])->group(function () {
     Route::post('/upload-user-doc', [UserController::class, 'userDocsUpload']);
     Route::post('/save-bank-info', [UserController::class, 'saveUserBankData']);
 
+    Route::post('/user/invoices/invoice-view', [UserController::class, 'viewUserInvoiceCommand']);
+
     // AJAX Calls
     Route::get('/fetch-user-documents', [UserController::class, 'getUserDocsAJAX']);
 });

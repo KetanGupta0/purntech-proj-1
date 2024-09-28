@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('invoice_logos', function (Blueprint $table) {
-            $table->id('img_id');
-            $table->string('img_inv_id');
-            $table->string('img_inv_no');
-            $table->string('img_name');
-            $table->tinyInteger('img_status')->default(1);
+        Schema::create('company_services', function (Blueprint $table) {
+            $table->id('cms_id');
+            $table->string('cms_service_name')->nullable(false);
+            $table->tinyInteger('cms_status')->default(1)->nullable(false);
             $table->timestamps();
         });
     }
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('invoice_logos');
+        Schema::dropIfExists('company_services');
     }
 };

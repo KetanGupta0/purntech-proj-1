@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\ApprovalLetterSetting;
+use App\Models\CompanyInfo;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
 use App\Models\InvoiceLogo;
+use App\Models\InvoiceSetting;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
@@ -114,7 +117,15 @@ class AdminController extends Controller
     }
     public function adminSettingsView()
     {
-        return view('Admin.header') . view('Admin.admin_settings') . view('Admin.footer');
+        try{
+            $companyInfo = CompanyInfo::where('cmp_id','=',1)->where('cmp_status','=',1)->first();
+            $approvalInfo = ApprovalLetterSetting::where('als_id','=',1)->where('als_status','=',1)->first();
+            $invoiceInfo = InvoiceSetting::where('ins_id','=',1)->where('ins_status','=',1)->first();
+            // dd($approvalInfo);
+            return view('Admin.header') . view('Admin.admin_settings',compact('companyInfo','approvalInfo','invoiceInfo')) . view('Admin.footer');
+        }catch (Exception $e) {
+            return redirect()->to('/')->with('error', $e->getMessage());
+        }
     }
     public function adminHelpView()
     {

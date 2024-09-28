@@ -13,6 +13,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
 class AdminController extends Controller
@@ -283,7 +284,8 @@ class AdminController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    public function verifyNowDocumentCommand(Request $request){
+    public function verifyNowDocumentCommand(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric',
             'doc_id' => 'required|numeric'
@@ -294,22 +296,47 @@ class AdminController extends Controller
             'doc_id.numeric' => 'Unable to process your request right now!'
         ]);
         try {
+            // Find user and document by IDs
             $user = WebUser::find($request->uid);
             $doc = UserDocuments::find($request->doc_id);
+
             if ($user && $doc) {
+                // Mark document as verified
                 $doc->udc_status = 2;
-                if($doc->save()){
-                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>true]);
-                }else{
-                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
+                if ($doc->save()) {
+                    // Check if all required document types are verified
+                    $requiredDocumentTypes = [1, 2, 3, 4, 5, 6, 7];
+                    $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
+                        ->whereIn('udc_doc_type', $requiredDocumentTypes)
+                        ->where('udc_status', 2)
+                        ->count();
+                    // Update user verification status
+                    if ($verifiedDocumentsCount == count($requiredDocumentTypes)) {
+                        $user->usr_verification_status = 1; // Fully verified
+                    } else {
+                        $user->usr_verification_status = 0; // Not fully verified
+                    }
+                    $user->save();
+
+                    // Return success view
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => true]);
+                } else {
+                    // Failed to save document status
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => false]);
                 }
             } else {
-                return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
+                // User or document not found
+                return view('Admin.goToVerifyDocuments', ['uid' => $request->uid, 'status' => false]);
             }
         } catch (Exception $e) {
-            return view('Admin.goToVerifyDocuments', ['uid' => 1,'status'=>false]);
+            // Log the exception for debugging
+            Log::error('Error verifying document: '.$e->getMessage());
+
+            // Return failure view
+            return view('Admin.goToVerifyDocuments', ['uid' => $request->uid, 'status' => false]);
         }
     }
+
     public function rejectNowDocumentCommand(Request $request){
         $request->validate([
             'uid' => 'required|numeric',
@@ -326,15 +353,30 @@ class AdminController extends Controller
             if ($user && $doc) {
                 $doc->udc_status = 3;
                 if($doc->save()){
-                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>true]);
+                    // Check if all required document types are verified
+                    $requiredDocumentTypes = [1, 2, 3, 4, 5, 6, 7];
+                    $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
+                        ->whereIn('udc_doc_type', $requiredDocumentTypes)
+                        ->where('udc_status', 2)
+                        ->count();
+                    // Update user verification status
+                    if ($verifiedDocumentsCount == count($requiredDocumentTypes)) {
+                        $user->usr_verification_status = 1; // Fully verified
+                    } else {
+                        $user->usr_verification_status = 0; // Not fully verified
+                    }
+                    $user->save();
+
+                    // Return success view
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => true]);
                 }else{
-                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
                 }
             } else {
-                return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
+                return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
             }
         } catch (Exception $e) {
-            return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
+            return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
         }
     }
     public function deleteNowDocumentCommand(Request $request){
@@ -353,9 +395,9 @@ class AdminController extends Controller
             if ($user && $doc) {
                 $doc->udc_status = 0;
                 if($doc->save()){
-                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>true]);
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>true]);
                 }else{
-                    return view('Admin.goToVerifyDocuments', ['uid' => 1,'status1'=>false]);
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
                 }
             } else {
                 return redirect()->back()->with('error', 'Something went wrong!');
@@ -521,25 +563,12 @@ class AdminController extends Controller
                 return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Address Line 2 is required!']);
             }
 
-            $invoice_number = 'BIWTS/'.date('d/m/Y');
-            
-            $name = explode(' ', $request->customer_name);
-            $last_four_digits = substr($customer_phone1, -4);
+            $user = WebUser::find($uid);
+            $invoice_number = $user->usr_username;
 
-            if (count($name) > 1) {
-                $invoice_number .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[1][0]) . $last_four_digits;
-            } elseif (count($name) == 1) {
-                $invoice_number .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[0][1]) . $last_four_digits;
-            }
+            $countInvoice = Invoice::where('inv_status','!=',0)->count();
+            $invoice_number = $invoice_number.'/IN'.($countInvoice+1);
 
-            $count = 0;
-            $temp = $invoice_number;
-            while(Invoice::where('inv_number','=',$temp)->exists()){
-                $count++;
-                $temp = $invoice_number.'/'.$count;
-            }
-            $invoice_number = $temp;
-            // dd($temp);
             $inv_amount = 0.00;
             foreach ($request->inv_amount as $amount) {
                 if($amount == '' || $amount == null){

@@ -8,6 +8,7 @@ use App\Models\InvoiceDescriptionAmount;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
+use Carbon\Carbon;
 use DateTime;
 use Exception;
 use Illuminate\Http\Request;
@@ -22,12 +23,93 @@ class UserController extends Controller
 
     public function userDashboardView()
     {
-        return view('User.header') . view('User.dashboard') . view('User.footer');
+        $user = WebUser::find(Session::get('uid'));
+        // List of profile fields
+        $profileFields = [
+            'usr_first_name',
+            'usr_last_name',
+            'usr_father',
+            'usr_mother',
+            'usr_gender',
+            'usr_dob',
+            'usr_email',
+            'usr_mobile',
+            'usr_alt_mobile',
+            'usr_full_address',
+            'usr_landmark',
+            'usr_profile_photo'
+        ];
+        $totalProfileFields = count($profileFields);
+        $filledProfileFields = 0;
+        foreach ($profileFields as $field) {
+            if (!empty($user->$field)) {
+                $filledProfileFields++;
+            }
+        }
+        $profileCompletionPercentage = ($filledProfileFields / $totalProfileFields) * 100;
+        $profileCompletionPercentage = round($profileCompletionPercentage, 2);
+
+        $documentTypes = ['1', '2', '3', '4', '5', '6', '7'];
+        $totalDocuments = count($documentTypes);
+        $uploadedDocuments = UserDocuments::where('udc_user_id', $user->usr_id)
+            ->whereIn('udc_doc_type', $documentTypes)
+            ->where(function ($query) {
+                $query->where('udc_status', '!=', '0')
+                    ->where('udc_status', '!=', '3');
+            })
+            ->count();
+        $documentUploadPercentage = ($uploadedDocuments / $totalDocuments) * 100;
+        $documentUploadPercentage = round($documentUploadPercentage, 2);
+
+        $bankDetails = UserBankDetail::where('ubd_usr_id','=',$user->usr_id)->where('ubd_user_kyc_status','!=', 0)->orWhere('ubd_user_kyc_status','!=', 4)->first();
+        $bankDetailsFields = [
+            'ubd_user_name',
+            'ubd_user_pan',
+            'ubd_user_name_in_bank',
+            'ubd_user_bank_name',
+            'ubd_user_bank_acc',
+            'ubd_user_ifsc',
+            'ubd_user_bank_proof'
+        ];
+        $totalBankDetailsFields = count($bankDetailsFields);
+        $filledBankDetailsFields = 0;
+        foreach ($bankDetailsFields as $field) {
+            if (!empty($bankDetails->$field)) {
+                $filledBankDetailsFields++;
+            }
+        }
+        $bankDetailsCompletionPercentage = ($filledBankDetailsFields / $totalBankDetailsFields) * 100;
+        $bankDetailsCompletionPercentage = round($bankDetailsCompletionPercentage, 2);
+
+        return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','documentUploadPercentage','bankDetailsCompletionPercentage')) . view('User.footer');
     }
     public function profileView()
     {
         $user = WebUser::find(Session::get('uid'));
-        return view('User.header') . view('User.profile', compact('user')) . view('User.footer');
+        $profileFields = [
+            'usr_first_name',
+            'usr_last_name',
+            'usr_father',
+            'usr_mother',
+            'usr_gender',
+            'usr_dob',
+            'usr_email',
+            'usr_mobile',
+            'usr_alt_mobile',
+            'usr_full_address',
+            'usr_landmark',
+            'usr_profile_photo'
+        ];
+        $totalProfileFields = count($profileFields);
+        $filledProfileFields = 0;
+        foreach ($profileFields as $field) {
+            if (!empty($user->$field)) {
+                $filledProfileFields++;
+            }
+        }
+        $profileCompletionPercentage = ($filledProfileFields / $totalProfileFields) * 100;
+        $profileCompletionPercentage = round($profileCompletionPercentage, 2);
+        return view('User.header') . view('User.profile', compact('user','profileCompletionPercentage')) . view('User.footer');
     }
     public function documentsView()
     {
@@ -37,6 +119,11 @@ class UserController extends Controller
     {
         $data = Invoice::where('inv_party_id','=', Session::get('uid'))->where('inv_status','!=',0)->get();
         return view('User.header') . view('User.invoices',compact('data')) . view('User.footer');
+    }
+    public function appravalLetterView()
+    {
+        $data = Invoice::where('inv_party_id','=', Session::get('uid'))->where('inv_status','=',5)->get();
+        return view('User.header') . view('User.approvalLetter',compact('data')) . view('User.footer');
     }
     public function bankDetailsView()
     {
@@ -107,6 +194,7 @@ class UserController extends Controller
     private function uploadUserDocument(Request $request, $fileInputName, $userId, $source, $docType)
     {
         if ($request->hasFile($fileInputName)) {
+            
             $file = $request->file($fileInputName);
             $fileName = time() . '-' . $file->getClientOriginalName();
             $file->move(public_path('assets/img/uploads/documents'), $fileName);
@@ -132,7 +220,9 @@ class UserController extends Controller
         ]);
         try {
             $user = WebUser::find(Session::get('uid'));
-            $checkOldDoc = UserDocuments::where('udc_doc_type', '=', $request->doc_type)->where('udc_status', '=', 1)->orWhere('udc_status', '=', 2)->first();
+            $docStatus = [1,2];
+            $checkOldDoc = UserDocuments::where('udc_user_id','=',$user->usr_id)->where('udc_doc_type', '=', $request->doc_type)->whereIn('udc_status', $docStatus)->first();
+            // dd($checkOldDoc);
             if ($checkOldDoc) {
                 return redirect()->back()->with('error', 'Document is already uploaded!');
             } else {

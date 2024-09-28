@@ -176,13 +176,15 @@ class WebController extends Controller
                 // Stage 2
                 $oldUser = WebUser::where('usr_email', '=', $request->email)->orWhere('usr_mobile', '=', $request->mobile)->where('usr_profile_status', '!=', 0)->first();
                 if (!$oldUser) {
-                    // Extract a part of the string
-                    $part = substr($request->first_name, 0, 3); // Get the first 3 characters
-                    $partUpper = strtoupper($part);
-
-                    $username = $partUpper . rand(11111, 99999);
-                    while (WebUser::where('usr_username', '=', $username)->first()) {
-                        $username = $partUpper . rand(11111, 99999);
+                    $username = 'BIWTS/'.date('d/m/Y');
+                    $fullName = $request->first_name.' '.$request->last_name;
+                    $customer_phone1 = $request->mobile;
+                    $name = explode(' ', $fullName);
+                    $last_four_digits = substr($customer_phone1, -4);
+                    if (count($name) > 1) {
+                        $username .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[1][0]) . $last_four_digits;
+                    } elseif (count($name) == 1) {
+                        $username .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[0][1]) . $last_four_digits;
                     }
 
                     $user = new WebUser();

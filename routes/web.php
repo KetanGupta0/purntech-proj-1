@@ -26,6 +26,7 @@ Route::middleware([UserAuthCheck::class])->group(function () {
     Route::get('/user/profile', [UserController::class, 'profileView']);
     Route::get('/user/documents', [UserController::class, 'documentsView']);
     Route::get('/user/invoices', [UserController::class, 'invoicesView']);
+    Route::get('/user/approval-letter', [UserController::class, 'appravalLetterView']);
     Route::get('/user/bank-details', [UserController::class, 'bankDetailsView']);
     Route::get('/user/payments', [UserController::class, 'paymentsView']);
     Route::get('/user/help', [UserController::class, 'helpView']);

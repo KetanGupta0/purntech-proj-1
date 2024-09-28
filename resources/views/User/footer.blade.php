@@ -58,6 +58,9 @@
 <script type='text/javascript' src='{{ asset('public/dashboard/assets/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script type='text/javascript' src='{{ asset('public/dashboard/assets/libs/flatpickr/flatpickr.min.js') }}'></script>
 
+<script type='text/javascript' src="{{ asset('public/dashboard/assets/libs/apexcharts/apexcharts.min.js') }}"></script>
+<script type='text/javascript' src="{{ asset('public/dashboard/assets/js/pages/apexcharts-heatmap.init.js') }}"></script>
+
 <!-- App js -->
 <script type='text/javascript' src="{{ asset('public/dashboard/assets/js/app.js') }}"></script>
 <script>

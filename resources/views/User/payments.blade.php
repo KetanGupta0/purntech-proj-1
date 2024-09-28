@@ -14,4 +14,36 @@
         </div>
     </div>
 </div>
-<!-- end page title -->
+<!-- FullCalendar CSS -->
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+
+<!-- FullCalendar JS -->
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<div class="row">
+    <div class="col-md-6">
+        <div id="calendar"></div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var calendarEl = document.getElementById('calendar');
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            events: '/employee/payment-status', // Fetch events via AJAX
+            eventColor: '#378006', // Color for events
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth'
+            },
+            eventRender: function (info) {
+                $(info.el).tooltip({
+                    title: info.event.extendedProps.paymentStatus
+                });
+            }
+        });
+
+        calendar.render();
+    });
+</script>

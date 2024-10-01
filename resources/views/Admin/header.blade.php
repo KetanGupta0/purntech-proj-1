@@ -22,6 +22,8 @@
         <link href="{{ asset('public/dashboard/assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- Datatable CSS -->
         <link href="{{ asset('public/dashboard/assets/css/dataTables.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
+         <!-- Layout config Js -->
+         
         <!-- JQuery CDN -->
         <script src="{{ asset('public/dashboard/assets/js/jquery-3.7.1.min.js') }}"></script>
         <!-- Datatable JS -->
@@ -101,26 +103,19 @@
                                 </button>
                                 <div class="dropdown-menu dropdown-menu-end">
                                     <!-- item-->
-                                    <h6 class="dropdown-header">Welcome Anna!</h6>
-                                    <a class="dropdown-item"
+                                    <h6 class="dropdown-header">Welcome {{ Session::get('fusername') }}!</h6>
+                                    {{-- <a class="dropdown-item"
                                        href="{{url('/admin/profile')}}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Profile</span></a>
-                                    <a class="dropdown-item"
-                                       href=""><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Messages</span></a>
-                                    <a class="dropdown-item"
-                                       href=""><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Taskboard</span></a>
-                                    <div class="dropdown-divider"></div>
+                                        <span class="align-middle">Profile</span></a> --}}
 
                                     <a class="dropdown-item"
                                        href="{{url('/admin/settings')}}">
                                         <span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i
                                            class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle">Settings</span></a>
-                                    <a class="dropdown-item"
+                                    {{-- <a class="dropdown-item"
                                        href="{{url('/admin/help')}}"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Help</span></a>
+                                        <span class="align-middle">Help</span></a> --}}
                                     <a class="dropdown-item"
                                        href="{{url('/logout')}}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle"
@@ -225,7 +220,7 @@
                             id="navbar-nav">
                             <li class="menu-title">
                                 <i class="ri-more-fill"></i>
-                                <span data-key="t-pages">Pages</span>
+                                <span data-key="t-pages">Menu</span>
                             </li>
 
                             <li class="nav-item">
@@ -238,42 +233,42 @@
                             <li class="nav-item">
                                 <a class="nav-link menu-link user-profiles"
                                    href="{{ url('/admin/user-profiles') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-account-circle-fill"></i>
                                     <span data-key="t-widgets">User Profiles</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link user-documents"
                                    href="{{ url('/admin/user-documents') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-file-fill"></i>
                                     <span data-key="t-widgets">User Doucments</span>
                                 </a>
                             </li>
-                            <li class="nav-item">
+                            {{-- <li class="nav-item">
                                 <a class="nav-link menu-link user-kyc"
                                    href="{{ url('/admin/user-kyc') }}">
                                     <i class="ri-dashboard-2-line"></i>
                                     <span data-key="t-widgets">User KYC</span>
                                 </a>
-                            </li>
+                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link menu-link user-bank-details"
                                    href="{{ url('/admin/user-bank-details') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-bank-fill"></i>
                                     <span data-key="t-widgets">User Bank Details</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link user-invoices-page"
                                    href="{{ url('/admin/user-invoices-page') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-price-tag-2-fill"></i>
                                     <span data-key="t-widgets">User Invoices Page</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link user-download"
                                    href="{{ url('/admin/user-download') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-download-cloud-fill"></i>
                                     <span data-key="t-widgets">Download Page</span>
                                 </a>
                             </li>
@@ -292,7 +287,7 @@
             <!-- Start right Content here -->
             <!-- ============================================================== -->
             <div class="main-content">
-                <div class="page-content">
+                <div class="page-content" style="min-height: 92vh!important;">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col">

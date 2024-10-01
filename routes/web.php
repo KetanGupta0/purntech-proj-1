@@ -63,6 +63,7 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-profiles/view-user', [AdminController::class, 'viewUserCommand']);
     Route::post('/admin/user-profiles/edit-user', [AdminController::class, 'editUserCommand']);
     Route::post('/admin/user-profiles/delete-user', [AdminController::class, 'deleteUserCommand']);
+    Route::post('/admin/user-profiles/user-update', [AdminController::class, 'userUpdateCommand']);
 
     Route::post('/admin/user-documents/review-verified-documents', [AdminController::class, 'reviewVerifiedDocumentsCommand']);
     Route::post('/admin/user-documents/verify-documents', [AdminController::class, 'verifyDocumentsCommand']);

@@ -7,7 +7,10 @@
 <!-- container-fluid -->
 </div>
 <!-- End Page-content -->
-
+<div class="row">
+    
+    
+</div>
 <footer class="footer" style="height: unset!important;">
     <div class="container-fluid">
         <div class="row">
@@ -21,10 +24,8 @@
                 </marquee>
             </div>
             <div class="col-md-12">
-                <p class="text-center">All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
+                <p class="text-center fs-10">All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
             </div>
-        </div>
-        <div class="row">
             <div class="col-sm-6">
                 <script>
                     document.write(new Date().getFullYear());
@@ -106,6 +107,9 @@
 <script type='text/javascript' src='{{ asset('public/dashboard/assets/js/toastify-js.js') }}'></script>
 <script type='text/javascript' src='{{ asset('public/dashboard/assets/libs/choices.js/public/assets/scripts/choices.min.js') }}'></script>
 <script type='text/javascript' src='{{ asset('public/dashboard/assets/libs/flatpickr/flatpickr.min.js') }}'></script>
+<script type='text/javascript' src='{{ asset('public/dashboard/assets/libs/apexcharts/apexcharts.min.js') }}'></script>
+<script type='text/javascript' src='{{ asset('public/dashboard/assets/js/plugins.js') }}'></script>
+<script type='text/javascript' src='{{ asset('public/dashboard/assets/js/pages/dashboard-crm.init.js') }}'></script>
 
 <!-- App js -->
 <script type='text/javascript' src="{{ asset('public/dashboard/assets/js/app.js') }}"></script>

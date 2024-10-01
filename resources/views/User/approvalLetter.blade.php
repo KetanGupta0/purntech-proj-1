@@ -26,7 +26,7 @@
             @elseif ($user->usr_verification_status == 1)
                 <h5 class="card-title text-success">Your file is approved</h5>
                 <p class="card-text">Please follow the below button to download or view your approval letter.</p>
-                <a href="{{ url('user/view-approval-letter') }}" class="btn btn-primary">View/Donload</a>
+                <a href="{{ url('user/view-approval-letter') }}" class="btn btn-primary">View/Download</a>
             @endif
         </div>
     </div>

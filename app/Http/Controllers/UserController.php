@@ -138,7 +138,16 @@ class UserController extends Controller
     }
     public function paymentsView()
     {
-        return view('User.header') . view('User.payments') . view('User.footer');
+        try{
+            $user = WebUser::find(Session::get('uid'));
+            if($user){
+                return view('User.header') . view('User.payments',compact('user')) . view('User.footer');
+            }else{
+                return redirect()->back()->with('error', 'Something went wrong!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
     public function helpView()
     {

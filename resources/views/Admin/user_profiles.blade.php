@@ -25,6 +25,9 @@
                         <th>Name</th>
                         <th>Primary Email</th>
                         <th>Primary Contact</th>
+                        <th>Service Date</th>
+                        <th>Service Name</th>
+                        <th>Enquiry Date</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -37,6 +40,9 @@
                                 <th>{{$user->usr_first_name}} {{$user->usr_last_name}}</th>
                                 <th>{{$user->usr_email}}</th>
                                 <th>{{$user->usr_mobile}}</th>
+                                <th>{{date('d M Y', strtotime($user->usr_date))}}</th>
+                                <th>{{$user->usr_service}}</th>
+                                <th>{{date('d M Y', strtotime($user->created_at))}}</th>
                                 <th>
                                     @if($user->usr_profile_status == 1)
                                         <span class="text-success">Active</span>
@@ -52,12 +58,12 @@
                                             @csrf
                                             <input type="hidden" name="uid" value="{{$user->usr_id}}">
                                             <input type="submit" class="btn btn-sm btn-info" value="Edit">
-                                        </form>
+                                        </form> --}}
                                         <form action="{{url('/admin/user-profiles/view-user')}}" class="mx-1" method="post">
                                             @csrf
                                             <input type="hidden" name="uid" value="{{$user->usr_id}}">
                                             <input type="submit" class="btn btn-sm btn-primary" value="View">
-                                        </form> --}}
+                                        </form>
                                         <form action="{{url('/admin/user-profiles/delete-user')}}" class="mx-1" class="del_user_form" method="post">
                                             @csrf
                                             <input type="hidden" name="uid" value="{{$user->usr_id}}">

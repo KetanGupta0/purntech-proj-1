@@ -99,6 +99,53 @@
             </div>
         </div>
         <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                @if ($errors->any())
+                    Swal.fire({
+                        title: 'Error!',
+                        icon: 'error',
+                        html: `<ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>`,
+                        confirmButtonText: 'OK'
+                    });
+                @endif
+            });
+        </script>
+        @if (Session::has('status'))
+            @if (Session::get('status') == true)
+                <script>
+                    Swal.fire({
+                        icon: "success",
+                        title: "Success",
+                        html: "{{Session::get('message')}}"
+                    });
+                </script>
+            @endif
+        @endif
+        @if (Session::has('err_code'))
+            @if (Session::get('err_code') == 900)
+                <script>
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Oops..",
+                        html: "{{Session::get('message')}}"
+                    });
+                    console.log("{{Session::get('message')}}");
+                </script>
+            @else
+                <script>
+                    Swal.fire({
+                        icon: "warning",
+                        title: "Oops..",
+                        html: "{{Session::get('message')}}"
+                    });
+                </script>
+            @endif
+        @endif
+        <script>
             $(document).ready(function() {
                 $.ajaxSetup({
                     headers: {

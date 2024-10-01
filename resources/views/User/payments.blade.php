@@ -20,13 +20,17 @@
 <!-- FullCalendar JS -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 
+@if(isset($user))
 <div class="card">
     <div class="card-header">
       Payment Report
     </div>
     <div class="card-body">
-      <h5 class="card-title">Advance Amount for LO - ₹3500000.00</h5> {{-- From DB --}}
-      <h5 class="card-title">Monthly Rent for LO - ₹45000.00</h5>{{-- From DB --}}
+        <h5 class="card-title">File - {{ $user->usr_username }} for {{ $user->usr_service }}</h5> {{-- From DB --}}
+      <h5 class="card-title">Advance Amount for LO - ₹{{ sprintf('%.2f',$user->usr_adv_amount) }}</h5> {{-- From DB --}}
+      <div>Payment Status - @if($user->usr_adv_status == 1) <span class="badge bg-success-subtle text-success">Paid</span> @elseif($user->usr_adv_status == 0) <span class="badge bg-danger-subtle text-danger">Not Paid</span> @endif</div>
+      <div>Reference ID - <span class="badge bg-success-subtle text-success">{{ $user->usr_adv_txnid }}</span></div>
+      <h5 class="card-title">Monthly Rent for LO - ₹{{ sprintf('%.2f',$user->usr_mon_rent) }}</h5> {{-- From DB --}}
       <a href="#calendar" class="btn btn-primary">View Calender</a>
     </div>
   </div>
@@ -40,6 +44,8 @@
         </div>
     </div>
 </div>
+@endif
+
 <script>
     $(document).ready(function () {
         var calendarEl = document.getElementById('calendar');

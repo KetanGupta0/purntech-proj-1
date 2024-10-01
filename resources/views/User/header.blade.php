@@ -109,14 +109,9 @@
                                     <a class="dropdown-item" href="{{ url('/user/profile') }}"><i
                                            class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle">Profile</span></a>
-                                    <a class="dropdown-item" href=""><i class="mdi mdi-message-text-outline text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Messages</span></a>
-                                    <a class="dropdown-item" href=""><i class="mdi mdi-calendar-check-outline text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Taskboard</span></a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url('/user/help') }}"><i
+                                    {{-- <a class="dropdown-item" href="{{ url('/user/help') }}"><i
                                            class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle">Help</span></a>
+                                        <span class="align-middle">Help</span></a> --}}
                                     <a class="dropdown-item" href="{{ url('/logout') }}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle" data-key="t-logout">Logout</span>
                                     </a>
@@ -194,7 +189,7 @@
                         <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title">
                                 <i class="ri-more-fill"></i>
-                                <span data-key="t-pages">Pages</span>
+                                <span data-key="t-pages">Menu</span>
                             </li>
 
                             <li class="nav-item">
@@ -205,37 +200,37 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link profile" href="{{ url('/user/profile') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-account-circle-fill"></i>
                                     <span data-key="t-widgets">Profiles</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link documents" href="{{ url('/user/documents') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-file-fill"></i>
                                     <span data-key="t-widgets">Doucments</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link invoices" href="{{ url('/user/invoices') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-price-tag-2-fill"></i>
                                     <span data-key="t-widgets">Invoices</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link approval-letter" href="{{ url('/user/approval-letter') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-checkbox-circle-fill"></i>
                                     <span data-key="t-widgets">Approval Letter</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link bank-details" href="{{ url('/user/bank-details') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-bank-fill"></i>
                                     <span data-key="t-widgets">Bank Details</span>
                                 </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link payments" href="{{ url('/user/payments') }}">
-                                    <i class="ri-dashboard-2-line"></i>
+                                    <i class="ri-refund-2-fill"></i>
                                     <span data-key="t-widgets">Payments</span>
                                 </a>
                             </li>
@@ -254,7 +249,7 @@
             <!-- Start right Content here -->
             <!-- ============================================================== -->
             <div class="main-content">
-                <div class="page-content">
+                <div class="page-content" style="min-height: 92vh!important;">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="col">

@@ -79,7 +79,7 @@
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
                 <h2 id="pg-title-second-main"></h2>
-                <div><span>Enquiry Form</span> {{-- <span class="description-title">Starter Section</span> --}}</div>
+                <div><span>Enquiry Form</span> </div>
             </div><!-- End Section Title -->
 
             <div class="container" data-aos="fade-up">
@@ -213,6 +213,7 @@
             </div>
 
         </section><!-- /Starter Section Section -->
+
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 @if ($errors->any())

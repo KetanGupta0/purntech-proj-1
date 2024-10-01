@@ -21,7 +21,7 @@
     @endphp
     @if ($user->usr_verification_status == 1)
         <div class="alert alert-success" role="alert">
-            {{ $headline }} approved. Please follow <a href="{{ url('/user/approval-letter') }}">this link</a> to download your approval letter.
+            {{ $headline }} approved for {{ $user->usr_service }}. Please follow <a href="{{ url('/user/approval-letter') }}">this link</a> to download your approval letter.
         </div>
     @else
         <div class="alert alert-danger" role="alert">
@@ -90,7 +90,7 @@
     </div>
     <div class="col-md-6">
         <div class="card">
-            <div class="card body">
+            <div class="card body table-responsive">
                 <!-- Bordered Tables -->
                 <table class="table table-bordered table-nowrap">
                     <thead>

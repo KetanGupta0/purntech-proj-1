@@ -216,9 +216,9 @@ class WebController extends Controller
             $this->uploadUserDocument($request,"upload_aadhar_back",$uid,'Enquiry Form');
             $this->uploadUserDocument($request,"upload_pan_card",$uid,'Enquiry Form');
 
-            return redirect()->back()->with([
+            return redirect()->to('/user-login')->with([
                 'status' => true,
-                'message' => 'Form saved successfully!'
+                'message' => 'Your Enquiry for '.$request->service.' received to us for your Enquiry ID - '.$username.'!  Please login to your account using your Registered Mobile Number ('.$request->mobile.').'
             ]);
         } catch (Exception $ex) {
             return redirect()->back()->with([

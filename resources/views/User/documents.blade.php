@@ -20,7 +20,7 @@
 </style>
 <div class="card">
     <div class="card-body">
-        <div class="container-fluid">
+        <div class="container-fluid table-responsive">
             <table class="table" id="documents_table">
                 <thead>
                     <tr>

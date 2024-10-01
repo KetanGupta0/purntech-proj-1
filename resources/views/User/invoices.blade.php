@@ -17,7 +17,7 @@
 <!-- end page title -->
 <div class="card">
     <div class="card-body">
-        <section>
+        <section class="table-responsive">
             <table class="table table-responsive" id="inv_table">
                 <thead>
                     <tr>

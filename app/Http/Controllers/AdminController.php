@@ -7,7 +7,7 @@ use App\Models\ApprovalLetterSetting;
 use App\Models\CompanyInfo;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
-use App\Models\InvoiceLogo;
+use App\Models\CompanyService;
 use App\Models\InvoiceSetting;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
@@ -28,7 +28,12 @@ class AdminController extends Controller
 
     public function adminDashboardView()
     {
-        return view('Admin.header') . view('Admin.dashboard') . view('Admin.footer');
+        $company = CompanyInfo::find(1);
+        if($company){
+            return view('Admin.header') . view('Admin.dashboard',compact('company')) . view('Admin.footer');
+        }else{
+            return redirect()->back()->with('error','Something went wrong!');
+        }
     }
     public function userProfileView()
     {
@@ -219,6 +224,38 @@ class AdminController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+    public function userUpdateCommand(Request $request)
+    {
+        // dd($request);
+        // Validation Required
+        try {
+            $user = WebUser::find($request->uid);
+            $user->usr_first_name = $request->usr_first_name;
+            $user->usr_last_name = $request->usr_last_name;
+            $user->usr_email = $request->usr_email;
+            $user->usr_mobile = $request->usr_mobile;
+            $user->usr_alt_mobile = $request->usr_alt_mobile;
+            $user->usr_dob = date('Y/m/d', strtotime($request->usr_dob));
+            $user->usr_gender = $request->usr_gender;
+            $user->usr_father = $request->usr_father;
+            $user->usr_mother = $request->usr_mother;
+            $user->usr_full_address = $request->usr_full_address;
+            $user->usr_landmark = $request->usr_landmark;
+            $user->usr_service = $request->usr_service;
+            $user->usr_adv_amount = $request->usr_adv_amount;
+            $user->usr_mon_rent = $request->usr_mon_rent;
+            $user->usr_adv_txnid = $request->usr_adv_txnid;
+            $user->usr_adv_status = $request->usr_adv_status;
+            
+            if ($user->save()) {
+                return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>200,'msg'=>'Profile data updated!']);
+            } else {
+                return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
+            }
+        } catch (Exception $e) {
+            return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>$e->getMessage()]);
+        }
+    }
     public function viewUserCommand(Request $request)
     {
         $request->validate([
@@ -229,8 +266,9 @@ class AdminController extends Controller
         ]);
         try {
             $user = WebUser::find($request->uid);
-            if ($user) {
-                return view('Admin.header') . view('Admin.view_user', compact('user')) . view('Admin.footer');
+            $services = CompanyService::orderBy('cms_service_name','ASC')->get();
+            if ($user && $services) {
+                return view('Admin.header') . view('Admin.view_user', compact('user','services')) . view('Admin.footer');
             } else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }

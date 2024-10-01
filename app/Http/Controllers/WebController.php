@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Admin;
 use App\Models\Enquiry;
 use App\Models\OtpRecord;
 use App\Models\UserDocuments;
@@ -66,7 +67,8 @@ class WebController extends Controller
             if ($user) {
                 $otp = rand(111111, 999999);
                 $optMessage = $otp . " is your OTP for BHRTI website login.OTP valid for 8 minutes.Do not share this OTP with anyone. FISBHT";
-                //$response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=amazepay&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $request->mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162495816654996');
+                $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $request->mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162495816654996');
+                // return response()->json(['data'=>$response->xml()],400);
                 $otpRecord = new OtpRecord();
                 $otpRecord->otp_code = $otp;
                 $otpRecord->otp_initiated_by = $user->usr_id;
@@ -231,6 +233,14 @@ class WebController extends Controller
             if(Session::get('loggedin') == 'user'){
                 $user = WebUser::find(Session::get('uid'));
                 return response()->json($user->usr_profile_photo);
+            }
+        }
+    }
+    public function getAdminImageAJAX(){
+        if(Session::has('loggedin')){
+            if(Session::get('loggedin') == 'admin'){
+                $user = Admin::find(Session::get('uid'));
+                return response()->json($user->adm_profile_photo);
             }
         }
     }

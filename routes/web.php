@@ -6,6 +6,7 @@ use App\Http\Controllers\WebController;
 use App\Http\Middleware\AdminAuthCheck;
 use App\Http\Middleware\LoggedUserCheck;
 use App\Http\Middleware\UserAuthCheck;
+use App\Models\CompanyService;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -76,7 +77,21 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-invoices-page/raise-new-invoice/form-submit',[AdminController::class, 'raiseNewInvoiceFormSubmitCommand']);
 
     Route::post('/admin/user-invoices-page/view-invoice-list',[AdminController::class, 'viewUserInvoiceList']);
+    Route::post('/admin/user-invoices-page/command/paid',[AdminController::class, 'makeInvoicePaidCommand']);
+    Route::post('/admin/user-invoices-page/command/pending',[AdminController::class, 'makeInvoicePendingCommand']);
+    Route::post('/admin/user-invoices-page/command/partial',[AdminController::class, 'makeInvoicePartialPaidCommand']);
+    Route::post('/admin/user-invoices-page/command/refunded',[AdminController::class, 'makeInvoiceRefundedCommand']);
+    Route::post('/admin/user-invoices-page/command/unpaid',[AdminController::class, 'makeInvoiceUnpaidCommand']);
+    Route::post('/admin/user-invoices-page/command/delete',[AdminController::class, 'makeInvoiceDeleteCommand']);
+
+    // Admin Setting Routs
+    Route::post('/admin/settings/update-company',[AdminController::class, 'updateCompanyCommand']);
+    Route::post('/admin/settings/update-approval-letter',[AdminController::class, 'updateApprovalLetterCommand']);
+    Route::post('/admin/settings/update-invoice',[AdminController::class, 'updateInvoiceCommand']);
+    Route::post('/admin/settings/admin-account',[AdminController::class, 'updateAdminAccountCommand']);
+    
     // AJAX Calls
+    
 
 });
 
@@ -86,7 +101,8 @@ Route::middleware([LoggedUserCheck::class])->group(function () {
     Route::get('/user-login', [UserController::class, 'userLoginView']);
     // Enquiry Page
     Route::get('/enquiry', function () {
-        return view('header') . view('User.enquiry') . view('footer');
+        $company = CompanyService::orderBy('cms_service_name','ASC')->get();
+        return view('header') . view('User.enquiry',compact('company')) . view('footer');
     });
     Route::post('/admin-login-submit', [AdminController::class, 'adminLoginSubmit']);
 });
@@ -98,6 +114,8 @@ Route::post('/enquiry-submit', [WebController::class, "enquiryFormSubmit"]);
 Route::post('/check-user-mobile', [WebController::class, 'verifyMobileAJAX']);
 Route::post('/match-otp', [WebController::class, 'matchOTPAJAX']);
 Route::get('/get-user-profile-picture', [WebController::class, 'getUserImageAJAX']);
+Route::get('/get-admin-profile-picture', [WebController::class, 'getAdminImageAJAX']);
+Route::get('fetch-company-info',[AdminController::class,'getCompanyInfo']);
 
 // One time route
 Route::get('/make-admin', [AdminController::class, 'makeFirstAdmin']);

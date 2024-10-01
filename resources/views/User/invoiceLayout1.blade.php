@@ -140,11 +140,27 @@
         padding: 3px;
         font-size: 18px;
     }
+    .payment-status{
+      padding: 3px 8px;
+      border: 2px solid black;
+      border-radius: 8px;
+      text-transform: uppercase;
+      width: fit-content!important;
+      font-weight: bolder;
+    }
+    .paid{
+      border-color: #30e02a!important;
+      color: #30e02a;
+    }
+    .unpaid{
+      border-color: #eb3124!important;
+      color: #eb3124;
+    }
   </style>
 </head>
 
 <body>
-    @if(isset($user) && isset($invoice) && isset($company))
+    @if(isset($user) && isset($invoice) && isset($company) && isset($invoiceSettings))
         <div class="invoice-container">
             <header>
             <!-- Include Logo Image -->
@@ -153,7 +169,7 @@
                 <span>{{ date('m/d/y, g:i A') }}</span>
                 </div>
                 <div class="main-logo">
-                <img src="{{ asset('public/assets/invoice/logo1.png') }}" alt="Company Logo" class="logo">
+                <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_header_img }}" alt="Company Logo" class="logo">
                 <span>Bharti Infratel Tower</span>
                 </div>
             </div>
@@ -161,6 +177,15 @@
             <p>Invoice No: {{ $invoice->inv_number }}</p>
             <p>Invoice Date: {{ date("d M Y", strtotime($invoice->inv_date)) }}</p>
             <p>Due Date: {{ date("d M Y", strtotime($invoice->inv_due_date)) }}</p>
+            <p style="text-align: center;">
+              <div style="display:flex; justify-content:center;">
+                @if ($invoice->inv_status == 5)
+                  <div class="payment-status paid">Paid</div>
+                @else    
+                  <div class="payment-status unpaid">Not Paid</div>
+                @endif
+              </div>
+            </p>
             </header>
 
             <div class="meta-data">
@@ -194,8 +219,8 @@
 
             <!-- Include any relevant images from the PDF -->
             <section class="invoice-image">
-            <img src="{{ asset('public/assets/invoice/logo1.png') }}" alt="Invoice Details Image" class="invoice-image">
-            <img src="{{ asset('public/assets/invoice/logo2.png') }}" alt="Invoice Details Image" class="invoice-image">
+            <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_body_img_1 }}" alt="Invoice Details Image" class="invoice-image">
+            <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_body_img_2 }}" alt="Invoice Details Image" class="invoice-image">
             </section>
 
             <section class="invoice-table">
@@ -229,11 +254,11 @@
 
             <footer>
             <div class="seal-container">
-                <img src="{{ asset('public/assets/invoice/logo3.png') }}" alt="seal" class="seal">
+                <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_stamp }}" alt="seal" class="seal">
             </div>
-            <img src="{{ asset('public/assets/invoice/logo4.png') }}" alt="Footer Image" class="footer-image">
-            @if($company->cmp_website != '' && $company->cmp_website != null)
-                <p><a href="{{ $company->cmp_website }}">{{ $company->cmp_website }}</a></p>
+            <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_footer_img }}" alt="Footer Image" class="footer-image">
+            @if($invoiceSettings->ins_website != '' && $invoiceSettings->ins_website != null)
+                <p><a href="{{ $invoiceSettings->ins_website }}">{{ $invoiceSettings->ins_website }}</a></p>
             @endif
             </footer>
             <div class="btn-cont">
@@ -256,15 +281,11 @@
         }
 
         window.print();
-
-        window.onafterprint = function() {
-            if (prBtn) {
-                prBtn.style.display = "block";
-            }
-        };
+        prBtn.style.display = "block";
+        
     }
     document.addEventListener('DOMContentLoaded', function() {
-        printfun();
+        //printfun();
     });
 
 </script>

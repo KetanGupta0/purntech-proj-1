@@ -98,115 +98,119 @@
     </div>
     ';
 @endphp
-<div class="container">
-    <form action="{{url('/save-bank-info')}}" id="bank_form" method="POST" enctype="multipart/form-data">
-        @csrf
-        <div class="row" id="dynamic_container">
-            @if (isset($data))
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_name">Name</label>
-                        <input class="form-control" type="text" placeholder="Enter your full name as per PAN Card" value="{{$data->ubd_user_name}}" disabled>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_pan">PAN Number</label>
-                        <input class="form-control" style="text-transform: uppercase;" type="text" value="{{$data->ubd_user_pan}}" placeholder="ABCDE1234F" disabled>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_name_in_bank">Name at Bank</label>
-                        <input class="form-control" type="text"  value="{{$data->ubd_user_name_in_bank}}" placeholder="Enter your full name as per your bank" disabled>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_bank_name">Bank Name</label>
-                        <select class="form-control" value="{{$data->ubd_user_bank_name}}" disabled>
-                            <option value="">Select</option>
-                            <option value="Bank 1" {{ $data->ubd_user_bank_name == "Bank 1" ? "selected": "" }}>Bank 1</option>
-                            <option value="Bank 2" {{ $data->ubd_user_bank_name == "Bank 2" ? "selected": "" }}>Bank 2</option>
-                            <option value="Bank 3" {{ $data->ubd_user_bank_name == "Bank 3" ? "selected": "" }}>Bank 3</option>
-                            <option value="Bank 4" {{ $data->ubd_user_bank_name == "Bank 4" ? "selected": "" }}>Bank 4</option>
-                            <option value="Bank 5" {{ $data->ubd_user_bank_name == "Bank 5" ? "selected": "" }}>Bank 5</option>
-                            <option value="Other" {{ $data->ubd_user_bank_name == "Other" ? "selected": "" }}>Other</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="col-md-6 other_bank" @if($data->ubd_user_bank_name_other == '' || $data->ubd_user_bank_name_other == NULL)style="display: none;" @else style="display: block;" @endif>
-                    <div class="form-group pb-4">
-                        <label for="user_bank_name_other">Other Bank Name</label>
-                        <input class="form-control" type="text" value="{{$data->ubd_user_bank_name_other}}" placeholder="Enter your bank name" disabled>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_bank_acc">Account Number</label>
-                        <input class="form-control" type="text" value="{{$data->ubd_user_bank_acc}}" placeholder="Enter your account number" disabled>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_ifsc">IFSC Code</label>
-                        <input class="form-control" style="text-transform: uppercase;" type="text" value="{{$data->ubd_user_ifsc}}" placeholder="Enter your IFSC Code" disabled>
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group pb-4">
-                        <label for="user_bank_proof">Upload Bank Proof Cancel Chque / Bank Passbook</label>
-                        <input class="form-control" type="text" value="{{$data->ubd_user_bank_proof}}" disabled>
-                    </div>
-                </div>
-                <div class="col-md-12">
-                    <div class="form-group pb-4 text-center">
-                        <div class="btn btn-success chk_btn" data-id="{{$data->ubd_user_kyc_status}}">Check Verification Status</div>
-                    </div>
-                </div>
-                <script>
-                    $(document).ready(function(){
-                        let formContent = `{!! $form !!}`;
-                        $(document).on('click','.chk_btn',function(){
-                            let value = $(this).attr('data-id');
-                            if(value == 1){
-                                Swal.fire({
-                                    icon: 'success',
-                                    title: 'Verified',
-                                });
-                            }else if(value == 2){
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Processing'
-                                });
-                            }else if(value == 3){
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Pending'
-                                });
-                            }else if(value == 4){
-                                Swal.fire({
-                                    title: "Rejected",
-                                    text: "Do you want to submit your details again?",
-                                    icon: "error",
-                                    showCancelButton: true,
-                                    confirmButtonColor: "#3085d6",
-                                    cancelButtonColor: "#d33",
-                                    confirmButtonText: "Yes"
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        $('#dynamic_container').html(formContent);
+<div class="card">
+    <div class="card-body">
+        <div class="container">
+            <form action="{{url('/save-bank-info')}}" id="bank_form" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="row" id="dynamic_container">
+                    @if (isset($data))
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_name">Name</label>
+                                <input class="form-control" type="text" placeholder="Enter your full name as per PAN Card" value="{{$data->ubd_user_name}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_pan">PAN Number</label>
+                                <input class="form-control" style="text-transform: uppercase;" type="text" value="{{$data->ubd_user_pan}}" placeholder="ABCDE1234F" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_name_in_bank">Name at Bank</label>
+                                <input class="form-control" type="text"  value="{{$data->ubd_user_name_in_bank}}" placeholder="Enter your full name as per your bank" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_bank_name">Bank Name</label>
+                                <select class="form-control" value="{{$data->ubd_user_bank_name}}" disabled>
+                                    <option value="">Select</option>
+                                    <option value="Bank 1" {{ $data->ubd_user_bank_name == "Bank 1" ? "selected": "" }}>Bank 1</option>
+                                    <option value="Bank 2" {{ $data->ubd_user_bank_name == "Bank 2" ? "selected": "" }}>Bank 2</option>
+                                    <option value="Bank 3" {{ $data->ubd_user_bank_name == "Bank 3" ? "selected": "" }}>Bank 3</option>
+                                    <option value="Bank 4" {{ $data->ubd_user_bank_name == "Bank 4" ? "selected": "" }}>Bank 4</option>
+                                    <option value="Bank 5" {{ $data->ubd_user_bank_name == "Bank 5" ? "selected": "" }}>Bank 5</option>
+                                    <option value="Other" {{ $data->ubd_user_bank_name == "Other" ? "selected": "" }}>Other</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6 other_bank" @if($data->ubd_user_bank_name_other == '' || $data->ubd_user_bank_name_other == NULL)style="display: none;" @else style="display: block;" @endif>
+                            <div class="form-group pb-4">
+                                <label for="user_bank_name_other">Other Bank Name</label>
+                                <input class="form-control" type="text" value="{{$data->ubd_user_bank_name_other}}" placeholder="Enter your bank name" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_bank_acc">Account Number</label>
+                                <input class="form-control" type="text" value="{{$data->ubd_user_bank_acc}}" placeholder="Enter your account number" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_ifsc">IFSC Code</label>
+                                <input class="form-control" style="text-transform: uppercase;" type="text" value="{{$data->ubd_user_ifsc}}" placeholder="Enter your IFSC Code" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group pb-4">
+                                <label for="user_bank_proof">Upload Bank Proof Cancel Chque / Bank Passbook</label>
+                                <input class="form-control" type="text" value="{{$data->ubd_user_bank_proof}}" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group pb-4 text-center">
+                                <div class="btn btn-success chk_btn" data-id="{{$data->ubd_user_kyc_status}}">Check Verification Status</div>
+                            </div>
+                        </div>
+                        <script>
+                            $(document).ready(function(){
+                                let formContent = `{!! $form !!}`;
+                                $(document).on('click','.chk_btn',function(){
+                                    let value = $(this).attr('data-id');
+                                    if(value == 1){
+                                        Swal.fire({
+                                            icon: 'success',
+                                            title: 'Verified',
+                                        });
+                                    }else if(value == 2){
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Processing'
+                                        });
+                                    }else if(value == 3){
+                                        Swal.fire({
+                                            icon: 'warning',
+                                            title: 'Pending'
+                                        });
+                                    }else if(value == 4){
+                                        Swal.fire({
+                                            title: "Rejected",
+                                            text: "Do you want to submit your details again?",
+                                            icon: "error",
+                                            showCancelButton: true,
+                                            confirmButtonColor: "#3085d6",
+                                            cancelButtonColor: "#d33",
+                                            confirmButtonText: "Yes"
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                $('#dynamic_container').html(formContent);
+                                            }
+                                        });
                                     }
                                 });
-                            }
-                        });
-                    });
-                </script>
-            @else
-                {!!$form!!}
-            @endif
+                            });
+                        </script>
+                    @else
+                        {!!$form!!}
+                    @endif
+                </div>
+            </form>
         </div>
-    </form>
+    </div>
 </div>
 @if (Session::has("success"))
 <script>

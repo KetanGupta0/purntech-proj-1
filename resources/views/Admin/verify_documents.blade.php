@@ -18,128 +18,132 @@
 
 <!-- end page title -->
 <!-- Check if data exists -->
-@if (isset($data))
-    @php
-        $totalPending = 0;
-        $totalVerified = 0;
-        $totalRejected = 0;
-        foreach ($data as $doc) {
-            if ($doc->udc_status == 1) {
-                $totalPending++;
-            } elseif ($doc->udc_status == 2) {
-                $totalVerified++;
-            } elseif ($doc->udc_status == 3) {
-                $totalRejected++;
-            }
-        }
-    @endphp
-    <p>Total Documents for Verification: {{ $totalPending }}</p>
-    <p>Total Verified Documents: {{ $totalVerified }}</p>
-    <p>Total Rejected Documents: {{ $totalRejected }}</p>
-
-    <!-- Iterate through the documents -->
-    <div class="table-responsive">
-        <table class="table" id="verification_table">
-            <thead>
-                <tr>
-                    <th>S.No.</th>
-                    <th>Document Name</th>
-                    <th>Upload Date</th>
-                    <th>Status</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                @php
-                    function getFileName($type)
-                    {
-                        $fileName = 'Other';
-                        switch ($type) {
-                            case '1':
-                                $fileName = 'Aadhar Front';
-                                break;
-
-                            case '2':
-                                $fileName = 'Aadhar Back';
-                                break;
-
-                            case '3':
-                                $fileName = 'Pan Card';
-                                break;
-
-                            case '4':
-                                $fileName = 'Bank Passbook / Cancel Cheque';
-                                break;
-
-                            case '5':
-                                $fileName = 'Voter ID / Driving License';
-                                break;
-
-                            case '6':
-                                $fileName = 'Land Doucments';
-                                break;
-
-                            case '7':
-                                $fileName = 'Land Photographs';
-                                break;
-
-                            default:
-                                # code...
-                                break;
-                        }
-                        return $fileName;
+<div class="card">
+    <div class="card-body">
+        @if (isset($data))
+            @php
+                $totalPending = 0;
+                $totalVerified = 0;
+                $totalRejected = 0;
+                foreach ($data as $doc) {
+                    if ($doc->udc_status == 1) {
+                        $totalPending++;
+                    } elseif ($doc->udc_status == 2) {
+                        $totalVerified++;
+                    } elseif ($doc->udc_status == 3) {
+                        $totalRejected++;
                     }
-                @endphp
-                @foreach ($data as $index => $document)
-                    <tr>
-                        <th>{{ $index + 1 }}</th>
-                        <th><a href="{{ asset('public/assets/img/uploads/documents') }}/{{ $document->udc_name }}"
-                               target="_blank">{{ getFileName($document->udc_doc_type) }}</a></th>
-                        <th>{{ $document->created_at->format('d M Y \a\t h:i A') }}</th>
-                        <th>
-                            @if ($document->udc_status == 1)
-                                <span class="text-warning">Pending</span>
-                            @elseif($document->udc_status == 2)
-                                <span class="text-success">Verified</span>
-                            @elseif ($document->udc_status == 3)
-                                <span class="text-danger">Rejected</span>
-                            @endif
-                        </th>
-                        <th>
-                            <!-- Add actions like verify/reject here -->
-                            <div class="d-flex">
-                                @if ($document->udc_status != 3)
-                                    <form action="{{ url('/admin/user-documents/verify-documents/reject-now') }}" method="post">
-                                        @csrf
-                                        <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
-                                        <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
-                                        <input type="submit" class="mx-1 btn btn-sm btn-warning" value="Reject">
-                                    </form>
-                                @endif
-                                @if ($document->udc_status == 1 || $document->udc_status == 3)
-                                    <form action="{{ url('/admin/user-documents/verify-documents/verify-now') }}" method="post">
-                                        @csrf
-                                        <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
-                                        <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
-                                        <input type="submit" class="mx-1 btn btn-sm btn-success" value="Verify">
-                                    </form>
-                                @endif
-                                <form action="{{ url('/admin/user-documents/verify-documents/delete-now') }}" method="post">
-                                    @csrf
-                                    <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
-                                    <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
-                                    <input type="button" class="mx-1 btn btn-sm btn-danger usr_del" value="Delete">
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+                }
+            @endphp
+            <p>Total Documents for Verification: {{ $totalPending }}</p>
+            <p>Total Verified Documents: {{ $totalVerified }}</p>
+            <p>Total Rejected Documents: {{ $totalRejected }}</p>
+        
+            <!-- Iterate through the documents -->
+            <div class="table-responsive">
+                <table class="table" id="verification_table">
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Document Name</th>
+                            <th>Upload Date</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php
+                            function getFileName($type)
+                            {
+                                $fileName = 'Other';
+                                switch ($type) {
+                                    case '1':
+                                        $fileName = 'Aadhar Front';
+                                        break;
+        
+                                    case '2':
+                                        $fileName = 'Aadhar Back';
+                                        break;
+        
+                                    case '3':
+                                        $fileName = 'Pan Card';
+                                        break;
+        
+                                    case '4':
+                                        $fileName = 'Bank Passbook / Cancel Cheque';
+                                        break;
+        
+                                    case '5':
+                                        $fileName = 'Voter ID / Driving License';
+                                        break;
+        
+                                    case '6':
+                                        $fileName = 'Land Doucments';
+                                        break;
+        
+                                    case '7':
+                                        $fileName = 'Land Photographs';
+                                        break;
+        
+                                    default:
+                                        # code...
+                                        break;
+                                }
+                                return $fileName;
+                            }
+                        @endphp
+                        @foreach ($data as $index => $document)
+                            <tr>
+                                <th>{{ $index + 1 }}</th>
+                                <th><a href="{{ asset('public/assets/img/uploads/documents') }}/{{ $document->udc_name }}"
+                                       target="_blank">{{ getFileName($document->udc_doc_type) }}</a></th>
+                                <th>{{ $document->created_at->format('d M Y \a\t h:i A') }}</th>
+                                <th>
+                                    @if ($document->udc_status == 1)
+                                        <span class="text-warning">Pending</span>
+                                    @elseif($document->udc_status == 2)
+                                        <span class="text-success">Verified</span>
+                                    @elseif ($document->udc_status == 3)
+                                        <span class="text-danger">Rejected</span>
+                                    @endif
+                                </th>
+                                <th>
+                                    <!-- Add actions like verify/reject here -->
+                                    <div class="d-flex">
+                                        @if ($document->udc_status != 3)
+                                            <form action="{{ url('/admin/user-documents/verify-documents/reject-now') }}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
+                                                <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
+                                                <input type="submit" class="mx-1 btn btn-sm btn-warning" value="Reject">
+                                            </form>
+                                        @endif
+                                        @if ($document->udc_status == 1 || $document->udc_status == 3)
+                                            <form action="{{ url('/admin/user-documents/verify-documents/verify-now') }}" method="post">
+                                                @csrf
+                                                <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
+                                                <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
+                                                <input type="submit" class="mx-1 btn btn-sm btn-success" value="Verify">
+                                            </form>
+                                        @endif
+                                        <form action="{{ url('/admin/user-documents/verify-documents/delete-now') }}" method="post">
+                                            @csrf
+                                            <input type="hidden" name="uid" value="{{ $document->udc_user_id }}">
+                                            <input type="hidden" name="doc_id" value="{{ $document->udc_id }}">
+                                            <input type="button" class="mx-1 btn btn-sm btn-danger usr_del" value="Delete">
+                                        </form>
+                                    </div>
+                                </th>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        @else
+            <p>No documents found for verification.</p>
+        @endif
     </div>
-@else
-    <p>No documents found for verification.</p>
-@endif
+</div>
 
 <script>
     $(document).ready(function() {

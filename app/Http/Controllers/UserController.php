@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\CompanyInfo;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
+use App\Models\InvoiceSetting;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
@@ -81,7 +82,8 @@ class UserController extends Controller
         $bankDetailsCompletionPercentage = ($filledBankDetailsFields / $totalBankDetailsFields) * 100;
         $bankDetailsCompletionPercentage = round($bankDetailsCompletionPercentage, 2);
 
-        return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','documentUploadPercentage','bankDetailsCompletionPercentage')) . view('User.footer');
+        $invoices = Invoice::where('inv_party_id','=', $user->usr_id)->where('inv_status','!=', 0)->orderBy('created_at', 'desc')->get();
+        return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','documentUploadPercentage','bankDetailsCompletionPercentage','invoices')) . view('User.footer');
     }
     public function profileView()
     {
@@ -122,8 +124,8 @@ class UserController extends Controller
     }
     public function appravalLetterView()
     {
-        $data = Invoice::where('inv_party_id','=', Session::get('uid'))->where('inv_status','=',5)->get();
-        return view('User.header') . view('User.approvalLetter',compact('data')) . view('User.footer');
+        $user = WebUser::find(Session::get('uid'));
+        return view('User.header') . view('User.approvalLetter',compact('user')) . view('User.footer');
     }
     public function bankDetailsView()
     {
@@ -316,9 +318,10 @@ class UserController extends Controller
             $user = WebUser::find($request->uid);
             $invoice = Invoice::find($request->inv_id);
             $company = CompanyInfo::find(1);
-            if(($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0)){
+            $invoiceSettings = InvoiceSetting::find(1);
+            if(($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0) && $invoiceSettings){
                 $invoiceDescriptions = InvoiceDescriptionAmount::where('ida_inv_no','=',$invoice->inv_number)->where('ida_status','!=', 0)->get();
-                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company'));
+                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company','invoiceSettings'));
             }else{
                 return redirect()->back()->with('error','Ssomething went wrong. Please try after sometimes!');
             }

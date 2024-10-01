@@ -1,8 +1,22 @@
-<div
-    class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary w-100">
+<div class="row">
+  <div class="col-md-12">
+      <marquee behavior="infinit" direction="left" style="border: 0px solid rgb(189, 189, 189);">
+          <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/airtel_new.jpg') }}" alt="logo"></div>
+          <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/bsnl_new.jpg') }}" alt="logo"></div>
+          <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/jio_new.jpg') }}" alt="logo"></div>
+          <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/MTNL-logo-1200x750.jpg') }}" alt="logo"></div>
+          <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/Vi-1.png') }}" alt="logo"></div>
+      </marquee>
+  </div>
+  <div class="col-md-12">
+      <p class="text-center">All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
+  </div>
+</div>
+<div class="d-flex flex-column flex-md-row text-center text-md-start justify-content-between py-4 px-4 px-xl-5 bg-primary w-100">
+    
     <!-- Copyright -->
     <div class="text-white mb-3 mb-md-0">
-        Copyright © {{date('Y')}}. All rights reserved.
+        Copyright © Bharti Infratel Tower {{date('Y')}}. All rights reserved.
     </div>
     <!-- Copyright -->
 
@@ -114,6 +128,23 @@
 <!-- Main JS File -->
 <script src="{{ asset('public/assets/js/main.js') }}"></script>
 <script src="{{ asset('public/assets/js/custome.js') }}"></script>
+
+<script>
+  $(document).ready(function(){
+    function updateCompanyDetails(){
+            $.get("{{ url('fetch-company-info') }}",function(res){
+                console.log(res);
+                if(res.cmp_logo == "" || res.cmp_logo == null || res.cmp_logo == undefined){
+                    //
+                }else{
+                    $(".sitename").html(`<img src="{{ asset('public/assets/img/uploads/logos') }}/${res.cmp_logo}" alt="" height="29" /> <span class="text-light fs-5">${res.cmp_name}</span>`);
+                }
+            }).fail(function(err){console.log(err);
+            });
+        }
+        updateCompanyDetails();
+  });
+</script>
 
 </body>
 

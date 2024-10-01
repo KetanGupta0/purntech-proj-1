@@ -8,7 +8,8 @@
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="Themesbrand" name="author" />
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{{ asset('public/assets/img/favicons/2.png') }}">
+        <link href="{{asset('public/assets/img/favicon.png')}}" rel="icon">
+        <link href="{{asset('public/assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
         <!-- Layout config Js -->
         <script src="{{ asset('public/dashboard/assets/js/layout.js') }}"></script>
         <!-- Bootstrap Css -->
@@ -90,11 +91,11 @@
                             <div class="dropdown ms-sm-3 header-item topbar-user">
                                 <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <span class="d-flex align-items-center">
-                                        <img class="rounded-circle header-profile-user" src="{{ asset('public/dashboard/assets/images/users/avatar-1.jpg') }}" alt="Header Avatar" />
+                                        <img class="rounded-circle header-profile-user" src="{{ asset('public/assets/img/uploads/documents/user.png') }}" alt="Header Avatar" />
                                         <span class="text-start ms-xl-2">
-                                            <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">Anna
-                                                Adame</span>
-                                            <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Founder</span>
+                                            <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ Session::get('fusername') }}
+                                                {{ Session::get('lusername') }}</span>
+                                            <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text">Super Admin</span>
                                         </span>
                                     </span>
                                 </button>

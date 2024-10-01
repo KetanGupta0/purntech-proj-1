@@ -121,12 +121,14 @@ class AdminController extends Controller
             $companyInfo = CompanyInfo::where('cmp_id','=',1)->where('cmp_status','=',1)->first();
             $approvalInfo = ApprovalLetterSetting::where('als_id','=',1)->where('als_status','=',1)->first();
             $invoiceInfo = InvoiceSetting::where('ins_id','=',1)->where('ins_status','=',1)->first();
+            $admin = Admin::find(Session::get('uid'));
             // dd($approvalInfo);
-            return view('Admin.header') . view('Admin.admin_settings',compact('companyInfo','approvalInfo','invoiceInfo')) . view('Admin.footer');
+            return view('Admin.header') . view('Admin.admin_settings',compact('companyInfo','approvalInfo','invoiceInfo','admin')) . view('Admin.footer');
         }catch (Exception $e) {
             return redirect()->to('/')->with('error', $e->getMessage());
         }
     }
+
     public function adminHelpView()
     {
         return view('Admin.header') . view('Admin.admin_help') . view('Admin.footer');
@@ -495,10 +497,133 @@ class AdminController extends Controller
         try{
             $user = WebUser::find($request->uid);
             if($user){
-                return view('Admin.header').view('Admin.viewInvoiceList',compact('user')).view('Admin.footer');
+                $invoiceList = Invoice::where('inv_party_id','=',$user->usr_id)->where('inv_status','!=',0)->get();
+                return view('Admin.header').view('Admin.viewInvoiceList',compact('user','invoiceList')).view('Admin.footer');
             }
         }catch(Exception $e){
             return redirect()->back()->with(['error'=>$e->getMessage()]);
+        }
+    }
+
+    private function changeInvoiceStatus($uid,$inv_id,$status){
+        $user = WebUser::find($uid);
+        if($user){
+            $invoice = Invoice::where('inv_id','=',$inv_id)->where('inv_party_id','=',$user->usr_id)->where('inv_status','!=',0)->first();
+            if($invoice){
+                $invoice->inv_status = $status;
+                if($invoice->save()){
+                    return true;
+                }else{
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public function makeInvoicePaidCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_id = $request->inv_id ?? 0;
+            if($uid == 0 || $inv_id == 0){
+                return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
+            }else{
+                if($this->changeInvoiceStatus($uid,$inv_id,5)){
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }else{
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                }
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function makeInvoicePendingCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_id = $request->inv_id ?? 0;
+            if($uid == 0 || $inv_id == 0){
+                return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
+            }else{
+                if($this->changeInvoiceStatus($uid,$inv_id,4)){
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }else{
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                }
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function makeInvoicePartialPaidCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_id = $request->inv_id ?? 0;
+            if($uid == 0 || $inv_id == 0){
+                return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
+            }else{
+                if($this->changeInvoiceStatus($uid,$inv_id,2)){
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }else{
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                }
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function makeInvoiceRefundedCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_id = $request->inv_id ?? 0;
+            if($uid == 0 || $inv_id == 0){
+                return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
+            }else{
+                if($this->changeInvoiceStatus($uid,$inv_id,3)){
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }else{
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                }
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function makeInvoiceUnpaidCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_id = $request->inv_id ?? 0;
+            if($uid == 0 || $inv_id == 0){
+                return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
+            }else{
+                if($this->changeInvoiceStatus($uid,$inv_id,1)){
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }else{
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                }
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function makeInvoiceDeleteCommand(Request $request){
+        try{
+            $uid = $request->uid ?? 0;
+            $inv_id = $request->inv_id ?? 0;
+            if($uid == 0 || $inv_id == 0){
+                return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
+            }else{
+                if($this->changeInvoiceStatus($uid,$inv_id,0)){
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice deleted successfully']);
+                }else{
+                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                }
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -512,7 +637,6 @@ class AdminController extends Controller
             $customer_phone2 = $request->customer_phone2;
             $customer_address1 = $request->customer_address1;
             $customer_address2 = $request->customer_address2;
-            $customer_message = $request->customer_message;
 
             if($uid == 0){
                 return redirect()->to('/admin/user-invoices-page')->with(['error' => 'Something went wrong. Please try again later!']);
@@ -599,7 +723,6 @@ class AdminController extends Controller
             $invoice->inv_party_address_2 = $customer_address2;
             $invoice->inv_party_mobile1 = $customer_phone1;
             $invoice->inv_party_mobile2 = $customer_phone2;
-            $invoice->inv_message = $customer_message;
             $invoice->inv_amount = $inv_amount;
             $invoice->inv_date = $inv_date;
             $invoice->inv_due_date = $due_date;
@@ -633,6 +756,300 @@ class AdminController extends Controller
         }
     }
 
+    public function updateCompanyCommand(Request $request){
+        $request->validate([
+            'cmp_name' => 'required|string|max:255',
+            'cmp_short_name' => 'required|string|max:255',
+            'cmp_primary_email' => 'required|email|max:255',
+            'cmp_mobile1' => 'required|numeric|digits:10',
+            'cmp_gst_no' => 'required|string|max:15',
+            'cmp_address1' => 'required|string|max:255',
+            'cmp_mobile2' => 'nullable|numeric|digits:10',
+            'cmp_mobile3' => 'nullable|numeric|digits:10',
+            'cmp_support_email' => 'nullable|email|max:255',
+            'cmp_contact_email' => 'nullable|email|max:255',
+            'cmp_website' => 'nullable|string|max:255',
+            'cmp_address2' => 'nullable|string|max:255',
+            'cmp_address3' => 'nullable|string|max:255',
+            'cmp_landmark' => 'nullable|string|max:255',
+            'cmp_country' => 'nullable|string|max:100',
+            'cmp_state' => 'nullable|string|max:100',
+            'cmp_city' => 'nullable|string|max:100',
+            'cmp_zip' => 'nullable|numeric|digits_between:5,6',
+            'cmp_logo' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            'cmp_name.required' => 'Company Name is required.',
+            'cmp_name.string' => 'Company Name must be a valid string.',
+            'cmp_name.max' => 'Company Name must not exceed 255 characters.',
+            'cmp_short_name.required' => 'Company Short Name is required.',
+            'cmp_short_name.string' => 'Company Short Name must be a valid string.',
+            'cmp_short_name.max' => 'Company Short Name must not exceed 255 characters.',
+            'cmp_primary_email.required' => 'Primary Email is required.',
+            'cmp_primary_email.email' => 'Enter a valid Primary Email address.',
+            'cmp_primary_email.max' => 'Primary Email must not exceed 255 characters.',
+            'cmp_mobile1.required' => 'Phone 1 is required.',
+            'cmp_mobile1.numeric' => 'Phone 1 must be a valid number.',
+            'cmp_mobile1.digits' => 'Phone 1 must be exactly 10 digits.',
+            'cmp_gst_no.required' => 'GST No. is required.',
+            'cmp_gst_no.string' => 'GST No. must be a valid string.',
+            'cmp_gst_no.max' => 'GST No. must not exceed 15 characters.',
+            'cmp_address1.required' => 'Address Line 1 is required.',
+            'cmp_address1.string' => 'Address Line 1 must be a valid string.',
+            'cmp_address1.max' => 'Address Line 1 must not exceed 255 characters.',
+            'cmp_mobile2.numeric' => 'Phone 2 must be a valid number.',
+            'cmp_mobile2.digits' => 'Phone 2 must be exactly 10 digits.',
+            'cmp_mobile3.numeric' => 'Phone 3 must be a valid number.',
+            'cmp_mobile3.digits' => 'Phone 3 must be exactly 10 digits.',
+            'cmp_support_email.email' => 'Enter a valid Support Email address.',
+            'cmp_support_email.max' => 'Support Email must not exceed 255 characters.',
+            'cmp_contact_email.email' => 'Enter a valid Contact Email address.',
+            'cmp_contact_email.max' => 'Contact Email must not exceed 255 characters.',
+            'cmp_website.string' => 'Company Website must be a valid string.',
+            'cmp_website.max' => 'Company Website must not exceed 255 characters.',
+            'cmp_address2.string' => 'Address Line 2 must be a valid string.',
+            'cmp_address2.max' => 'Address Line 2 must not exceed 255 characters.',
+            'cmp_address3.string' => 'Address Line 3 must be a valid string.',
+            'cmp_address3.max' => 'Address Line 3 must not exceed 255 characters.',
+            'cmp_landmark.string' => 'Landmark must be a valid string.',
+            'cmp_landmark.max' => 'Landmark must not exceed 255 characters.',
+            'cmp_country.string' => 'Country must be a valid string.',
+            'cmp_country.max' => 'Country must not exceed 100 characters.',
+            'cmp_state.string' => 'State must be a valid string.',
+            'cmp_state.max' => 'State must not exceed 100 characters.',
+            'cmp_city.string' => 'City must be a valid string.',
+            'cmp_city.max' => 'City must not exceed 100 characters.',
+            'cmp_zip.numeric' => 'Pin Code must be a valid number.',
+            'cmp_zip.digits_between' => 'Pin Code must be between 5 and 6 digits.',
+            'cmp_logo.file' => 'Company Logo must be a valid file.',
+            'cmp_logo.image' => 'Company Logo must be an image file.',
+            'cmp_logo.mimes' => 'Company Logo must be a jpeg, png, or jpg file.',
+            'cmp_logo.max' => 'Company Logo must not exceed 2MB in size.'
+        ]);
+        try{
+            $companyInfo = CompanyInfo::find(1);
+            $companyInfo->cmp_name = $request->cmp_name;
+            $companyInfo->cmp_short_name = $request->cmp_short_name;
+            $companyInfo->cmp_primary_email = $request->cmp_primary_email;
+            $companyInfo->cmp_mobile1 = $request->cmp_mobile1;
+            $companyInfo->cmp_gst_no = $request->cmp_gst_no;
+            $companyInfo->cmp_address1 = $request->cmp_address1;
+            $companyInfo->cmp_mobile2 = $request->cmp_mobile2;
+            $companyInfo->cmp_mobile3 = $request->cmp_mobile3;
+            $companyInfo->cmp_support_email = $request->cmp_support_email;
+            $companyInfo->cmp_contact_email = $request->cmp_contact_email;
+            $companyInfo->cmp_website = $request->cmp_website;
+            $companyInfo->cmp_address2 = $request->cmp_address2;
+            $companyInfo->cmp_address3 = $request->cmp_address3;
+            $companyInfo->cmp_landmark = $request->cmp_landmark;
+            $companyInfo->cmp_country = $request->cmp_country;
+            $companyInfo->cmp_state = $request->cmp_state;
+            $companyInfo->cmp_city = $request->cmp_city;
+            $companyInfo->cmp_zip = $request->cmp_zip;
+            $companyInfo->cmp_logo = $request->cmp_logo;
+            if ($request->hasFile('cmp_logo')) {
+                $file = $request->file('cmp_logo');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $companyInfo->cmp_logo = $fileName;
+            }
+            if($companyInfo->save()){
+                return redirect()->back()->with('success', 'Company information updated successfully!');
+            }else{
+                return redirect()->back()->with('error', 'Something went wrong. Please try again later!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function updateApprovalLetterCommand(Request $request){
+        $request->validate([
+            'als_header_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'als_footer_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'als_body_img_1' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'als_body_img_2' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'als_default_welcome_msg' => 'required|string|max:1000',
+        ], [
+            'als_header_img.image' => 'Header Logo must be an image file.',
+            'als_header_img.mimes' => 'Header Logo must be a file of type: jpeg, png, jpg.',
+            'als_header_img.max' => 'Header Logo must not exceed 2MB in size.',
+            'als_footer_img.image' => 'Footer Logo must be an image file.',
+            'als_footer_img.mimes' => 'Footer Logo must be a file of type: jpeg, png, jpg.',
+            'als_footer_img.max' => 'Footer Logo must not exceed 2MB in size.',
+            'als_body_img_1.image' => 'Body Logo 1 must be an image file.',
+            'als_body_img_1.mimes' => 'Body Logo 1 must be a file of type: jpeg, png, jpg.',
+            'als_body_img_1.max' => 'Body Logo 1 must not exceed 2MB in size.',
+            'als_body_img_2.image' => 'Body Logo 2 must be an image file.',
+            'als_body_img_2.mimes' => 'Body Logo 2 must be a file of type: jpeg, png, jpg.',
+            'als_body_img_2.max' => 'Body Logo 2 must not exceed 2MB in size.',
+            'als_default_welcome_msg.required' => 'Welcome Message is required.',
+            'als_default_welcome_msg.string' => 'Welcome Message must be valid text.',
+            'als_default_welcome_msg.max' => 'Welcome Message must not exceed 1000 characters.',
+        ]);
+        try{
+            $approvalSetting = ApprovalLetterSetting::find(1);
+            if ($request->hasFile('als_header_img')) {
+                $file = $request->file('als_header_img');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $approvalSetting->als_header_img = $fileName;
+            }
+            if ($request->hasFile('als_footer_img')) {
+                $file = $request->file('als_footer_img');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $approvalSetting->als_footer_img = $fileName;
+            }
+            if ($request->hasFile('als_body_img_1')) {
+                $file = $request->file('als_body_img_1');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $approvalSetting->als_body_img_1 = $fileName;
+            }
+            if ($request->hasFile('als_body_img_2')) {
+                $file = $request->file('als_body_img_2');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $approvalSetting->als_body_img_2 = $fileName;
+            }
+            $approvalSetting->als_default_welcome_msg = $request->als_default_welcome_msg;
+            if($approvalSetting->save()){
+                return redirect()->back()->with('success','Approval letter settings updated successfully');
+            }else{
+                return redirect()->back()->with('error','Something went wrong. Please try again later!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function updateInvoiceCommand(Request $request){
+        $request->validate([
+            'ins_header_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'ins_footer_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'ins_body_img_1' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'ins_body_img_2' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'ins_stamp' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+            'ins_website' => 'required|url',
+        ], [
+            'ins_header_img.image' => 'Header Logo must be an image file.',
+            'ins_header_img.mimes' => 'Header Logo must be a file of type: jpeg, png, jpg.',
+            'ins_header_img.max' => 'Header Logo must not exceed 2MB in size.',
+            'ins_footer_img.image' => 'Footer Logo must be an image file.',
+            'ins_footer_img.mimes' => 'Footer Logo must be a file of type: jpeg, png, jpg.',
+            'ins_footer_img.max' => 'Footer Logo must not exceed 2MB in size.',
+            'ins_body_img_1.image' => 'Body Logo 1 must be an image file.',
+            'ins_body_img_1.mimes' => 'Body Logo 1 must be a file of type: jpeg, png, jpg.',
+            'ins_body_img_1.max' => 'Body Logo 1 must not exceed 2MB in size.',
+            'ins_body_img_2.image' => 'Body Logo 2 must be an image file.',
+            'ins_body_img_2.mimes' => 'Body Logo 2 must be a file of type: jpeg, png, jpg.',
+            'ins_body_img_2.max' => 'Body Logo 2 must not exceed 2MB in size.',
+            'ins_stamp.image' => 'Stamp must be an image file.',
+            'ins_stamp.mimes' => 'Stamp must be a file of type: jpeg, png, jpg.',
+            'ins_stamp.max' => 'Stamp must not exceed 2MB in size.',
+            'ins_website.required' => 'Footer URL is required.',
+            'ins_website.url' => 'Footer URL must be a valid URL.',
+        ]);
+        try{
+            $invoiceSetting = InvoiceSetting::find(1);
+            if ($request->hasFile('ins_header_img')) {
+                $file = $request->file('ins_header_img');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $invoiceSetting->ins_header_img = $fileName;
+            }
+            if ($request->hasFile('ins_footer_img')) {
+                $file = $request->file('ins_footer_img');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $invoiceSetting->ins_footer_img = $fileName;
+            }
+            if ($request->hasFile('ins_body_img_1')) {
+                $file = $request->file('ins_body_img_1');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $invoiceSetting->ins_body_img_1 = $fileName;
+            }
+            if ($request->hasFile('ins_body_img_2')) {
+                $file = $request->file('ins_body_img_2');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $invoiceSetting->ins_body_img_2 = $fileName;
+            }
+            if ($request->hasFile('ins_stamp')) {
+                $file = $request->file('ins_stamp');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/logos'), $fileName);
+                $invoiceSetting->ins_stamp = $fileName;
+            }
+            $invoiceSetting->ins_website = $request->ins_website;
+            if($invoiceSetting->save()){
+                return redirect()->back()->with('success','Invoice settings updated successfully!');
+            }else{
+                return redirect()->back()->with('error','Something went wrong. Please try again later!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function updateAdminAccountCommand(Request $request){
+        $request->validate([
+            'adm_first_name' => 'required|string|min:2',
+            'adm_last_name' => 'required|string|min:2',
+            'adm_email' => 'required|email',
+            'adm_mobile' => 'required|numeric|digits:10',
+            'adm_current_password' => 'required|string', // Always required to update the profile
+            'adm_new_password' => 'nullable|string|min:8|same:adm_confirm_new_password', // Validate new password if provided
+            'adm_confirm_new_password' => 'nullable|required_with:adm_new_password|string|same:adm_new_password', // Confirm new password
+            'adm_profile_photo' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
+        ], [
+            // Custom error messages
+            'adm_first_name.required' => 'Admin First Name is required.',
+            'adm_last_name.required' => 'Admin Last Name is required.',
+            'adm_email.required' => 'Admin Email is required.',
+            'adm_mobile.required' => 'Admin Mobile is required.',
+            'adm_current_password.required' => 'Current Password is required.',
+            'adm_new_password.min' => 'New Password must be at least 8 characters.',
+            'adm_new_password.same' => 'New Password and Confirm New Password must match.',
+            'adm_confirm_new_password.required_with' => 'Confirm New Password is required when setting a new password.',
+            'adm_profile_photo.mimes' => 'Profile photo must be an image file (jpeg, png, jpg).',
+        ]);
+        
+        try{
+            $admin = Admin::find(Session::get('uid'));
+            if($admin && Hash::check($request->adm_current_password,$admin->adm_password)){
+                if ($request->hasFile('adm_profile_photo')) {
+                    $file = $request->file('adm_profile_photo');
+                    $fileName = time() . '-' . $file->getClientOriginalName();
+                    $file->move(public_path('assets/img/uploads/documents'), $fileName);
+                    $admin->adm_profile_photo = $fileName;
+                }
+                $admin->adm_first_name = $request->adm_first_name;
+                $admin->adm_last_name = $request->adm_last_name;
+                $admin->adm_email = $request->adm_email;
+                $admin->adm_mobile = $request->adm_mobile;
+                if($request->adm_new_password != '' && $request->adm_new_password != null){
+                    $admin->adm_password = Hash::make($request->adm_new_password);
+                    $admin->adm_visible_password = $request->adm_new_password;
+                }
+                if($admin->save()){
+                    return redirect()->back()->with('success','Account details updated successfully!');
+                }else{
+                    return redirect()->back()->with('error','Something went wrong. Please try again later!');
+                }
+            }else{
+                return redirect()->back()->with('error','Current password is wrong!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function getCompanyInfo(){
+        $company = CompanyInfo::find(1);
+        return response()->json($company);
+    }
     public function makeFirstAdmin()
     {
         $adm_first_name = "Super";

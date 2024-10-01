@@ -19,9 +19,25 @@
 
 <!-- FullCalendar JS -->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
-<div class="row">
-    <div class="col-md-6">
-        <div id="calendar"></div>
+
+<div class="card">
+    <div class="card-header">
+      Payment Report
+    </div>
+    <div class="card-body">
+      <h5 class="card-title">Advance Amount for LO - ₹3500000.00</h5> {{-- From DB --}}
+      <h5 class="card-title">Monthly Rent for LO - ₹45000.00</h5>{{-- From DB --}}
+      <a href="#calendar" class="btn btn-primary">View Calender</a>
+    </div>
+  </div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="calendar"></div>
+            </div>
+        </div>
     </div>
 </div>
 <script>

@@ -15,51 +15,55 @@
     </div>
 </div>
 <!-- end page title -->
-<div class="table-responsive">
-    <table class="table table-striped" id="userTable">
-        <thead>
-            <tr>
-                <th>S.No.</th>
-                <th>User</th>
-                <th>Email</th>
-                <th>Mobile</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (isset($results))
-                @foreach ($results as $user)
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped" id="userTable">
+                <thead>
                     <tr>
-                        <th>{{ $loop->index + 1 }}</th>
-                        <th>{{ $user->usr_first_name }} {{ $user->usr_last_name }}</th>
-                        <th>{{ $user->usr_email }}</th>
-                        <th>{{ $user->usr_mobile }}</th>
-                        <th>
-                            @if ($user->ubd_user_kyc_status == null)
-                                <span class="text-warning">Not Available</span>
-                            @elseif($user->ubd_user_kyc_status == 1)
-                                <span class="text-success">Approved</span>
-                            @elseif($user->ubd_user_kyc_status == 2)
-                                <span class="text-warning">Processing</span>
-                            @elseif($user->ubd_user_kyc_status == 3)
-                                <span class="text-warning">Pending</span>
-                            @elseif($user->ubd_user_kyc_status == 4)
-                                <span class="text-danger">Rejected</span>
-                            @endif
-                        </th>
-                        <th>
-                            <form method="POST" action="{{ url('/admin/user-bank-details/view-user-bank-details') }}">
-                                @csrf
-                                <input type="hidden" name="uid" value="{{ $user->usr_id }}">
-                                <input type="submit" class="btn btn-sm btn-secondary" value="View">
-                            </form>
-                        </th>
+                        <th>S.No.</th>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Mobile</th>
+                        <th>Status</th>
+                        <th>Action</th>
                     </tr>
-                @endforeach
-            @endif
-        </tbody>
-    </table>
+                </thead>
+                <tbody>
+                    @if (isset($results))
+                        @foreach ($results as $user)
+                            <tr>
+                                <th>{{ $loop->index + 1 }}</th>
+                                <th>{{ $user->usr_first_name }} {{ $user->usr_last_name }}</th>
+                                <th>{{ $user->usr_email }}</th>
+                                <th>{{ $user->usr_mobile }}</th>
+                                <th>
+                                    @if ($user->ubd_user_kyc_status == null)
+                                        <span class="text-warning">Not Available</span>
+                                    @elseif($user->ubd_user_kyc_status == 1)
+                                        <span class="text-success">Approved</span>
+                                    @elseif($user->ubd_user_kyc_status == 2)
+                                        <span class="text-warning">Processing</span>
+                                    @elseif($user->ubd_user_kyc_status == 3)
+                                        <span class="text-warning">Pending</span>
+                                    @elseif($user->ubd_user_kyc_status == 4)
+                                        <span class="text-danger">Rejected</span>
+                                    @endif
+                                </th>
+                                <th>
+                                    <form method="POST" action="{{ url('/admin/user-bank-details/view-user-bank-details') }}">
+                                        @csrf
+                                        <input type="hidden" name="uid" value="{{ $user->usr_id }}">
+                                        <input type="submit" class="btn btn-sm btn-secondary" value="View">
+                                    </form>
+                                </th>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <script>
     $(document).ready(function() {

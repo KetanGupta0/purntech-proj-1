@@ -8,18 +8,32 @@
 </div>
 <!-- End Page-content -->
 
-<footer class="footer">
+<footer class="footer" style="height: unset!important;">
     <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <marquee behavior="infinit" direction="left" style="border: 0px solid rgb(189, 189, 189);">
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/airtel_new.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/bsnl_new.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/jio_new.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/MTNL-logo-1200x750.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/Vi-1.png') }}" alt="logo"></div>
+                </marquee>
+            </div>
+            <div class="col-md-12">
+                <p class="text-center">All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
+            </div>
+        </div>
         <div class="row">
             <div class="col-sm-6">
                 <script>
                     document.write(new Date().getFullYear());
                 </script>
-                © Velzon.
+                © Bharti Infratel Tower.
             </div>
             <div class="col-sm-6">
                 <div class="text-sm-end d-none d-sm-block">
-                    Design & Develop by Themesbrand
+                    Design & Develop by Bharti Infratel
                 </div>
             </div>
         </div>
@@ -88,7 +102,20 @@
             $('#pg-title-second-main').html(pageTitle.toUpperCase());
 
         }
-
+        function updateCompanyDetails(){
+            $.get("{{ url('fetch-company-info') }}",function(res){
+                console.log(res);
+                if(res.cmp_logo == "" || res.cmp_logo == null || res.cmp_logo == undefined){
+                    $(".logo-lg").html(`<img src="{{ asset('public/dashboard/assets/images/logo-light.png') }}" alt="" height="17" />`);
+                    $(".logo-sm").html(`<img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}" alt="" height="22" />`);
+                }else{
+                    $(".logo-lg").html(`<img src="{{ asset('public/assets/img/uploads/logos') }}/${res.cmp_logo}" alt="" height="29" /> <span class="text-light fs-5">${res.cmp_name}</span>`);
+                    $(".logo-sm").html(`<img src="{{ asset('public/assets/img/uploads/logos') }}/${res.cmp_logo}" alt="" height="22" />`);
+                }
+            }).fail(function(err){console.log(err);
+            });
+        }
+        updateCompanyDetails();
 
     });
     function fetchUserProfilePicture(){

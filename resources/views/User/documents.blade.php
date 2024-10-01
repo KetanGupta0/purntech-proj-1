@@ -18,90 +18,94 @@
         text-align: center!important;
     }
 </style>
-<div class="container-fluid">
-    <table class="table" id="documents_table">
-        <thead>
-            <tr>
-                <th>S.No.</th>
-                <th>Document Name</th>
-                <th>Upload Status</th>
-                <th>KYC Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody id="documents">
-            <tr>
-                <th>1.</th>
-                <th>Aadhar Card Front</th>
-                <th id="af_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="af_kyc_status"><span class="">-</span></th>
-                <th id="af_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="af_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="af_upload" data-id="1"></i>
-                </th>
-            </tr>
-            <tr>
-                <th>2.</th>
-                <th>Aadhar Card Back</th>
-                <th id="ab_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="ab_kyc_status"><span class="">-</span></th>
-                <th id="ab_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="ab_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="ab_upload" data-id="2"></i>
-                </th>
-            </tr>
-            <tr>
-                <th>3.</th>
-                <th>PAN Card</th>
-                <th id="pan_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="pan_kyc_status"><span class="">-</span></th>
-                <th id="pan_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="pan_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="pan_upload" data-id="3"></i>
-                </th>
-            </tr>
-            <tr>
-                <th>4.</th>
-                <th>Bank Passbook / Cancel Cheque</th>
-                <th id="chk_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="chk_kyc_status"><span class="">-</span></th>
-                <th id="chk_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="chk_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="chk_upload" data-id="4"></i>
-                </th>
-            </tr>
-            <tr>
-                <th>5.</th>
-                <th>Voter ID / Driving License</th>
-                <th id="dl_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="dl_kyc_status"><span class="">-</span></th>
-                <th id="dl_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="dl_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="dl_upload" data-id="5"></i>
-                </th>
-            </tr>
-            <tr>
-                <th>6.</th>
-                <th>Land Doucments</th>
-                <th id="lan_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="lan_kyc_status"><span class="">-</span></th>
-                <th id="lan_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="lan_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="lan_upload" data-id="6"></i>
-                </th>
-            </tr>
-            <tr>
-                <th>7.</th>
-                <th>Land Photographs</th>
-                <th id="lan_pic_upload_status"><span class="text-danger">Not Uploaded</span></th>
-                <th id="lan_pic_kyc_status"><span class="">-</span></th>
-                <th id="lan_pic_btn">
-                    {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="lan_pic_view"></i> --}}
-                    <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="lan_pic_upload" data-id="7"></i>
-                </th>
-            </tr>
-        </tbody>
-    </table>
+<div class="card">
+    <div class="card-body">
+        <div class="container-fluid">
+            <table class="table" id="documents_table">
+                <thead>
+                    <tr>
+                        <th>S.No.</th>
+                        <th>Document Name</th>
+                        <th>Upload Status</th>
+                        <th>KYC Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="documents">
+                    <tr>
+                        <th>1.</th>
+                        <th>Aadhar Card Front</th>
+                        <th id="af_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="af_kyc_status"><span class="">-</span></th>
+                        <th id="af_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="af_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="af_upload" data-id="1"></i>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>2.</th>
+                        <th>Aadhar Card Back</th>
+                        <th id="ab_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="ab_kyc_status"><span class="">-</span></th>
+                        <th id="ab_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="ab_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="ab_upload" data-id="2"></i>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>3.</th>
+                        <th>PAN Card</th>
+                        <th id="pan_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="pan_kyc_status"><span class="">-</span></th>
+                        <th id="pan_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="pan_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="pan_upload" data-id="3"></i>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>4.</th>
+                        <th>Bank Passbook / Cancel Cheque</th>
+                        <th id="chk_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="chk_kyc_status"><span class="">-</span></th>
+                        <th id="chk_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="chk_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="chk_upload" data-id="4"></i>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>5.</th>
+                        <th>Voter ID / Driving License</th>
+                        <th id="dl_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="dl_kyc_status"><span class="">-</span></th>
+                        <th id="dl_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="dl_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="dl_upload" data-id="5"></i>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>6.</th>
+                        <th>Land Doucments</th>
+                        <th id="lan_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="lan_kyc_status"><span class="">-</span></th>
+                        <th id="lan_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="lan_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="lan_upload" data-id="6"></i>
+                        </th>
+                    </tr>
+                    <tr>
+                        <th>7.</th>
+                        <th>Land Photographs</th>
+                        <th id="lan_pic_upload_status"><span class="text-danger">Not Uploaded</span></th>
+                        <th id="lan_pic_kyc_status"><span class="">-</span></th>
+                        <th id="lan_pic_btn">
+                            {{-- <i class="btn btn-outline-primary fs-4 px-2 py-1 ri-eye-line" id="lan_pic_view"></i> --}}
+                            <i class="btn btn-outline-success fs-4 px-2 py-1 ri-upload-cloud-line int_upload" id="lan_pic_upload" data-id="7"></i>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 <!-- Modal -->
 <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="staticBackdropLabel" aria-hidden="true">

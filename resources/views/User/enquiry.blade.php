@@ -125,9 +125,9 @@
                                 <div data-mdb-input-init class="form-floating form-outline mb-4">
                                     <select name="service" id="service" class="form-control" required>
                                         <option value="">Select</option>
-                                        <option value="1">Option 1</option>
-                                        <option value="2">Option 2</option>
-                                        <option value="3">Option 3</option>
+                                        @foreach ($company as $service)
+                                            <option value="{{ $service->cms_service_name }}">{{ $service->cms_service_name }}</option>
+                                        @endforeach
                                     </select>
                                     <label class="form-label" for="service">Service <span
                                             class="text-danger">*</span></label>

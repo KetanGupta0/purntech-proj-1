@@ -10,7 +10,8 @@
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="Themesbrand" name="author" />
         <!-- App favicon -->
-        <link rel="shortcut icon" href="{{ asset('public/assets/img/favicons/2.png') }}">
+        <link href="{{asset('public/assets/img/favicon.png')}}" rel="icon">
+        <link href="{{asset('public/assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
         <!-- Layout config Js -->
         <script src="{{ asset('public/dashboard/assets/js/layout.js') }}"></script>
         <!-- Bootstrap Css -->

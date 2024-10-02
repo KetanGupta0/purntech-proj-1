@@ -87,12 +87,12 @@
         });
         
         if (pageTitle == 'User Dashboard') {
-            document.title = 'User - Dashboard';
+            document.title = 'User Dashboard - Bharti Infratel Tower';
             $('.dashboard').addClass('active');
             $('.pg-title').html('Dashboard');
         } else {
             // Set the page title
-            document.title = 'User - '+pageTitle;
+            document.title = 'User '+pageTitle+' - Bharti Infratel Tower';
             $('.' + lastSegment).addClass('active');
             // Set the content of the #page-title div
             $('.pg-title').html(pageTitle);

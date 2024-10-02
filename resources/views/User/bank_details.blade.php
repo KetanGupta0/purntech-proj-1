@@ -28,6 +28,13 @@
     }
 </style>
 @php
+    $bankOptions = '';
+    if(isset($banks)){
+        foreach ($banks as $bank){
+            $bankOptions .= '<option value="'.$bank->bnk_name.'">'.$bank->bnk_name.'</option>';
+        }
+    }
+                                    
     $form = '
     <div class="col-md-6">
         <div class="form-group pb-4">
@@ -52,11 +59,7 @@
             <label for="user_bank_name">Bank Name</label>
             <select class="form-control" name="user_bank_name" id="user_bank_name">
                 <option value="">Select</option>
-                <option value="Bank 1">Bank 1</option>
-                <option value="Bank 2">Bank 2</option>
-                <option value="Bank 3">Bank 3</option>
-                <option value="Bank 4">Bank 4</option>
-                <option value="Bank 5">Bank 5</option>
+                '.$bankOptions.'
                 <option value="Other">Other</option>
             </select>
         </div>
@@ -128,11 +131,9 @@
                                 <label for="user_bank_name">Bank Name</label>
                                 <select class="form-control" value="{{$data->ubd_user_bank_name}}" disabled>
                                     <option value="">Select</option>
-                                    <option value="Bank 1" {{ $data->ubd_user_bank_name == "Bank 1" ? "selected": "" }}>Bank 1</option>
-                                    <option value="Bank 2" {{ $data->ubd_user_bank_name == "Bank 2" ? "selected": "" }}>Bank 2</option>
-                                    <option value="Bank 3" {{ $data->ubd_user_bank_name == "Bank 3" ? "selected": "" }}>Bank 3</option>
-                                    <option value="Bank 4" {{ $data->ubd_user_bank_name == "Bank 4" ? "selected": "" }}>Bank 4</option>
-                                    <option value="Bank 5" {{ $data->ubd_user_bank_name == "Bank 5" ? "selected": "" }}>Bank 5</option>
+                                    @foreach ($banks as $bank)
+                                        <option value="{{ $bank->bnk_name }}" {{ $data->ubd_user_bank_name == $bank->bnk_name ? "selected": "" }}>{{ $bank->bnk_name }}</option>
+                                    @endforeach
                                     <option value="Other" {{ $data->ubd_user_bank_name == "Other" ? "selected": "" }}>Other</option>
                                 </select>
                             </div>

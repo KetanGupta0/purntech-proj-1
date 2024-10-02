@@ -189,6 +189,12 @@ class WebController extends Controller
                         $username .= '/' . date('y') . strtoupper($name[0][0]) . strtoupper($name[0][1]) . $last_four_digits;
                     }
 
+                    $counting = 1;
+                    while(WebUser::where('usr_username','=',$username)->first()){
+                        $username.='/'.$counting;
+                        $counting++;
+                    }
+
                     $user = new WebUser();
                     $user->usr_first_name = $request->first_name;
                     $user->usr_last_name = $request->last_name;
@@ -197,7 +203,11 @@ class WebController extends Controller
                     $user->usr_service = $request->service;
                     $user->usr_date = $request->date;
                     $user->usr_username = $username;
-                    if (!$user->save()) {
+                    // dd($user->save());
+                    if ($user->save()) {
+                        $optMessage = "Thanks For Registering with BHRTIWEB. Now you can view your Approval doc and Invoice. Your userid is ". $request->mobile ." and your mobile no is ". $request->mobile .". BHRTIWEB";
+                        $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $request->mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162531223327910');
+                    }else{
                         return redirect()->back()->with([
                             'err_code' => 905, //Database Error Code
                             'message' => 'Problem while saving user info!'
@@ -215,6 +225,8 @@ class WebController extends Controller
             $this->uploadUserDocument($request,"upload_aadhar_front",$uid,'Enquiry Form');
             $this->uploadUserDocument($request,"upload_aadhar_back",$uid,'Enquiry Form');
             $this->uploadUserDocument($request,"upload_pan_card",$uid,'Enquiry Form');
+
+           
 
             return redirect()->to('/user-login')->with([
                 'status' => true,

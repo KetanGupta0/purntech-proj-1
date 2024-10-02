@@ -31,6 +31,44 @@
         </div>
     </div>
 @endif
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if ($errors->any())
+            Swal.fire({
+                title: 'Error!',
+                icon: 'error',
+                html: `<ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>`,
+                confirmButtonText: 'OK'
+            });
+        @endif
+    });
+</script>
+@if (Session::has('status'))
+    @if (Session::get('status') == true)
+        <script>
+            Swal.fire({
+                icon: "success",
+                title: "Success",
+                html: "{{Session::get('message')}}"
+            });
+        </script>
+    @endif
+@endif
+@if (Session::has('error'))
+    <script>
+        Swal.fire({
+            icon: "warning",
+            title: "Oops..",
+            html: "{{Session::get('error')}}"
+        });
+        console.log("{{Session::get('error')}}");
+    </script>
+@endif
 <script>
     $(document).ready(function() {
         $('#inv_table').DataTable();

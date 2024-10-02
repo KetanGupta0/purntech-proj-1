@@ -6,11 +6,11 @@ $(document).ready(function() {
     var lastSegment = path.substring(path.lastIndexOf('/') + 1);
     var pageTitle = lastSegment.replace(/-/g, ' ').replace(/\b\w/g, function(l) { return l.toUpperCase(); });
     if(pageTitle == '' || pageTitle == undefined){
-        document.title = 'Home - FISBHT';
+        document.title = 'Bharti Infratel Tower App Home';
         $('.home').addClass('active');
     }else{
         // Set the page title
-        document.title = pageTitle + ' - FISBHT';
+        document.title = 'Bharti Infratel Tower App - ' + pageTitle;
         $('.'+lastSegment).addClass('active');
         // Set the content of the #page-title div
         $('.pg-title').html(pageTitle);

@@ -38,6 +38,7 @@ Route::middleware([UserAuthCheck::class])->group(function () {
     Route::post('/save-bank-info', [UserController::class, 'saveUserBankData']);
 
     Route::post('/user/invoices/invoice-view', [UserController::class, 'viewUserInvoiceCommand']);
+    Route::get('/user/view-approval-letter',[UserController::class,'viewApprovalLetter']);
 
     // AJAX Calls
     Route::get('/fetch-user-documents', [UserController::class, 'getUserDocsAJAX']);

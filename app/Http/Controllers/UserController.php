@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ApprovalLetterSetting;
+use App\Models\BankList;
 use App\Models\CompanyInfo;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
@@ -62,7 +64,8 @@ class UserController extends Controller
         $documentUploadPercentage = ($uploadedDocuments / $totalDocuments) * 100;
         $documentUploadPercentage = round($documentUploadPercentage, 2);
 
-        $bankDetails = UserBankDetail::where('ubd_usr_id','=',$user->usr_id)->where('ubd_user_kyc_status','!=', 0)->orWhere('ubd_user_kyc_status','!=', 4)->first();
+        $ignoredTypes = [0,4];
+        $bankDetails = UserBankDetail::where('ubd_usr_id','=',Session::get('uid'))->whereNotIn('ubd_user_kyc_status',$ignoredTypes)->first();
         $bankDetailsFields = [
             'ubd_user_name',
             'ubd_user_pan',
@@ -79,9 +82,10 @@ class UserController extends Controller
                 $filledBankDetailsFields++;
             }
         }
+        
         $bankDetailsCompletionPercentage = ($filledBankDetailsFields / $totalBankDetailsFields) * 100;
         $bankDetailsCompletionPercentage = round($bankDetailsCompletionPercentage, 2);
-
+        
         $invoices = Invoice::where('inv_party_id','=', $user->usr_id)->where('inv_status','!=', 0)->orderBy('created_at', 'desc')->get();
         return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','documentUploadPercentage','bankDetailsCompletionPercentage','invoices')) . view('User.footer');
     }
@@ -130,10 +134,11 @@ class UserController extends Controller
     public function bankDetailsView()
     {
         $data = UserBankDetail::where('ubd_usr_id','=',Session::get('uid'))->where('ubd_user_kyc_status','!=',0)->first();
+        $banks = BankList::where('bnk_status','=',1)->orderBy('bnk_name','ASC')->get();
         if($data){
-            return view('User.header') . view('User.bank_details',compact('data')) . view('User.footer');
+            return view('User.header') . view('User.bank_details',compact('data','banks')) . view('User.footer');
         }else{
-            return view('User.header') . view('User.bank_details') . view('User.footer');
+            return view('User.header') . view('User.bank_details',compact('banks')) . view('User.footer');
         }
     }
     public function paymentsView()
@@ -178,8 +183,8 @@ class UserController extends Controller
                 $request->validate([
                     "usr_dob" => "date"
                 ]);
-            $dateObject = DateTime::createFromFormat('d M, Y', $request->usr_dob);
-            $user->usr_dob = $dateObject->format('Y-m-d');
+            
+            $user->usr_dob = date('Y/m/d',strtotime($request->usr_dob));
             $user->usr_father = $request->usr_father;
             $user->usr_mother = $request->usr_mother;
             $user->usr_full_address = $request->usr_full_address;
@@ -336,6 +341,17 @@ class UserController extends Controller
             }
         }catch(Exception $e){
             return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function viewApprovalLetter(){
+        $user = WebUser::find(Session::get('uid'));
+        $companyInfos = CompanyInfo::find(1);
+        $aprovalSetting = ApprovalLetterSetting::find(1);
+        if($user && $user->usr_verification_status == 1 && $companyInfos){
+            return view('User.approvalLetterLayout1',compact('user','companyInfos','aprovalSetting'));
+        }else{
+            return redirect()->back()->with('error','Your file is not approved yet!');
         }
     }
 

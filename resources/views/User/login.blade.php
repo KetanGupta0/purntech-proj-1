@@ -24,8 +24,8 @@
 
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
-                <h2 id="pg-title-second-main"></h2>
-                <div><span>User Login Form</span> {{-- <span class="description-title">Starter Section</span> --}}</div>
+                <div><h1>Bharti Infratel Tower</h1> {{-- <span class="description-title">Starter Section</span> --}}</div>
+                <h2 id="pg-title-secon">Online Tower Apply Login</h2>
             </div><!-- End Section Title -->
 
             <div class="container" data-aos="fade-up">
@@ -60,7 +60,7 @@
 
                                 <div class="text-center text-lg-start mt-4 pt-2">
                                     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg send-otp"
-                                            style="padding-left: 2.5rem; padding-right: 2.5rem;">Send OTP</button>
+                                            style="padding-left: 2.5rem; padding-right: 2.5rem;">🔒 Send OTP</button>
                                 </div>
 
                             </form>
@@ -89,7 +89,7 @@
                                         <input type="text" name="userotp" id="userotp" class="form-control">
                                     </div>
                                     <div class="form-group my-3">
-                                        <div class="btn btn-primary verify-otp">Verify</div>
+                                        <div class="btn btn-primary verify-otp">🗝️ Verify</div>
                                     </div>
                                 </div>
                             </div>

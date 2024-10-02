@@ -79,7 +79,7 @@
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
                 <h2 id="pg-title-second-main"></h2>
-                <div><span>Enquiry Form</span> </div>
+                <div><span>Bharti Infratel Tower Apply Online Now</span> </div>
             </div><!-- End Section Title -->
 
             <div class="container" data-aos="fade-up">
@@ -91,7 +91,7 @@
                         </div>
                         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                             <form action="{{ url('enquiry-submit') }}" method="POST" enctype="multipart/form-data">
-                                <h3>Contact Details</h3>
+                                <h3>Mobile Tower Installation Application Details</h3>
                                 <!-- First Name input -->
                                 <div data-mdb-input-init class="form-floating form-outline mb-4">
                                     <input type="text" id="first_name" name="first_name" class="form-control form-control-lg"
@@ -203,7 +203,7 @@
                                 <div class="text-center text-lg-start mt-4 pt-2">
                                     <button type="submit" data-mdb-button-init data-mdb-ripple-init
                                         class="btn btn-primary btn-lg"
-                                        style="padding-left: 2.5rem; padding-right: 2.5rem;">Submit</button>
+                                        style="padding-left: 2.5rem; padding-right: 2.5rem;">📨 Submit</button>
                                 </div>
 
                             </form>

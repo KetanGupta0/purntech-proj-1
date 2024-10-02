@@ -109,148 +109,176 @@
             display: flex;
             align-items: center;
         }
+        .btn-cont{
+            display: flex;
+            justify-content: center;
+        }
+        #print{
+            padding: 3px;
+            font-size: 18px;
+        }
     </style>
 </head>
 <body>
-    <div class="al-container">
-        <!-- Header Section -->
-        <section class="meta-head">
-            <div class="timestamp">06/25/24, 1:47 PM</div>
-            <div class="meta-logo">
-                <img src="logo1.png" alt="logo">
-                <span>Bharti Infratel Tower</span>
-            </div>
-        </section>
-
-        <!-- Title Section -->
-        <section style="margin-top: 20px;">
-            <h2><u>Approval Letter</u></h2>
-        </section>
-
-        <!-- Party Information -->
-        <section class="party">
-            <div class="party-data">
-                <div class="party-logo">
-                    <img src="logo5.png" alt="logo" style="max-width: 100px;">
+    @if (isset($user) && isset($companyInfos) && isset($aprovalSetting))
+        <div class="al-container">
+            <!-- Header Section -->
+            <section class="meta-head">
+                <div class="timestamp">{{ date('m/d/y, g:i A') }}</div>
+                <div class="meta-logo">
+                    <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $aprovalSetting->als_header_img }}" alt="logo">
+                    <span>{{ $companyInfos->cmp_name }}</span>
                 </div>
-                <div class="party-info">
-                    <p><strong>Mr./Mrs. Harishchandr Saroj</strong></p>
-                    <p>Vill:- Pisaur Shivpur, Shivpur Road</p>
-                    <p>Varanasi, Uttar Pradesh 221003, India</p>
-                    <p>Date: 06-25-2024</p>
-                    <p>Contact: 7703001880 / 9838195481</p>
+            </section>
+
+            <!-- Title Section -->
+            <section style="margin-top: 20px;">
+                <h2><u>Approval Letter</u></h2>
+            </section>
+
+            <!-- Party Information -->
+            <section class="party">
+                <div class="party-data">
+                    <div class="party-logo">
+                        <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $aprovalSetting->als_body_img_1 }}" alt="logo" style="max-width: 100px;">
+                    </div>
+                    <div class="party-info">
+                        <p><strong>Mr./Mrs. {{ $user->usr_first_name }} {{ $user->usr_last_name }}</strong></p>
+                        <p>Vill/Land - {{ $user->usr_landmark }}</p>
+                        <p>{{ $user->usr_full_address }}</p>
+                        <p>Date: {{ date('d M Y', strtotime($user->updated_at)) }}</p>
+                        <p>Contact: +91-{{ $user->usr_mobile }} @if($user->usr_alt_mobile != '' && $user->usr_alt_mobile != null) / +91-{{ $user->usr_alt_mobile }} @endif</p>
+                    </div>
                 </div>
-            </div>
-            <div class="party-image">
-                <img src="logo2.png" alt="party logo">
-            </div>
-        </section>
+                <div class="party-image">
+                    <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $aprovalSetting->als_body_img_2 }}" alt="party logo">
+                </div>
+            </section>
 
-        <!-- Letter Body -->
-        <section>
-            <p><strong>Dear Sir/Madam,</strong></p>
-            <p style="text-align: justify;">
-                <strong>
-                    JIO welcomes you. We are pleased to inform you that your application for the installation of a JIO tower has been accepted. The address mentioned by you has been secretly verified by the company team. Below are the details as captured in JIO's records. Please review carefully and inform us immediately of any discrepancies.
-                </strong>
-            </p>
-        </section>
+            <!-- Letter Body -->
+            <section>
+                <p><strong>Dear Sir/Madam,</strong></p>
+                <p style="text-align: justify;">
+                    <strong>{{ str_replace("JIO", strtoupper(str_replace(" 5G/4G", "", $user->usr_service) ), $aprovalSetting->als_default_welcome_msg)}}</strong>
+                </p>
+            </section>
 
-        <!-- Details Table -->
-        <section>
-            <table>
-                <tr>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Application Detail</div>
-                            <div class="box-block">
-                                <p>Ref. No. / Serial No.: BIWTS/ 25/06/2024/24HS1880</p>
-                                <p>Application No.: JIO/BIWTS/25/06/2024/24HS1880</p>
+            <!-- Details Table -->
+            <section>
+                <table>
+                    <tr>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Application Detail</div>
+                                <div class="box-block">
+                                    <p>Ref. No. / Serial No.: {{ $user->usr_username }}</p>
+                                    <p>Application No.: {{ strtoupper(str_replace(" 5G/4G", "", $user->usr_service) )}}/{{ $user->usr_username }}</p>
+                                </div>
+                                <div class="box-block">
+                                    <p><strong>Applicant Name</strong></p>
+                                    <p>Mr./Mrs. {{ $user->usr_first_name }} {{ $user->usr_last_name }}</p>
+                                    <p>Vill:- {{ $user->usr_landmark }}</p>
+                                    <p>{{ $user->usr_full_address }}, India</p>
+                                </div>
+                                <div class="box-block">Date: {{ date('d M Y', strtotime($user->updated_at)) }}</div>
                             </div>
-                            <div class="box-block">
-                                <p><strong>Applicant Name</strong></p>
-                                <p>Mr./Mrs. Harishchandr Saroj</p>
-                                <p>Vill:- Pisaur Shivpur, Shivpur Road</p>
-                                <p>Varanasi, Uttar Pradesh 221003, India</p>
+                        </td>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Job Application Detail</div>
+                                <div class="box-block">
+                                    <p>Ref. No. / Serial No.: {{ $user->usr_username }}</p>
+                                    <p>Application No.: {{ strtoupper(str_replace(" 5G/4G", "", $user->usr_service) )}}/{{ $user->usr_username }}</p>
+                                </div>
+                                <div class="box-block">
+                                    <p><strong>Proposed Applicant</strong></p>
+                                    <p>Mr./Mrs. {{ $user->usr_first_name }} {{ $user->usr_last_name }}</p>
+                                    <p>Vill:- {{ $user->usr_landmark }}</p>
+                                    <p>{{ $user->usr_full_address }}, India</p>
+                                </div>
+                                <div class="box-block">Date: {{ date('d M Y', strtotime($user->updated_at)) }}</div>
                             </div>
-                            <div class="box-block">Date: 06-25-2024</div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Job Application Detail</div>
-                            <div class="box-block">
-                                <p>Ref. No. / Serial No.: BIWTS/ 25/06/2024/24HS1880</p>
-                                <p>Application No.: JIO/BIWTS/25/06/2024/24HS1880</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Applicant Address</div>
+                                <div class="box-block"></div>
                             </div>
-                            <div class="box-block">
-                                <p><strong>Proposed Applicant</strong></p>
-                                <p>Mr./Mrs. Harishchandr Saroj</p>
-                                <p>Vill:- Pisaur Shivpur, Shivpur Road</p>
-                                <p>Varanasi, Uttar Pradesh 221003, India</p>
+                        </td>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Site Address</div>
+                                <div class="box-block"></div>
                             </div>
-                            <div class="box-block">Date: 06-25-2024</div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Applicant Address</div>
-                            <div class="box-block"></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Site Address</div>
-                            <div class="box-block"></div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Applicant Bank Details</div>
-                            <div class="box-block"></div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Proposed Applicant Bank Details</div>
-                            <div class="box-block"></div>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Rent & Advance Approved</div>
-                            <div class="box-block">
-                                <p>Rent: ₹25,000 - ₹50,000 per month</p>
-                                <p>Advance: ₹30 lakh - ₹60 lakh (Non-refundable after 15 years)</p>
-                                <p>Agreement No.: JIO/BIWTS/25/06/2024/24HS1880</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Applicant Bank Details</div>
+                                <div class="box-block"></div>
                             </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="box">
-                            <div class="box-title">Job Acceptance</div>
-                            <div class="box-block"></div>
-                        </div>
-                    </td>
-                </tr>
-            </table>
-        </section>
+                        </td>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Proposed Applicant Bank Details</div>
+                                <div class="box-block"></div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Rent & Advance Approved</div>
+                                <div class="box-block">
+                                    <p>Rent: @if($user->usr_mon_rent != '' && $user->usr_mon_rent != null) ₹{{ number_format($user->usr_mon_rent) }} @else ₹25,000 - ₹50,000 @endif per month</p>
+                                    <p>Advance: @if($user->usr_adv_amount != '' && $user->usr_adv_amount != null) ₹{{ number_format($user->usr_adv_amount) }} @else ₹30 lakh - ₹60 lakh (Non-refundable after 15 years) @endif</p>
+                                    <p>Agreement No.: {{ strtoupper(str_replace(" 5G/4G", "", $user->usr_service) )}}/{{ $user->usr_username }}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="box">
+                                <div class="box-title">Job Acceptance</div>
+                                <div class="box-block"></div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </section>
 
-        <!-- Footer Section -->
-        <footer>
-            <div class="website">
-                <a href="https://bhartiinfratel.co/admin/Approvaldoc.aspx">https://bhartiinfratel.co/admin/Approvaldoc.aspx</a>
+            <!-- Footer Section -->
+            <footer>
+                <div class="website">
+                    <a href="{{ $companyInfos->cmp_website }}">{{ $companyInfos->cmp_website }}</a>
+                </div>
+                <div class="foot-logo">
+                    <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $aprovalSetting->als_footer_img }}" alt="footer logo">
+                </div>
+            </footer>
+            <div class="btn-cont">
+                <button id="print" onclick="printfun()">Print</button>
             </div>
-            <div class="foot-logo">
-                <img src="logo4.png" alt="footer logo">
-            </div>
-        </footer>
-    </div>
+        </div>
+    @endif
+    <script>
+        function printfun(){
+            let prBtn = document.getElementById('print');
+    
+            if (prBtn) {
+                prBtn.style.display = "none";
+            }
+    
+            window.print();
+            prBtn.style.display = "block";
+            
+        }
+        document.addEventListener('DOMContentLoaded', function() {
+            //printfun();
+        });
+    
+    </script>
 </body>
 </html>

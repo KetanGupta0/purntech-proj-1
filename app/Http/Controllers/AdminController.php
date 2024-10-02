@@ -16,6 +16,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
 
@@ -226,31 +227,37 @@ class AdminController extends Controller
     }
     public function userUpdateCommand(Request $request)
     {
-        // dd($request);
         // Validation Required
         try {
-            $user = WebUser::find($request->uid);
-            $user->usr_first_name = $request->usr_first_name;
-            $user->usr_last_name = $request->usr_last_name;
-            $user->usr_email = $request->usr_email;
-            $user->usr_mobile = $request->usr_mobile;
-            $user->usr_alt_mobile = $request->usr_alt_mobile;
-            $user->usr_dob = date('Y/m/d', strtotime($request->usr_dob));
-            $user->usr_gender = $request->usr_gender;
-            $user->usr_father = $request->usr_father;
-            $user->usr_mother = $request->usr_mother;
-            $user->usr_full_address = $request->usr_full_address;
-            $user->usr_landmark = $request->usr_landmark;
-            $user->usr_service = $request->usr_service;
-            $user->usr_adv_amount = $request->usr_adv_amount;
-            $user->usr_mon_rent = $request->usr_mon_rent;
-            $user->usr_adv_txnid = $request->usr_adv_txnid;
-            $user->usr_adv_status = $request->usr_adv_status;
-            
-            if ($user->save()) {
-                return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>200,'msg'=>'Profile data updated!']);
-            } else {
-                return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
+            if($request->uid =="" || $request->uid == null) {
+                return redirect('/')->with('error','Soemthing went wrong!');
+            }else{
+                $user = WebUser::find($request->uid);
+                if($user){
+                    $user->usr_first_name = $request->usr_first_name;
+                    $user->usr_last_name = $request->usr_last_name;
+                    $user->usr_email = $request->usr_email;
+                    $user->usr_mobile = $request->usr_mobile;
+                    $user->usr_alt_mobile = $request->usr_alt_mobile;
+                    $user->usr_dob = date('Y/m/d', strtotime($request->usr_dob));
+                    $user->usr_gender = $request->usr_gender;
+                    $user->usr_father = $request->usr_father;
+                    $user->usr_mother = $request->usr_mother;
+                    $user->usr_full_address = $request->usr_full_address;
+                    $user->usr_landmark = $request->usr_landmark;
+                    $user->usr_service = $request->usr_service;
+                    $user->usr_adv_amount = $request->usr_adv_amount;
+                    $user->usr_mon_rent = $request->usr_mon_rent;
+                    $user->usr_adv_txnid = $request->usr_adv_txnid;
+                    $user->usr_adv_status = $request->usr_adv_status;
+                    if ($user->save()) {
+                        return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>200,'msg'=>'Profile data updated!']);
+                    } else {
+                        return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
+                    }
+                }else{
+                    return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
+                }
             }
         } catch (Exception $e) {
             return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>$e->getMessage()]);
@@ -356,7 +363,7 @@ class AdminController extends Controller
                 $doc->udc_status = 2;
                 if ($doc->save()) {
                     // Check if all required document types are verified
-                    $requiredDocumentTypes = [1, 2, 3, 4, 5, 6, 7];
+                    $requiredDocumentTypes = [1, 2, 3, 4, 7];
                     $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
                         ->whereIn('udc_doc_type', $requiredDocumentTypes)
                         ->where('udc_status', 2)
@@ -405,7 +412,7 @@ class AdminController extends Controller
                 $doc->udc_status = 3;
                 if($doc->save()){
                     // Check if all required document types are verified
-                    $requiredDocumentTypes = [1, 2, 3, 4, 5, 6, 7];
+                    $requiredDocumentTypes = [1, 2, 3, 4, 7];
                     $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
                         ->whereIn('udc_doc_type', $requiredDocumentTypes)
                         ->where('udc_status', 2)
@@ -768,6 +775,17 @@ class AdminController extends Controller
             if(!$invoice->save()){
                 return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Something went wrong while saving invoice. Please try again after sometimes!']);
             }else{
+                $string = $invoice_number;
+                // Explode the string by slashes
+                $parts = explode('/', $string);
+                // Get the last two parts and join them into a single string
+                $lastTwoParts = implode('/', array_slice($parts, -2));
+
+                $optMessage ="Dear Customer, Your ".$lastTwoParts." INR ".$inv_amount." fee at BHRTIWEB is due for processing, Please make sure to clear your dues immediately to avid file closure. BHRTIWEB";
+                
+                $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $customer_phone1 . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513430583099');
+                Log::info('SMS API Response', ['status' => $response->status(), 'body' => $response->body()]);
+
                 if (count($request->inv_desc_title) !== count($request->inv_amount)) {
                     return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Mismatch between descriptions and amounts!']);
                 }
@@ -783,6 +801,8 @@ class AdminController extends Controller
                         $invoiceDescription->save();
                     }
                 }
+                
+
                 return view('Admin.goToRaiseNewInvoice',['uid' => $uid, 'code'=> 200, 'msg'=> 'Invoice Raised Successfully']);
 
             }

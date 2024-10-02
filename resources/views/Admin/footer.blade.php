@@ -125,11 +125,11 @@
         });
         
         if (pageTitle == 'Admin Dashboard View') {
-            document.title = 'Admin - Dashboard';
+            document.title = 'Admin Dashboard - Bharti Infratel Tower';
             $('.dashboard').addClass('active');
         } else {
             // Set the page title
-            document.title = 'Admin - '+pageTitle;
+            document.title = 'Admin '+pageTitle+' - Bharti Infratel Tower';
             $('.' + lastSegment).addClass('active');
             // Set the content of the #page-title div
             $('.pg-title').html(pageTitle);

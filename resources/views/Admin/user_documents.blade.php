@@ -18,8 +18,7 @@
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table"
-                   id="user_table">
+            <table class="table" id="user_table">
                 <thead>
                     <tr>
                         <th>S.No.</th>
@@ -48,14 +47,14 @@
                                             if ($document->udc_status != '0' && $document->udc_status != '3') {
                                                 $totalDocuments++;
                                             }
-                                            if($document->udc_status == '3'){
+                                            if ($document->udc_status == '3') {
                                                 $rejectedDocument[] = $document;
                                             }
                                         }
                                         // Calculate percentage based on total (assuming 7 required documents)
-                                        $percent = ($totalDocuments * 100.0) / 7.0;
+                                        $percent = ($totalDocuments * 100.0) / 5.0;
                                     @endphp
-        
+
                                     {{ sprintf('%.0f', $percent) }}% {{-- ({{ $totalDocuments }} documents) --}}
                                     {{-- @if ($totalDocuments > 0)
                                     @else
@@ -65,14 +64,14 @@
                                 <th>
                                     @php
                                         $isVerified = 'verified';
-        
+
                                         if ($totalDocuments > 0) {
                                             $pendingDocuments = [];
                                             $verifiedDocuments = [];
                                             $rejectedDocuments = [];
                                             $requiredDocumentTypes = range(1, 7); // Document types 1 through 7
                                             $documentStatus = [];
-        
+
                                             foreach ($details['documents'] as $document) {
                                                 $type = $document->udc_doc_type;
                                                 if ($document->udc_status == '3') {
@@ -86,7 +85,7 @@
                                                     $verifiedDocuments[$type] = $document;
                                                 }
                                             }
-        
+
                                             // Determine status based on documents
                                             foreach ($requiredDocumentTypes as $type) {
                                                 if (isset($pendingDocuments[$type])) {
@@ -95,7 +94,7 @@
                                                     $isVerified = 'rejected'; // No other document of this type and a rejected one is present
                                                 }
                                             }
-        
+
                                             // If no pending documents and all required types are verified
                                             if ($isVerified !== 'pending' && count($verifiedDocuments) === count($requiredDocumentTypes)) {
                                                 $isVerified = 'verified';
@@ -117,29 +116,19 @@
                                 <th>
                                     <div class="d-flex">
                                         @if ($isVerified == 'verified')
-                                            <form action="{{ url('/admin/user-documents/verify-documents') }}"
-                                                  method="post">
+                                            <form action="{{ url('/admin/user-documents/verify-documents') }}" method="post">
                                                 @csrf
-                                                <input type="hidden"
-                                                       name="uid"
-                                                       value="{{ $details['user']->usr_id }}">
-                                                <input type="submit"
-                                                       class="mx-1 btn btn-sm btn-info"
-                                                       value="Review">
+                                                <input type="hidden" name="uid" value="{{ $details['user']->usr_id }}">
+                                                <input type="submit" class="mx-1 btn btn-sm btn-info" value="Review">
                                             </form>
                                         @else
-                                            <form action="{{ url('/admin/user-documents/verify-documents') }}"
-                                                  method="post">
+                                            <form action="{{ url('/admin/user-documents/verify-documents') }}" method="post">
                                                 @csrf
-                                                <input type="hidden"
-                                                       name="uid"
-                                                       value="{{ $details['user']->usr_id }}">
-                                                <input type="submit"
-                                                       class="mx-1 btn btn-sm btn-success"
-                                                       value="Verify">
+                                                <input type="hidden" name="uid" value="{{ $details['user']->usr_id }}">
+                                                <input type="submit" class="mx-1 btn btn-sm btn-success" value="Verify">
                                             </form>
                                         @endif
-        
+
                                     </div>
                                 </th>
                             </tr>

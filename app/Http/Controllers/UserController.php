@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\ApprovalLetterSetting;
 use App\Models\BankList;
 use App\Models\CompanyInfo;
+use App\Models\CompanyService;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
 use App\Models\InvoiceSetting;
@@ -348,8 +349,9 @@ class UserController extends Controller
         $user = WebUser::find(Session::get('uid'));
         $companyInfos = CompanyInfo::find(1);
         $aprovalSetting = ApprovalLetterSetting::find(1);
+        $services = CompanyService::get();
         if($user && $user->usr_verification_status == 1 && $companyInfos){
-            return view('User.approvalLetterLayout1',compact('user','companyInfos','aprovalSetting'));
+            return view('User.approvalLetterLayout1',compact('user','companyInfos','aprovalSetting','services'));
         }else{
             return redirect()->back()->with('error','Your file is not approved yet!');
         }

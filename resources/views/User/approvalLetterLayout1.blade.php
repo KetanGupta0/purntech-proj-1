@@ -120,7 +120,7 @@
     </style>
 </head>
 <body>
-    @if (isset($user) && isset($companyInfos) && isset($aprovalSetting))
+    @if (isset($user) && isset($companyInfos) && isset($aprovalSetting) && isset($services))
         <div class="al-container">
             <!-- Header Section -->
             <section class="meta-head">
@@ -140,7 +140,11 @@
             <section class="party">
                 <div class="party-data">
                     <div class="party-logo">
-                        <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $aprovalSetting->als_body_img_1 }}" alt="logo" style="max-width: 100px;">
+                        @foreach ($services as $service)
+                            @if($service->cms_service_name == $user->usr_service)
+                                <img src="{{ asset('public/dashboard/assets/footer_logo') }}/{{ $service->cms_logo }}" alt="logo" style="max-width: 100px;">
+                            @endif
+                        @endforeach
                     </div>
                     <div class="party-info">
                         <p><strong>Mr./Mrs. {{ $user->usr_first_name }} {{ $user->usr_last_name }}</strong></p>

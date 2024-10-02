@@ -24,24 +24,14 @@
 
             <!-- Section Title -->
             <div class="container section-title" data-aos="fade-up">
-                <div><h1>Bharti Infratel Tower</h1> {{-- <span class="description-title">Starter Section</span> --}}</div>
+                <div>
+                    <h1>Bharti Infratel Tower</h1> {{-- <span class="description-title">Starter Section</span> --}}
+                </div>
                 <h2 id="pg-title-secon">Online Tower Apply Login</h2>
             </div><!-- End Section Title -->
 
             <div class="container" data-aos="fade-up">
-                {{-- <div class="row">
-                    <div class="col-xl-4 col-md-6 col-sm-8">
-                        <form action="{{ url('/user-form-submit') }}" method="POST">
-                            <div class="form-group my-3">
-                                <label for="mobile">Mobile</label>
-                                <input type="text" name="mobile" id="mobile" class="form-control" required>
-                            </div>
-                            <div class="form-group my-3">
-                                <div class="btn btn-outline-primary send-otp">Send OTP</div>
-                            </div>
-                        </form>
-                    </div>
-                </div> --}}
+
                 <div class="container-fluid h-custom">
                     <div class="row d-flex justify-content-center align-items-center h-100">
                         <div class="col-md-9 col-lg-6 col-xl-5">
@@ -49,18 +39,23 @@
                         </div>
                         <div class="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
                             <form>
-                                <div class="d-flex flex-row align-items-center justify-content-center justify-content-lg-start">
-                                    <p class="lead fw-normal mb-0 me-3">Sign in with</p>
+                                <div class="d-flex flex-row align-items-center justify-content-center justify-content-center">
+                                    <p class="lead fw-bold mb-0 me-3"><i class="bi bi-shield-lock"></i>  Sign in with </p>
                                 </div>
                                 <!-- Email input -->
-                                <div data-mdb-input-init class="form-floating form-outline mb-4">
+                                <label class="visually-hidden" for="mobile">Mobile</label>
+                                <div class="input-group">
+                                    <div class="input-group-text" style="font-size: 20px!important;"><i class="bi bi-phone-fill"></i></div>
+                                    <input type="text" class="form-control" id="mobile" placeholder="Mobile" style="min-height: 62px; font-size: 20px;">
+                                </div>
+                                {{-- <div data-mdb-input-init class="form-floating form-outline mb-4">
                                     <input type="text" id="mobile" class="form-control form-control-lg" placeholder="Enter a valid email address" />
                                     <label class="form-label" for="mobile">Mobile</label>
-                                </div>
+                                </div> --}}
 
                                 <div class="text-center text-lg-start mt-4 pt-2">
                                     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg send-otp"
-                                            style="padding-left: 2.5rem; padding-right: 2.5rem;">🔒 Send OTP</button>
+                                            style="padding-left: 1.8rem; padding-right: 1.8rem;">🔒 Send OTP</button>
                                 </div>
 
                             </form>
@@ -74,7 +69,7 @@
         <!-- Modal -->
         <div class="modal fade" id="otpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="otpModalLabel"
              aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered modal-sm">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="otpModalLabel">OTP Sent to your mobile</h1>
@@ -83,12 +78,12 @@
                     <div class="modal-body">
                         <form>
                             <div class="row">
-                                <div class="col">
+                                <div class="col-md-8 mx-auto">
                                     <div class="form-group my-3">
-                                        <label for="userotp">Type your otp</label>
+                                        <label for="userotp" class="fw-bold text-center w-100"><i class="bi bi-key"></i> Type your otp</label>
                                         <input type="text" name="userotp" id="userotp" class="form-control">
                                     </div>
-                                    <div class="form-group my-3">
+                                    <div class="form-group my-3 text-center">
                                         <div class="btn btn-primary verify-otp">🗝️ Verify</div>
                                     </div>
                                 </div>
@@ -120,7 +115,7 @@
                     Swal.fire({
                         icon: "success",
                         title: "Success",
-                        html: "{{Session::get('message')}}"
+                        html: "{{ Session::get('message') }}"
                     });
                 </script>
             @endif
@@ -131,22 +126,23 @@
                     Swal.fire({
                         icon: "warning",
                         title: "Oops..",
-                        html: "{{Session::get('message')}}"
+                        html: "{{ Session::get('message') }}"
                     });
-                    console.log("{{Session::get('message')}}");
+                    console.log("{{ Session::get('message') }}");
                 </script>
             @else
                 <script>
                     Swal.fire({
                         icon: "warning",
                         title: "Oops..",
-                        html: "{{Session::get('message')}}"
+                        html: "{{ Session::get('message') }}"
                     });
                 </script>
             @endif
         @endif
         <script>
             $(document).ready(function() {
+                // $('#otpModal').modal('show');
                 $.ajaxSetup({
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

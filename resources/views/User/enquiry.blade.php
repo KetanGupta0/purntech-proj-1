@@ -22,30 +22,6 @@
                 transform: translateY(-50%);
             }
 
-            .image-area {
-                border: 2px dashed rgba(68, 68, 68, 0.7);
-                padding: 1rem;
-                position: relative;
-            }
-
-            .image-area::before {
-                content: 'Uploaded image result';
-                color: #fff;
-                font-weight: bold;
-                text-transform: uppercase;
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                font-size: 0.8rem;
-                z-index: 1;
-            }
-
-            .image-area img {
-                z-index: 2;
-                position: relative;
-            }
-
             @media (max-width: 450px) {
                 .h-custom {
                     height: 100%;
@@ -142,7 +118,7 @@
 
                                 <h3>Documents</h3>
 
-                                <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm mt-3">
+                                <div class="input-group mb-1 px-1 py-1 rounded-pill bg-white shadow-sm mt-1">
                                     <input id="upload_aadhar_front" name="upload_aadhar_front" type="file" onchange="readURL(this);"
                                         class="form-control border-0 upload">
                                     <label for="upload_aadhar_front"
@@ -157,11 +133,8 @@
                                 </div>
 
                                 <!-- Uploaded image area-->
-                                <div class="image-area">
-                                    <img id="aadharFrontImageResult" src="#" alt=""
-                                        class="img-fluid rounded shadow-sm mx-auto d-block">
-                                </div>
-                                <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm mt-5">
+                                
+                                <div class="input-group mb-1 px-2 py-1 rounded-pill bg-white shadow-sm mt-2">
                                     <input id="upload_aadhar_back" name="upload_aadhar_back" type="file" onchange="readURL(this);"
                                         class="form-control border-0 upload">
                                     <label for="upload_aadhar_back"
@@ -176,11 +149,8 @@
                                 </div>
 
                                 <!-- Uploaded image area-->
-                                <div class="image-area">
-                                    <img id="aadharBackImageResult" src="#" alt=""
-                                        class="img-fluid rounded shadow-sm mx-auto d-block">
-                                </div>
-                                <div class="input-group mb-3 px-2 py-2 rounded-pill bg-white shadow-sm mt-5">
+                                
+                                <div class="input-group mb-1 px-1 py-1 rounded-pill bg-white shadow-sm mt-2">
                                     <input id="upload_pan_card" name="upload_pan_card" type="file" onchange="readURL(this);"
                                         class="form-control border-0 upload">
                                     <label for="upload_pan_card" class="font-weight-light text-muted upload-label">PAN
@@ -195,10 +165,7 @@
                                 </div>
 
                                 <!-- Uploaded image area-->
-                                <div class="image-area">
-                                    <img id="panCardImageResult" src="#" alt=""
-                                        class="img-fluid rounded shadow-sm mx-auto d-block">
-                                </div>
+                                
 
                                 <div class="text-center text-lg-start mt-4 pt-2">
                                     <button type="submit" data-mdb-button-init data-mdb-ripple-init

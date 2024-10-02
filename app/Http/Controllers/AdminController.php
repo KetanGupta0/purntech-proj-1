@@ -225,13 +225,139 @@ class AdminController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    public function userUpdateCommand(Request $request)
-    {
+    public function userUpdateCommand(Request $request){
         // Validation Required
         try {
             if($request->uid =="" || $request->uid == null) {
                 return redirect('/')->with('error','Soemthing went wrong!');
             }else{
+                $usr_first_name = $request->usr_first_name; // Required, String
+                $usr_last_name = $request->usr_last_name; // Required, String
+                $usr_email = $request->usr_email; // Required, String, Email
+                $usr_mobile = $request->usr_mobile; // Required, Numeric, 10 digits
+                $usr_alt_mobile = $request->usr_alt_mobile; // Not Required but if provided should be numeric and 10 digits
+                $usr_dob = $request->usr_dob; // Required, string
+                $usr_gender = $request->usr_gender;
+                $usr_father = $request->usr_father;
+                $usr_mother = $request->usr_mother;
+                $usr_full_address = $request->usr_full_address; // Required, String
+                $usr_landmark = $request->usr_landmark;
+                $usr_service = $request->usr_service;
+                $usr_adv_amount = $request->usr_adv_amount;
+                $usr_mon_rent = $request->usr_mon_rent;
+                $usr_adv_txnid = $request->usr_adv_txnid;
+                $usr_adv_status = $request->usr_adv_status;
+
+
+                $errors = [];
+
+                // Validate first name (required, string)
+                if (empty($usr_first_name)) {
+                    $errors['usr_first_name'] = "First name is required.";
+                } elseif (!is_string($usr_first_name)) {
+                    $errors['usr_first_name'] = "First name must be a string.";
+                }
+
+                // Validate last name (required, string)
+                if (empty($usr_last_name)) {
+                    $errors['usr_last_name'] = "Last name is required.";
+                } elseif (!is_string($usr_last_name)) {
+                    $errors['usr_last_name'] = "Last name must be a string.";
+                }
+
+                // Validate email (required, valid email)
+                if (empty($usr_email)) {
+                    $errors['usr_email'] = "Email is required.";
+                } elseif (!filter_var($usr_email, FILTER_VALIDATE_EMAIL)) {
+                    $errors['usr_email'] = "Invalid email format.";
+                }
+
+                // Validate mobile number (required, numeric, 10 digits)
+                if (empty($usr_mobile)) {
+                    $errors['usr_mobile'] = "Mobile number is required.";
+                } elseif (!is_numeric($usr_mobile) || strlen($usr_mobile) != 10) {
+                    $errors['usr_mobile'] = "Mobile number must be numeric and exactly 10 digits.";
+                }
+
+                // Validate alternate mobile (optional, if provided, numeric, 10 digits)
+                if (!empty($usr_alt_mobile)) {
+                    if (!is_numeric($usr_alt_mobile) || strlen($usr_alt_mobile) != 10) {
+                        $errors['usr_alt_mobile'] = "Alternate mobile number must be numeric and exactly 10 digits.";
+                    }
+                }
+
+                // Validate date of birth (required)
+                if (empty($usr_dob)) {
+                    $errors['usr_dob'] = "Date of birth is required.";
+                } 
+
+                // Validate gender (optional)
+                $valid_genders = ['Male', 'Female', 'Other'];
+                if (!empty($usr_gender) && !in_array($usr_gender, $valid_genders)) {
+                    $errors['usr_gender'] = "Invalid gender selected.";
+                }
+
+                // Validate father's name (optional, string)
+                if (!empty($usr_father) && !is_string($usr_father)) {
+                    $errors['usr_father'] = "Father's name must be a string.";
+                }
+
+                // Validate mother's name (optional, string)
+                if (!empty($usr_mother) && !is_string($usr_mother)) {
+                    $errors['usr_mother'] = "Mother's name must be a string.";
+                }
+
+                // Validate full address (required, string)
+                if (empty($usr_full_address)) {
+                    $errors['usr_full_address'] = "Full address is required.";
+                } elseif (!is_string($usr_full_address)) {
+                    $errors['usr_full_address'] = "Full address must be a string.";
+                }
+
+                // Validate landmark (optional, string)
+                if (!empty($usr_landmark) && !is_string($usr_landmark)) {
+                    $errors['usr_landmark'] = "Landmark must be a string.";
+                }
+
+                // Validate service (optional, string)
+                if (!empty($usr_service) && !is_string($usr_service)) {
+                    $errors['usr_service'] = "Service must be a string.";
+                }
+
+                // Validate advance amount (optional, numeric)
+                if (!empty($usr_adv_amount) && !is_numeric($usr_adv_amount)) {
+                    $errors['usr_adv_amount'] = "Advance amount must be numeric.";
+                }
+
+                // Validate monthly rent (optional, numeric)
+                if (!empty($usr_mon_rent) && !is_numeric($usr_mon_rent)) {
+                    $errors['usr_mon_rent'] = "Monthly rent must be numeric.";
+                }
+
+                // Validate advance transaction ID (optional, string)
+                if (!empty($usr_adv_txnid) && !is_string($usr_adv_txnid)) {
+                    $errors['usr_adv_txnid'] = "Advance transaction ID must be a string.";
+                }
+
+                // Validate advance status (optional, string)
+                if (!empty($usr_adv_status) && !is_string($usr_adv_status)) {
+                    $errors['usr_adv_status'] = "Advance status must be a string.";
+                }
+
+                $outError = "";
+                // Check if there are any errors
+                if (count($errors) > 0) {
+                    // Handle errors (e.g., display to the user)
+                    foreach ($errors as $field => $error) {
+                        $outError .= "$error ";
+                    }
+                    return view('Admin.gotouserViewPage',['uid'=>$request->uid,'code'=>400,'msg'=>$outError]);
+                } else {
+                    // Proceed with processing the form data
+                    echo "Form is valid!";
+                }
+
+
                 $user = WebUser::find($request->uid);
                 if($user){
                     $user->usr_first_name = $request->usr_first_name;
@@ -256,11 +382,11 @@ class AdminController extends Controller
                         return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
                     }
                 }else{
-                    return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
+                    return redirect()->to('/')->with('error','Something went wrong!');
                 }
             }
         } catch (Exception $e) {
-            return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>$e->getMessage()]);
+            return redirect()->to('/')->with('error',$e->getMessage());
         }
     }
     public function viewUserCommand(Request $request)

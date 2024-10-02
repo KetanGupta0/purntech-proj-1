@@ -11,7 +11,7 @@
 <footer class="footer" style="height: unset!important;">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-12" >
                 <marquee behavior="infinit" direction="left" style="border: 0px solid rgb(189, 189, 189);">
                     <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/airtel_new.jpg') }}" alt="logo"></div>
                     <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/bsnl_new.jpg') }}" alt="logo"></div>

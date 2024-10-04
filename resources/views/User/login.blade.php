@@ -57,6 +57,9 @@
                                     <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg send-otp"
                                             style="padding-left: 1.8rem; padding-right: 1.8rem;">🔒 Send OTP</button>
                                 </div>
+                                <div class="text-center text-lg-center mt-2">
+                                    <img src="{{ asset('public/assets/img/trust-seal.png') }}" alt="Trust Seal" style="height: 100px;">
+                                </div>
 
                             </form>
                         </div>

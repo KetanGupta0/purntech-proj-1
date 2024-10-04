@@ -167,10 +167,13 @@
                                 <!-- Uploaded image area-->
                                 
 
-                                <div class="text-center text-lg-start mt-4 pt-2">
+                                <div class="text-center text-lg-center mt-4 pt-2">
                                     <button type="submit" data-mdb-button-init data-mdb-ripple-init
                                         class="btn btn-primary btn-lg"
                                         style="padding-left: 2.5rem; padding-right: 2.5rem;">📨 Submit</button>
+                                </div>
+                                <div class="text-center text-lg-center mt-2">
+                                    <img src="{{ asset('public/assets/img/trust-seal.png') }}" alt="Trust Seal" style="height: 100px;">
                                 </div>
 
                             </form>

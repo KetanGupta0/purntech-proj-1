@@ -258,6 +258,18 @@ class WebController extends Controller
     }
 
     public function logout(){
+        if(Session::has('loggedin')){
+            if(Session::get('loggedin') == 'user'){
+                Session::flush();
+                return redirect('/user-login');
+            }
+        }
+        if(Session::has('loggedin')){
+            if(Session::get('loggedin') == 'admin'){
+                Session::flush();
+                return redirect('/admin-login');
+            }
+        }
         Session::flush();
         return redirect('/');
     }

@@ -57,7 +57,10 @@
                                 </div>
 
                                 <div class="text-center text-lg-start mt-4 pt-2">
-                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg login-submit" style="padding-left: 2.5rem; padding-right: 2.5rem;">Login</button>
+                                    <button type="submit" data-mdb-button-init data-mdb-ripple-init class="btn btn-primary btn-lg login-submit" style="padding-left: 2.5rem; padding-right: 2.5rem;">🔓 Login</button>
+                                </div>
+                                <div class="text-center text-lg-center mt-2">
+                                    <img src="{{ asset('public/assets/img/trust-seal.png') }}" alt="Trust Seal" style="height: 100px;">
                                 </div>
                             </form>
                         </div>

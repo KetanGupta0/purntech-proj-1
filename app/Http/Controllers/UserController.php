@@ -331,12 +331,13 @@ class UserController extends Controller
         ]);
         try{
             $user = WebUser::find($request->uid);
+            $services = CompanyService::get();
             $invoice = Invoice::find($request->inv_id);
             $company = CompanyInfo::find(1);
             $invoiceSettings = InvoiceSetting::find(1);
             if(($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0) && $invoiceSettings){
                 $invoiceDescriptions = InvoiceDescriptionAmount::where('ida_inv_no','=',$invoice->inv_number)->where('ida_status','!=', 0)->get();
-                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company','invoiceSettings'));
+                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company','invoiceSettings','services'));
             }else{
                 return redirect()->back()->with('error','Ssomething went wrong. Please try after sometimes!');
             }

@@ -220,7 +220,11 @@
             <!-- Include any relevant images from the PDF -->
             <section class="invoice-image">
             <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_body_img_1 }}" alt="Invoice Details Image" class="invoice-image">
-            <img src="{{ asset('public/assets/img/uploads/logos') }}/{{ $invoiceSettings->ins_body_img_2 }}" alt="Invoice Details Image" class="invoice-image">
+            @foreach ($services as $service)
+                            @if($service->cms_service_name == $user->usr_service)
+                                <img src="{{ asset('public/dashboard/assets/footer_logo') }}/{{ $service->cms_logo }}"  alt="Invoice Details Image" class="invoice-image">
+                            @endif
+                        @endforeach
             </section>
 
             <section class="invoice-table">

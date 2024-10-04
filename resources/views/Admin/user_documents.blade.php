@@ -44,7 +44,7 @@
                                         $rejectedDocument = [];
                                         // Count only valid uploaded documents
                                         foreach ($details['documents'] as $document) {
-                                            if ($document->udc_status != '0' && $document->udc_status != '3') {
+                                            if ($document->udc_status != '0' && $document->udc_status != '3' && ($document->udc_doc_type == 1 || $document->udc_doc_type == 2 || $document->udc_doc_type == 3 || $document->udc_doc_type == 4 || $document->udc_doc_type == 7)) {
                                                 $totalDocuments++;
                                             }
                                             if ($document->udc_status == '3') {

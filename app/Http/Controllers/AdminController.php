@@ -360,6 +360,7 @@ class AdminController extends Controller
 
                 $user = WebUser::find($request->uid);
                 if($user){
+                    $oldTnxId = $user->usr_adv_txnid;
                     $user->usr_first_name = $request->usr_first_name;
                     $user->usr_last_name = $request->usr_last_name;
                     $user->usr_email = $request->usr_email;
@@ -377,6 +378,12 @@ class AdminController extends Controller
                     $user->usr_adv_txnid = $request->usr_adv_txnid;
                     $user->usr_adv_status = $request->usr_adv_status;
                     if ($user->save()) {
+                        if($request->usr_adv_txnid != '' && ($oldTnxId == "" || $oldTnxId == null)){
+                        
+                            $optMessage = "Dear ".$user->usr_first_name.", Your ".'file '.$user->usr_username." payment amount INR ".$user->usr_adv_amount." sent successfully sent , Please note it will take up to 24 working hours to reflect amount in your bank account. FLNOTI";
+                            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162696221494512');
+
+                        }
                         return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>200,'msg'=>'Profile data updated!']);
                     } else {
                         return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
@@ -496,6 +503,16 @@ class AdminController extends Controller
                         ->count();
                     // Update user verification status
                     if ($verifiedDocumentsCount == count($requiredDocumentTypes)) {
+                        
+                        if($user->usr_verification_status == 0){
+                            $string = $user->usr_username;
+                            $parts = explode('/', $string);
+                            $lastTwoParts = implode('/', array_slice($parts, -1));
+
+                            $optMessage = "Dear ".$user->usr_first_name.", Your registration ".$lastTwoParts." at BHRTI WEB is successful, Documents received/required for verification are APPROVED Regards ! BHRTI";
+
+                            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
+                        }
                         $user->usr_verification_status = 1; // Fully verified
                     } else {
                         $user->usr_verification_status = 0; // Not fully verified
@@ -622,10 +639,19 @@ class AdminController extends Controller
             }
             if($req >= 1 && $req <= 4){
                 $user = WebUser::find($request->uid);
-                $bankDetails = UserBankDetail::find($request->ubdid);
+                $bankDetails = UserBankDetail::where('ubd_usr_id','=',$request->uid)->where('ubd_user_kyc_status','!=',0)->first();
                 if($user && $bankDetails){
                     $bankDetails->ubd_user_kyc_status = $request->ubd_user_kyc_status;
                     if($bankDetails->save()){
+                        if($req == 1){
+                            $string = $bankDetails->ubd_user_bank_acc;
+                            $lastFourChars = substr($string, -4);
+                            
+                            $optMessage = "Dear ".$user->usr_first_name.", Your Documents received for verification are verified successfully, Aadhar,Pan,Photos and Bank ".$lastFourChars." are forwarded to Operator. Regards ! BHRTIWEB";
+                            // dd($optMessage);
+
+                            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513378567622');
+                        }
                         return view('Admin.goToUserBankDetails',['code' => 402, 'uid' => $request->uid]);
                     }else{
                         return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
@@ -702,7 +728,16 @@ class AdminController extends Controller
             if($uid == 0 || $inv_id == 0){
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
             }else{
+                $user = WebUser::find($uid);
+                $invoice = Invoice::find($inv_id);
                 if($this->changeInvoiceStatus($uid,$inv_id,5)){
+
+                    $string = $invoice->inv_number;
+                    $parts = explode('/', $string);
+                    $lastTwoParts = implode('/', array_slice($parts, -2));
+                    $optMessage = "Dear ".$user->usr_first_name." ".$user->usr_last_name.", Your ".'Invoice '.$lastTwoParts." fee amount INR ".$invoice->inv_amount." received successfully at BHRTIWEB, Please make sure to provide correct details and documents to avid file cancellation. BHRTIWEB";
+                    $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513450643192');
+
                     return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
                 }else{
                     return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
@@ -872,7 +907,7 @@ class AdminController extends Controller
             $user = WebUser::find($uid);
             $invoice_number = $user->usr_username;
 
-            $countInvoice = Invoice::where('inv_status','!=',0)->count();
+            $countInvoice = Invoice::where('inv_party_id','=',$user->usr_id)->count();
             $invoice_number = $invoice_number.'/IN'.($countInvoice+1);
 
             $inv_amount = 0.00;
@@ -902,9 +937,7 @@ class AdminController extends Controller
                 return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Something went wrong while saving invoice. Please try again after sometimes!']);
             }else{
                 $string = $invoice_number;
-                // Explode the string by slashes
                 $parts = explode('/', $string);
-                // Get the last two parts and join them into a single string
                 $lastTwoParts = implode('/', array_slice($parts, -2));
 
                 $optMessage ="Dear Customer, Your ".$lastTwoParts." INR ".$inv_amount." fee at BHRTIWEB is due for processing, Please make sure to clear your dues immediately to avid file closure. BHRTIWEB";

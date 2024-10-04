@@ -57,13 +57,13 @@
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="customer_address1" class="form-label">Address Line 1</label>
+                            <label for="customer_address1" class="form-label">Village/Street/Colony</label>
                             <input type="text" class="form-control" id="customer_address1" name="customer_address1" placeholder="Customer Address" value="{{ $user->usr_landmark }}"/>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="mb-3">
-                            <label for="customer_address2" class="form-label">Address Line 2</label>
+                            <label for="customer_address2" class="form-label">City, State, Country - Pin</label>
                             <input type="text" class="form-control" id="customer_address2" name="customer_address2" placeholder="Customer Address" value="{{ $user->usr_full_address }}"/>
                         </div>
                     </div>

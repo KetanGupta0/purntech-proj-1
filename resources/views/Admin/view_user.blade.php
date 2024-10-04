@@ -56,8 +56,8 @@
                     </div>
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
-                            <input type="text" class="form-control" data-provider="flatpickr" id="usr_dob" name="usr_dob" data-date-format="d M, Y" data-deafult-date="{{ date('d M, Y', strtotime($user->usr_dob)) }}" placeholder="Select Date of Birth" />
-                            <label for="usr_dob">Date of birth</label>
+                            <input type="text" class="form-control" data-provider="flatpickr" id="usr_dob" name="usr_dob" data-date-format="Y-m-d" data-deafult-date="{{ date('Y-m-d', strtotime($user->usr_dob)) }}" placeholder="Select Date of Birth" />
+                            <label for="usr_dob">Date of birth <span class="text-muted">(yyyy-mm-dd)</span></label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">

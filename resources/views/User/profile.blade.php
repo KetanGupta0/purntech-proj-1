@@ -124,8 +124,8 @@
                                         <!--end col-->
                                         <div class="col-lg-6">
                                             <div class="mb-3">
-                                                <label for="usr_dob" class="form-label">Date of Birth</label>
-                                                <input type="text" class="form-control" data-provider="flatpickr" id="usr_dob" name="usr_dob" data-date-format="d M, Y" data-deafult-date="{{ date('d M, Y', strtotime($user->usr_dob)) }}" placeholder="Select Date of Birth" />
+                                                <label for="usr_dob" class="form-label">Date of Birth <span class="text-muted">(yyyy-mm-dd)</span></label>
+                                                <input type="text" class="form-control" data-provider="flatpickr" id="usr_dob" name="usr_dob" data-date-format="Y-m-d" data-deafult-date="{{ date('Y-m-d', strtotime($user->usr_dob)) }}" placeholder="Select Date of Birth" />
                                             </div>
                                         </div>
                                         <!--end col-->
@@ -152,15 +152,15 @@
                                         <!--end col-->
                                         <div class="col-lg-12">
                                             <div class="mb-3">
-                                                <label for="usr_full_address" class="form-label">Full Address</label>
-                                                <textarea class="form-control" id="usr_full_address" name="usr_full_address" placeholder="Enter your complete address" rows="3">{{$user->usr_full_address}}</textarea>
+                                                <label for="usr_landmark" class="form-label">Village/Street/Colony</label>
+                                                <input type="text" class="form-control" id="usr_landmark" name="usr_landmark" placeholder="Enter your nearest landmark" value="{{$user->usr_landmark}}">
                                             </div>
                                         </div>
                                         <!--end col-->
                                         <div class="col-lg-12">
                                             <div class="mb-3">
-                                                <label for="usr_landmark" class="form-label">Nearest Landmark</label>
-                                                <input type="text" class="form-control" id="usr_landmark" name="usr_landmark" placeholder="Enter your nearest landmark" value="{{$user->usr_landmark}}">
+                                                <label for="usr_full_address" class="form-label">City, State, Country - Pin</label>
+                                                <textarea class="form-control" id="usr_full_address" name="usr_full_address" placeholder="Enter your complete address" rows="1">{{$user->usr_full_address}}</textarea>
                                             </div>
                                         </div>
                                         <!--end col-->
@@ -207,7 +207,7 @@
                                         <!--end col-->
                                         <div class="col-lg-12">
                                             <div class="text-end">
-                                                <button type="submit" class="btn btn-success">Change Password</button>
+                                                <button type="button" class="btn btn-success">Change Password</button>
                                             </div>
                                         </div>
                                         <!--end col-->

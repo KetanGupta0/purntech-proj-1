@@ -159,6 +159,8 @@ class AdminController extends Controller
                 Session::put('lusername', $admin->adm_last_name);
                 Session::flash('welcome', "Welcome {$admin->adm_first_name} {$admin->adm_last_name}");
                 return redirect('admin-dashboard');
+            }else{
+                return redirect()->back()->with('error','Incorrect email or password!');
             }
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -357,6 +359,7 @@ class AdminController extends Controller
                     echo "Form is valid!";
                 }
 
+                // dd(date('Y-m-d', strtotime($request->usr_dob)));
 
                 $user = WebUser::find($request->uid);
                 if($user){
@@ -366,7 +369,7 @@ class AdminController extends Controller
                     $user->usr_email = $request->usr_email;
                     $user->usr_mobile = $request->usr_mobile;
                     $user->usr_alt_mobile = $request->usr_alt_mobile;
-                    $user->usr_dob = date('Y/m/d', strtotime($request->usr_dob));
+                    $user->usr_dob = date('Y-m-d', strtotime($request->usr_dob));
                     $user->usr_gender = $request->usr_gender;
                     $user->usr_father = $request->usr_father;
                     $user->usr_mother = $request->usr_mother;

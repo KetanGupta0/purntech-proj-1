@@ -54,6 +54,7 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::get('/admin/user-bank-details', [AdminController::class, 'userBankDetailsView']);
     Route::get('/admin/user-invoices-page', [AdminController::class, 'userInvoicesPageView']);
     Route::get('/admin/user-download', [AdminController::class, 'userDownloadView']);
+    Route::get('/admin/reminders', [AdminController::class, 'remindersView']);
     Route::get('/admin/profile', [AdminController::class, 'adminProfileView']);
     Route::get('/admin/settings', [AdminController::class, 'adminSettingsView']);
     Route::get('/admin/help', [AdminController::class, 'adminHelpView']);
@@ -85,6 +86,8 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-invoices-page/command/refunded',[AdminController::class, 'makeInvoiceRefundedCommand']);
     Route::post('/admin/user-invoices-page/command/unpaid',[AdminController::class, 'makeInvoiceUnpaidCommand']);
     Route::post('/admin/user-invoices-page/command/delete',[AdminController::class, 'makeInvoiceDeleteCommand']);
+    
+    Route::post('admin/send-reminder',[AdminController::class, 'sendReminderCommand']);
 
     // Admin Setting Routs
     Route::post('/admin/settings/update-company',[AdminController::class, 'updateCompanyCommand']);

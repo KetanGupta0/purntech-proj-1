@@ -244,13 +244,6 @@
                                     <span data-key="t-widgets">User Doucments</span>
                                 </a>
                             </li>
-                            {{-- <li class="nav-item">
-                                <a class="nav-link menu-link user-kyc"
-                                   href="{{ url('/admin/user-kyc') }}">
-                                    <i class="ri-dashboard-2-line"></i>
-                                    <span data-key="t-widgets">User KYC</span>
-                                </a>
-                            </li> --}}
                             <li class="nav-item">
                                 <a class="nav-link menu-link user-bank-details"
                                    href="{{ url('/admin/user-bank-details') }}">
@@ -263,6 +256,13 @@
                                    href="{{ url('/admin/user-invoices-page') }}">
                                     <i class="ri-price-tag-2-fill"></i>
                                     <span data-key="t-widgets">User Invoices Page</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link reminders"
+                                   href="{{ url('/admin/reminders') }}">
+                                    <i class="ri-alarm-fill"></i>
+                                    <span data-key="t-widgets">Reminders</span>
                                 </a>
                             </li>
                             <li class="nav-item">

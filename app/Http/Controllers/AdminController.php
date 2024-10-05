@@ -30,15 +30,16 @@ class AdminController extends Controller
     public function adminDashboardView()
     {
         $company = CompanyInfo::find(1);
-        if($company){
-            return view('Admin.header') . view('Admin.dashboard',compact('company')) . view('Admin.footer');
-        }else{
-            return redirect()->back()->with('error','Something went wrong!');
+        if ($company) {
+            return view('Admin.header') . view('Admin.dashboard', compact('company')) . view('Admin.footer');
+        }
+        else {
+            return redirect()->back()->with('error', 'Something went wrong!');
         }
     }
     public function userProfileView()
     {
-        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at','DESC')->get();
+        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at', 'DESC')->get();
         return view('Admin.header') . view('Admin.user_profiles', compact('data')) . view('Admin.footer');
     }
     public function userDocumentsView()
@@ -54,8 +55,8 @@ class AdminController extends Controller
                     'web_users.usr_mobile',
                     'user_documents.*'
                 )
-                ->where('web_users.usr_profile_status','!=',0)
-                ->orderBy('web_users.created_at','DESC')
+                ->where('web_users.usr_profile_status', '!=', 0)
+                ->orderBy('web_users.created_at', 'DESC')
                 ->get();
 
             // Group by user and create a new collection
@@ -88,7 +89,7 @@ class AdminController extends Controller
     }
     public function userBankDetailsView()
     {
-        try{
+        try {
             $results = DB::table('web_users')
                 ->leftJoin('user_bank_details', 'web_users.usr_id', '=', 'user_bank_details.ubd_usr_id')
                 ->select(
@@ -99,23 +100,27 @@ class AdminController extends Controller
                     'web_users.usr_mobile',
                     'user_bank_details.*'
                 )
-                ->where('web_users.usr_profile_status','!=',0)
-                ->orderBy('web_users.created_at','DESC')
+                ->where('web_users.usr_profile_status', '!=', 0)
+                ->orderBy('web_users.created_at', 'DESC')
                 ->get();
             // dd($results);
-            return view('Admin.header') . view('Admin.user_bank_details',compact('results')) . view('Admin.footer');
-        }catch (Exception $e) {
+            return view('Admin.header') . view('Admin.user_bank_details', compact('results')) . view('Admin.footer');
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
     public function userInvoicesPageView()
     {
-        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at','DESC')->get();
-        return view('Admin.header') . view('Admin.user_invoices_page',compact('data')) . view('Admin.footer');
+        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at', 'DESC')->get();
+        return view('Admin.header') . view('Admin.user_invoices_page', compact('data')) . view('Admin.footer');
     }
     public function userDownloadView()
     {
         return view('Admin.header') . view('Admin.user_download_page') . view('Admin.footer');
+    }
+    public function remindersView()
+    {
+        return view('Admin.header') . view('Admin.reminders') . view('Admin.footer');
     }
     public function adminProfileView()
     {
@@ -123,14 +128,14 @@ class AdminController extends Controller
     }
     public function adminSettingsView()
     {
-        try{
-            $companyInfo = CompanyInfo::where('cmp_id','=',1)->where('cmp_status','=',1)->first();
-            $approvalInfo = ApprovalLetterSetting::where('als_id','=',1)->where('als_status','=',1)->first();
-            $invoiceInfo = InvoiceSetting::where('ins_id','=',1)->where('ins_status','=',1)->first();
+        try {
+            $companyInfo = CompanyInfo::where('cmp_id', '=', 1)->where('cmp_status', '=', 1)->first();
+            $approvalInfo = ApprovalLetterSetting::where('als_id', '=', 1)->where('als_status', '=', 1)->first();
+            $invoiceInfo = InvoiceSetting::where('ins_id', '=', 1)->where('ins_status', '=', 1)->first();
             $admin = Admin::find(Session::get('uid'));
             // dd($approvalInfo);
-            return view('Admin.header') . view('Admin.admin_settings',compact('companyInfo','approvalInfo','invoiceInfo','admin')) . view('Admin.footer');
-        }catch (Exception $e) {
+            return view('Admin.header') . view('Admin.admin_settings', compact('companyInfo', 'approvalInfo', 'invoiceInfo', 'admin')) . view('Admin.footer');
+        } catch (Exception $e) {
             return redirect()->to('/')->with('error', $e->getMessage());
         }
     }
@@ -159,8 +164,9 @@ class AdminController extends Controller
                 Session::put('lusername', $admin->adm_last_name);
                 Session::flash('welcome', "Welcome {$admin->adm_first_name} {$admin->adm_last_name}");
                 return redirect('admin-dashboard');
-            }else{
-                return redirect()->back()->with('error','Incorrect email or password!');
+            }
+            else {
+                return redirect()->back()->with('error', 'Incorrect email or password!');
             }
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
@@ -180,7 +186,8 @@ class AdminController extends Controller
             $user->usr_profile_status = 2;
             if ($user->save()) {
                 return redirect()->back()->with('success', 'User blocked successfully!');
-            } else {
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong! Please try again later!');
             }
         } catch (Exception $e) {
@@ -200,7 +207,8 @@ class AdminController extends Controller
             $user->usr_profile_status = 1;
             if ($user->save()) {
                 return redirect()->back()->with('success', 'User unblocked successfully!');
-            } else {
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong! Please try again later!');
             }
         } catch (Exception $e) {
@@ -220,19 +228,22 @@ class AdminController extends Controller
             $user->usr_profile_status = 0;
             if ($user->save()) {
                 return redirect()->back()->with('success', 'User deleted successfully!');
-            } else {
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong! Please try again later!');
             }
         } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    public function userUpdateCommand(Request $request){
+    public function userUpdateCommand(Request $request)
+    {
         // Validation Required
         try {
-            if($request->uid =="" || $request->uid == null) {
-                return redirect('/')->with('error','Soemthing went wrong!');
-            }else{
+            if ($request->uid == "" || $request->uid == null) {
+                return redirect('/')->with('error', 'Soemthing went wrong!');
+            }
+            else {
                 $usr_first_name = $request->usr_first_name; // Required, String
                 $usr_last_name = $request->usr_last_name; // Required, String
                 $usr_email = $request->usr_email; // Required, String, Email
@@ -256,28 +267,32 @@ class AdminController extends Controller
                 // Validate first name (required, string)
                 if (empty($usr_first_name)) {
                     $errors['usr_first_name'] = "First name is required.";
-                } elseif (!is_string($usr_first_name)) {
+                }
+                elseif (!is_string($usr_first_name)) {
                     $errors['usr_first_name'] = "First name must be a string.";
                 }
 
                 // Validate last name (required, string)
                 if (empty($usr_last_name)) {
                     $errors['usr_last_name'] = "Last name is required.";
-                } elseif (!is_string($usr_last_name)) {
+                }
+                elseif (!is_string($usr_last_name)) {
                     $errors['usr_last_name'] = "Last name must be a string.";
                 }
 
                 // Validate email (required, valid email)
                 if (empty($usr_email)) {
                     $errors['usr_email'] = "Email is required.";
-                } elseif (!filter_var($usr_email, FILTER_VALIDATE_EMAIL)) {
+                }
+                elseif (!filter_var($usr_email, FILTER_VALIDATE_EMAIL)) {
                     $errors['usr_email'] = "Invalid email format.";
                 }
 
                 // Validate mobile number (required, numeric, 10 digits)
                 if (empty($usr_mobile)) {
                     $errors['usr_mobile'] = "Mobile number is required.";
-                } elseif (!is_numeric($usr_mobile) || strlen($usr_mobile) != 10) {
+                }
+                elseif (!is_numeric($usr_mobile) || strlen($usr_mobile) != 10) {
                     $errors['usr_mobile'] = "Mobile number must be numeric and exactly 10 digits.";
                 }
 
@@ -291,7 +306,7 @@ class AdminController extends Controller
                 // Validate date of birth (required)
                 if (empty($usr_dob)) {
                     $errors['usr_dob'] = "Date of birth is required.";
-                } 
+                }
 
                 // Validate gender (optional)
                 $valid_genders = ['Male', 'Female', 'Other'];
@@ -312,7 +327,8 @@ class AdminController extends Controller
                 // Validate full address (required, string)
                 if (empty($usr_full_address)) {
                     $errors['usr_full_address'] = "Full address is required.";
-                } elseif (!is_string($usr_full_address)) {
+                }
+                elseif (!is_string($usr_full_address)) {
                     $errors['usr_full_address'] = "Full address must be a string.";
                 }
 
@@ -353,8 +369,9 @@ class AdminController extends Controller
                     foreach ($errors as $field => $error) {
                         $outError .= "$error ";
                     }
-                    return view('Admin.gotouserViewPage',['uid'=>$request->uid,'code'=>400,'msg'=>$outError]);
-                } else {
+                    return view('Admin.gotouserViewPage', ['uid' => $request->uid, 'code' => 400, 'msg' => $outError]);
+                }
+                else {
                     // Proceed with processing the form data
                     echo "Form is valid!";
                 }
@@ -362,7 +379,7 @@ class AdminController extends Controller
                 // dd(date('Y-m-d', strtotime($request->usr_dob)));
 
                 $user = WebUser::find($request->uid);
-                if($user){
+                if ($user) {
                     $oldTnxId = $user->usr_adv_txnid;
                     $user->usr_first_name = $request->usr_first_name;
                     $user->usr_last_name = $request->usr_last_name;
@@ -381,22 +398,24 @@ class AdminController extends Controller
                     $user->usr_adv_txnid = $request->usr_adv_txnid;
                     $user->usr_adv_status = $request->usr_adv_status;
                     if ($user->save()) {
-                        if($request->usr_adv_txnid != '' && ($oldTnxId == "" || $oldTnxId == null)){
-                        
-                            $optMessage = "Dear ".$user->usr_first_name.", Your ".'file '.$user->usr_username." payment amount INR ".$user->usr_adv_amount." sent successfully sent , Please note it will take up to 24 working hours to reflect amount in your bank account. FLNOTI";
+                        if ($request->usr_adv_txnid != '' && ($oldTnxId == "" || $oldTnxId == null)) {
+
+                            $optMessage = "Dear " . $user->usr_first_name . ", Your " . 'file ' . $user->usr_username . " payment amount INR " . $user->usr_adv_amount . " sent successfully sent , Please note it will take up to 24 working hours to reflect amount in your bank account. FLNOTI";
                             $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162696221494512');
 
                         }
-                        return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>200,'msg'=>'Profile data updated!']);
-                    } else {
-                        return view('Admin.gotouserViewPage',['uid'=>$user->usr_id,'code'=>400,'msg'=>'Something went worng!']);
+                        return view('Admin.gotouserViewPage', ['uid' => $user->usr_id, 'code' => 200, 'msg' => 'Profile data updated!']);
                     }
-                }else{
-                    return redirect()->to('/')->with('error','Something went wrong!');
+                    else {
+                        return view('Admin.gotouserViewPage', ['uid' => $user->usr_id, 'code' => 400, 'msg' => 'Something went worng!']);
+                    }
+                }
+                else {
+                    return redirect()->to('/')->with('error', 'Something went wrong!');
                 }
             }
         } catch (Exception $e) {
-            return redirect()->to('/')->with('error',$e->getMessage());
+            return redirect()->to('/')->with('error', $e->getMessage());
         }
     }
     public function viewUserCommand(Request $request)
@@ -409,10 +428,11 @@ class AdminController extends Controller
         ]);
         try {
             $user = WebUser::find($request->uid);
-            $services = CompanyService::orderBy('cms_service_name','ASC')->get();
+            $services = CompanyService::orderBy('cms_service_name', 'ASC')->get();
             if ($user && $services) {
-                return view('Admin.header') . view('Admin.view_user', compact('user','services')) . view('Admin.footer');
-            } else {
+                return view('Admin.header') . view('Admin.view_user', compact('user', 'services')) . view('Admin.footer');
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
         } catch (Exception $e) {
@@ -431,7 +451,8 @@ class AdminController extends Controller
             $user = WebUser::find($request->uid);
             if ($user) {
                 return view('Admin.header') . view('Admin.edit_user', compact('user')) . view('Admin.footer');
-            } else {
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
         } catch (Exception $e) {
@@ -450,9 +471,10 @@ class AdminController extends Controller
         try {
             $user = WebUser::find($request->uid);
             if ($user) {
-                $data = UserDocuments::where('udc_user_id','=',$user->usr_id)->where('udc_status','!=','0')->orderBy('udc_doc_type','ASC')->get();
-                return view('Admin.header') . view('Admin.verify_documents', compact('data','user')) . view('Admin.footer');
-            } else {
+                $data = UserDocuments::where('udc_user_id', '=', $user->usr_id)->where('udc_status', '!=', '0')->orderBy('udc_doc_type', 'ASC')->get();
+                return view('Admin.header') . view('Admin.verify_documents', compact('data', 'user')) . view('Admin.footer');
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
         } catch (Exception $e) {
@@ -471,7 +493,8 @@ class AdminController extends Controller
             $user = WebUser::find($request->uid);
             if ($user) {
                 return view('Admin.header') . view('Admin.review_documents', compact('user')) . view('Admin.footer');
-            } else {
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
         } catch (Exception $e) {
@@ -499,49 +522,53 @@ class AdminController extends Controller
                 $doc->udc_status = 2;
                 if ($doc->save()) {
                     // Check if all required document types are verified
-                    $requiredDocumentTypes = [1, 2, 3, 4, 7];
+                    $requiredDocumentTypes = [1, 2, 3];
                     $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
                         ->whereIn('udc_doc_type', $requiredDocumentTypes)
                         ->where('udc_status', 2)
                         ->count();
                     // Update user verification status
                     if ($verifiedDocumentsCount == count($requiredDocumentTypes)) {
-                        
-                        if($user->usr_verification_status == 0){
+
+                        if ($user->usr_verification_status == 0) {
                             $string = $user->usr_username;
                             $parts = explode('/', $string);
                             $lastTwoParts = implode('/', array_slice($parts, -1));
 
-                            $optMessage = "Dear ".$user->usr_first_name.", Your registration ".$lastTwoParts." at BHRTI WEB is successful, Documents received/required for verification are APPROVED Regards ! BHRTI";
+                            $optMessage = "Dear " . $user->usr_first_name . ", Your registration " . $lastTwoParts . " at BHRTI WEB is successful, Documents received/required for verification are APPROVED Regards ! BHRTI";
 
                             $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
                         }
                         $user->usr_verification_status = 1; // Fully verified
-                    } else {
+                    }
+                    else {
                         $user->usr_verification_status = 0; // Not fully verified
                     }
                     $user->save();
 
                     // Return success view
                     return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => true]);
-                } else {
+                }
+                else {
                     // Failed to save document status
                     return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => false]);
                 }
-            } else {
+            }
+            else {
                 // User or document not found
                 return view('Admin.goToVerifyDocuments', ['uid' => $request->uid, 'status' => false]);
             }
         } catch (Exception $e) {
             // Log the exception for debugging
-            Log::error('Error verifying document: '.$e->getMessage());
+            Log::error('Error verifying document: ' . $e->getMessage());
 
             // Return failure view
             return view('Admin.goToVerifyDocuments', ['uid' => $request->uid, 'status' => false]);
         }
     }
 
-    public function rejectNowDocumentCommand(Request $request){
+    public function rejectNowDocumentCommand(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric',
             'doc_id' => 'required|numeric'
@@ -556,7 +583,7 @@ class AdminController extends Controller
             $doc = UserDocuments::find($request->doc_id);
             if ($user && $doc) {
                 $doc->udc_status = 3;
-                if($doc->save()){
+                if ($doc->save()) {
                     // Check if all required document types are verified
                     $requiredDocumentTypes = [1, 2, 3, 4, 7];
                     $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
@@ -566,24 +593,28 @@ class AdminController extends Controller
                     // Update user verification status
                     if ($verifiedDocumentsCount == count($requiredDocumentTypes)) {
                         $user->usr_verification_status = 1; // Fully verified
-                    } else {
+                    }
+                    else {
                         $user->usr_verification_status = 0; // Not fully verified
                     }
                     $user->save();
 
                     // Return success view
                     return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => true]);
-                }else{
-                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
                 }
-            } else {
-                return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
+                else {
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status1' => false]);
+                }
+            }
+            else {
+                return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status1' => false]);
             }
         } catch (Exception $e) {
-            return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
+            return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status1' => false]);
         }
     }
-    public function deleteNowDocumentCommand(Request $request){
+    public function deleteNowDocumentCommand(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric',
             'doc_id' => 'required|numeric'
@@ -598,12 +629,14 @@ class AdminController extends Controller
             $doc = UserDocuments::find($request->doc_id);
             if ($user && $doc) {
                 $doc->udc_status = 0;
-                if($doc->save()){
-                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>true]);
-                }else{
-                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id,'status1'=>false]);
+                if ($doc->save()) {
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status1' => true]);
                 }
-            } else {
+                else {
+                    return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status1' => false]);
+                }
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
         } catch (Exception $e) {
@@ -611,233 +644,264 @@ class AdminController extends Controller
         }
     }
 
-    public function viewUserBankDetailsCommand(Request $request){
+    public function viewUserBankDetailsCommand(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric'
-        ],[
+        ], [
             'uid.required' => 'Unable to process your request right now!',
             'uid.numeric' => 'Unable to process your request right now!'
         ]);
-        try{
+        try {
             $user = WebUser::find($request->uid);
-            $bankDetails = UserBankDetail::where('ubd_usr_id','=',$request->uid)->where('ubd_user_kyc_status','!=',0)->first();
+            $bankDetails = UserBankDetail::where('ubd_usr_id', '=', $request->uid)->where('ubd_user_kyc_status', '!=', 0)->first();
             if ($user && $bankDetails) {
-                return view('Admin.header') . view('Admin.user_bank_details_view',compact('user','bankDetails')) . view('Admin.footer');
-            }else{
-                return redirect()->back()->with('error','Details not updated!');
+                return view('Admin.header') . view('Admin.user_bank_details_view', compact('user', 'bankDetails')) . view('Admin.footer');
             }
-        }catch (Exception $e) {
+            else {
+                return redirect()->back()->with('error', 'Details not updated!');
+            }
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function updateUserBankDetailsKYCCommand(Request $request){
-        try{
+    public function updateUserBankDetailsKYCCommand(Request $request)
+    {
+        try {
             $req = $request->ubd_user_kyc_status;
-            if($req == ""){
-                return view('Admin.goToUserBankDetails',['code' => 404, 'uid' => $request->uid]);
+            if ($req == "") {
+                return view('Admin.goToUserBankDetails', ['code' => 404, 'uid' => $request->uid]);
             }
-            if(!is_numeric($req)){
-                return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+            if (!is_numeric($req)) {
+                return view('Admin.goToUserBankDetails', ['code' => 400, 'uid' => $request->uid]);
             }
-            if($req >= 1 && $req <= 4){
+            if ($req >= 1 && $req <= 4) {
                 $user = WebUser::find($request->uid);
-                $bankDetails = UserBankDetail::where('ubd_usr_id','=',$request->uid)->where('ubd_user_kyc_status','!=',0)->first();
-                if($user && $bankDetails){
+                $bankDetails = UserBankDetail::where('ubd_usr_id', '=', $request->uid)->where('ubd_user_kyc_status', '!=', 0)->first();
+                if ($user && $bankDetails) {
                     $bankDetails->ubd_user_kyc_status = $request->ubd_user_kyc_status;
-                    if($bankDetails->save()){
-                        if($req == 1){
+                    if ($bankDetails->save()) {
+                        if ($req == 1) {
                             $string = $bankDetails->ubd_user_bank_acc;
                             $lastFourChars = substr($string, -4);
-                            
-                            $optMessage = "Dear ".$user->usr_first_name.", Your Documents received for verification are verified successfully, Aadhar,Pan,Photos and Bank ".$lastFourChars." are forwarded to Operator. Regards ! BHRTIWEB";
+
+                            $optMessage = "Dear " . $user->usr_first_name . ", Your Documents received for verification are verified successfully, Aadhar,Pan,Photos and Bank " . $lastFourChars . " are forwarded to Operator. Regards ! BHRTIWEB";
                             // dd($optMessage);
 
                             $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513378567622');
                         }
-                        return view('Admin.goToUserBankDetails',['code' => 402, 'uid' => $request->uid]);
-                    }else{
-                        return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+                        return view('Admin.goToUserBankDetails', ['code' => 402, 'uid' => $request->uid]);
                     }
-                }else{
-                    return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+                    else {
+                        return view('Admin.goToUserBankDetails', ['code' => 400, 'uid' => $request->uid]);
+                    }
                 }
-            }else{
-                return view('Admin.goToUserBankDetails',['code' => 400, 'uid' => $request->uid]);
+                else {
+                    return view('Admin.goToUserBankDetails', ['code' => 400, 'uid' => $request->uid]);
+                }
             }
-        }catch(Exception $e){
-            return view('Admin.goToUserBankDetails',['code' => 405, 'uid' => $request->uid, 'msg' => $e->getMessage()]);
+            else {
+                return view('Admin.goToUserBankDetails', ['code' => 400, 'uid' => $request->uid]);
+            }
+        } catch (Exception $e) {
+            return view('Admin.goToUserBankDetails', ['code' => 405, 'uid' => $request->uid, 'msg' => $e->getMessage()]);
         }
     }
 
-    public function raiseNewInvoiceCommand(Request $request){
+    public function raiseNewInvoiceCommand(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric'
-        ],[
+        ], [
             'uid.required' => 'Something went wrong. Please try again later!',
             'uid.numeric' => 'Something went wrong. Please try again later!'
         ]);
-        try{
+        try {
             $user = WebUser::find($request->uid);
-            if($user){
-                return view('Admin.header').view('Admin.newInvoice',compact('user')).view('Admin.footer');
+            if ($user) {
+                return view('Admin.header') . view('Admin.newInvoice', compact('user')) . view('Admin.footer');
             }
-        }catch(Exception $e){
-            return redirect()->back()->with(['error'=>$e->getMessage()]);
+        } catch (Exception $e) {
+            return redirect()->back()->with(['error' => $e->getMessage()]);
         }
     }
 
-    public function viewUserInvoiceList(Request $request){
+    public function viewUserInvoiceList(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric'
-        ],[
+        ], [
             'uid.required' => 'Something went wrong. Please try again later!',
             'uid.numeric' => 'Something went wrong. Please try again later!'
         ]);
-        try{
+        try {
             $user = WebUser::find($request->uid);
-            if($user){
-                $invoiceList = Invoice::where('inv_party_id','=',$user->usr_id)->where('inv_status','!=',0)->get();
-                return view('Admin.header').view('Admin.viewInvoiceList',compact('user','invoiceList')).view('Admin.footer');
+            if ($user) {
+                $invoiceList = Invoice::where('inv_party_id', '=', $user->usr_id)->where('inv_status', '!=', 0)->get();
+                return view('Admin.header') . view('Admin.viewInvoiceList', compact('user', 'invoiceList')) . view('Admin.footer');
             }
-        }catch(Exception $e){
-            return redirect()->back()->with(['error'=>$e->getMessage()]);
+        } catch (Exception $e) {
+            return redirect()->back()->with(['error' => $e->getMessage()]);
         }
     }
 
-    private function changeInvoiceStatus($uid,$inv_id,$status){
+    private function changeInvoiceStatus($uid, $inv_id, $status)
+    {
         $user = WebUser::find($uid);
-        if($user){
-            $invoice = Invoice::where('inv_id','=',$inv_id)->where('inv_party_id','=',$user->usr_id)->where('inv_status','!=',0)->first();
-            if($invoice){
+        if ($user) {
+            $invoice = Invoice::where('inv_id', '=', $inv_id)->where('inv_party_id', '=', $user->usr_id)->where('inv_status', '!=', 0)->first();
+            if ($invoice) {
                 $invoice->inv_status = $status;
-                if($invoice->save()){
+                if ($invoice->save()) {
                     return true;
-                }else{
+                }
+                else {
                     return false;
                 }
-            }else{
+            }
+            else {
                 return false;
             }
-        }else{
+        }
+        else {
             return false;
         }
     }
 
-    public function makeInvoicePaidCommand(Request $request){
-        try{
+    public function makeInvoicePaidCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_id = $request->inv_id ?? 0;
-            if($uid == 0 || $inv_id == 0){
+            if ($uid == 0 || $inv_id == 0) {
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
-            }else{
+            }
+            else {
                 $user = WebUser::find($uid);
                 $invoice = Invoice::find($inv_id);
-                if($this->changeInvoiceStatus($uid,$inv_id,5)){
+                if ($this->changeInvoiceStatus($uid, $inv_id, 5)) {
 
                     $string = $invoice->inv_number;
                     $parts = explode('/', $string);
                     $lastTwoParts = implode('/', array_slice($parts, -2));
-                    $optMessage = "Dear ".$user->usr_first_name." ".$user->usr_last_name.", Your ".'Invoice '.$lastTwoParts." fee amount INR ".$invoice->inv_amount." received successfully at BHRTIWEB, Please make sure to provide correct details and documents to avid file cancellation. BHRTIWEB";
+                    $optMessage = "Dear " . $user->usr_first_name . " " . $user->usr_last_name . ", Your " . 'Invoice ' . $lastTwoParts . " fee amount INR " . $invoice->inv_amount . " received successfully at BHRTIWEB, Please make sure to provide correct details and documents to avid file cancellation. BHRTIWEB";
                     $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513450643192');
 
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
-                }else{
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }
+                else {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
                 }
             }
-        }catch(Exception $e){
-            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
-    public function makeInvoicePendingCommand(Request $request){
-        try{
+    public function makeInvoicePendingCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_id = $request->inv_id ?? 0;
-            if($uid == 0 || $inv_id == 0){
+            if ($uid == 0 || $inv_id == 0) {
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
-            }else{
-                if($this->changeInvoiceStatus($uid,$inv_id,4)){
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
-                }else{
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+            }
+            else {
+                if ($this->changeInvoiceStatus($uid, $inv_id, 4)) {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }
+                else {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
                 }
             }
-        }catch(Exception $e){
-            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
-    public function makeInvoicePartialPaidCommand(Request $request){
-        try{
+    public function makeInvoicePartialPaidCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_id = $request->inv_id ?? 0;
-            if($uid == 0 || $inv_id == 0){
+            if ($uid == 0 || $inv_id == 0) {
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
-            }else{
-                if($this->changeInvoiceStatus($uid,$inv_id,2)){
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
-                }else{
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+            }
+            else {
+                if ($this->changeInvoiceStatus($uid, $inv_id, 2)) {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }
+                else {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
                 }
             }
-        }catch(Exception $e){
-            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
-    public function makeInvoiceRefundedCommand(Request $request){
-        try{
+    public function makeInvoiceRefundedCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_id = $request->inv_id ?? 0;
-            if($uid == 0 || $inv_id == 0){
+            if ($uid == 0 || $inv_id == 0) {
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
-            }else{
-                if($this->changeInvoiceStatus($uid,$inv_id,3)){
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
-                }else{
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+            }
+            else {
+                if ($this->changeInvoiceStatus($uid, $inv_id, 3)) {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }
+                else {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
                 }
             }
-        }catch(Exception $e){
-            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
-    public function makeInvoiceUnpaidCommand(Request $request){
-        try{
+    public function makeInvoiceUnpaidCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_id = $request->inv_id ?? 0;
-            if($uid == 0 || $inv_id == 0){
+            if ($uid == 0 || $inv_id == 0) {
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
-            }else{
-                if($this->changeInvoiceStatus($uid,$inv_id,1)){
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
-                }else{
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+            }
+            else {
+                if ($this->changeInvoiceStatus($uid, $inv_id, 1)) {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice status updated successfully']);
+                }
+                else {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
                 }
             }
-        }catch(Exception $e){
-            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
-    public function makeInvoiceDeleteCommand(Request $request){
-        try{
+    public function makeInvoiceDeleteCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_id = $request->inv_id ?? 0;
-            if($uid == 0 || $inv_id == 0){
+            if ($uid == 0 || $inv_id == 0) {
                 return redirect()->to('/')->with(['error' => 'Something went wrong. Please try again later!']);
-            }else{
-                if($this->changeInvoiceStatus($uid,$inv_id,0)){
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 200, 'msg' => 'Invoice deleted successfully']);
-                }else{
-                    return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
+            }
+            else {
+                if ($this->changeInvoiceStatus($uid, $inv_id, 0)) {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice deleted successfully']);
+                }
+                else {
+                    return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong. Please try again later!']);
                 }
             }
-        }catch(Exception $e){
-            return view('Admin.goToInvoiceListPage',['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        } catch (Exception $e) {
+            return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
 
-    public function raiseNewInvoiceFormSubmitCommand(Request $request){
-        try{
+    public function raiseNewInvoiceFormSubmitCommand(Request $request)
+    {
+        try {
             $uid = $request->uid ?? 0;
             $inv_date_input = $request->inv_date;
             $due_date_input = $request->due_date;
@@ -847,18 +911,18 @@ class AdminController extends Controller
             $customer_address1 = $request->customer_address1;
             $customer_address2 = $request->customer_address2;
 
-            if($uid == 0){
+            if ($uid == 0) {
                 return redirect()->to('/admin/user-invoices-page')->with(['error' => 'Something went wrong. Please try again later!']);
             }
 
-            if($inv_date_input == ''){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Invoice date is required!']);
+            if ($inv_date_input == '') {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Invoice date is required!']);
             }
-            if($due_date_input == ''){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Due date is required!']);
+            if ($due_date_input == '') {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Due date is required!']);
             }
             if ($due_date_input < $inv_date_input) {
-                return view('Admin.goToRaiseNewInvoice', ['uid'=>$uid, 'code' => 400, 'msg'=> 'Due date cannot be earlier than invoice date!']);
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Due date cannot be earlier than invoice date!']);
             }
             // Validate invoice date
             try {
@@ -884,45 +948,47 @@ class AdminController extends Controller
                 ]);
             }
 
-            if($customer_name == ''){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Name is required!']);
+            if ($customer_name == '') {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Name is required!']);
             }
 
-            if($customer_phone1 == ''){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Phone 1 is required!']);
-            }elseif(!is_numeric($customer_phone1) || strlen($customer_phone1) != 10){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Invalid phone 1 provided!']);
+            if ($customer_phone1 == '') {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Phone 1 is required!']);
+            }
+            elseif (!is_numeric($customer_phone1) || strlen($customer_phone1) != 10) {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Invalid phone 1 provided!']);
             }
 
-            if($customer_phone2 != ''){
-                if(!is_numeric($customer_phone2) || strlen($customer_phone2) != 10){
-                    return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Invalid phone 2 provided!']);
+            if ($customer_phone2 != '') {
+                if (!is_numeric($customer_phone2) || strlen($customer_phone2) != 10) {
+                    return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Invalid phone 2 provided!']);
                 }
             }
 
-            if($customer_address1 == ''){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Address Line 1 is required!']);
+            if ($customer_address1 == '') {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Address Line 1 is required!']);
             }
-            if($customer_address2 == ''){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Address Line 2 is required!']);
+            if ($customer_address2 == '') {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Address Line 2 is required!']);
             }
 
             $user = WebUser::find($uid);
             $invoice_number = $user->usr_username;
 
-            $countInvoice = Invoice::where('inv_party_id','=',$user->usr_id)->count();
-            $invoice_number = $invoice_number.'/IN'.($countInvoice+1);
+            $countInvoice = Invoice::where('inv_party_id', '=', $user->usr_id)->count();
+            $invoice_number = $invoice_number . '/IN' . ($countInvoice + 1);
 
             $inv_amount = 0.00;
             foreach ($request->inv_amount as $amount) {
-                if($amount == '' || $amount == null){
+                if ($amount == '' || $amount == null) {
                     continue;
-                }elseif (!is_numeric($amount) || $amount <= 0) {
+                }
+                elseif (!is_numeric($amount) || $amount <= 0) {
                     return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Invalid amount provided!']);
                 }
-                $inv_amount += (float)$amount;
+                $inv_amount += (float) $amount;
             }
-            
+
             $invoice = new Invoice();
 
             $invoice->inv_number = $invoice_number;
@@ -936,26 +1002,28 @@ class AdminController extends Controller
             $invoice->inv_date = $inv_date;
             $invoice->inv_due_date = $due_date;
             $invoice->inv_created_by = Session::get('uid');
-            if(!$invoice->save()){
-                return view('Admin.goToRaiseNewInvoice',['uid'=>$uid, 'code' => 400, 'msg'=> 'Something went wrong while saving invoice. Please try again after sometimes!']);
-            }else{
+            if (!$invoice->save()) {
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Something went wrong while saving invoice. Please try again after sometimes!']);
+            }
+            else {
                 $string = $invoice_number;
                 $parts = explode('/', $string);
                 $lastTwoParts = implode('/', array_slice($parts, -2));
 
-                $optMessage ="Dear Customer, Your ".$lastTwoParts." INR ".$inv_amount." fee at BHRTIWEB is due for processing, Please make sure to clear your dues immediately to avid file closure. BHRTIWEB";
-                
+                $optMessage = "Dear Customer, Your " . $lastTwoParts . " INR " . $inv_amount . " fee at BHRTIWEB is due for processing, Please make sure to clear your dues immediately to avid file closure. BHRTIWEB";
+
                 $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $customer_phone1 . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513430583099');
                 Log::info('SMS API Response', ['status' => $response->status(), 'body' => $response->body()]);
 
                 if (count($request->inv_desc_title) !== count($request->inv_amount)) {
                     return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => 'Mismatch between descriptions and amounts!']);
                 }
-                foreach($request->inv_desc_title as $key=>$description){
+                foreach ($request->inv_desc_title as $key => $description) {
                     $invoiceDescription = new InvoiceDescriptionAmount();
-                    if($description == "" || $description == null){
+                    if ($description == "" || $description == null) {
                         continue;
-                    }else{
+                    }
+                    else {
                         $invoiceDescription->ida_inv_id = $invoice->inv_id;
                         $invoiceDescription->ida_inv_no = $invoice_number;
                         $invoiceDescription->ida_description = $description;
@@ -963,20 +1031,21 @@ class AdminController extends Controller
                         $invoiceDescription->save();
                     }
                 }
-                
 
-                return view('Admin.goToRaiseNewInvoice',['uid' => $uid, 'code'=> 200, 'msg'=> 'Invoice Raised Successfully']);
+
+                return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 200, 'msg' => 'Invoice Raised Successfully']);
 
             }
-        }catch(Exception $e){
-            if($uid == 0){
+        } catch (Exception $e) {
+            if ($uid == 0) {
                 return redirect()->to('/admin/user-invoices-page')->with(['error' => $e->getMessage()]);
             }
-            return view('Admin.goToRaiseNewInvoice',['uid' => $uid, 'code' => 400, 'msg'=> $e->getMessage()]);
+            return view('Admin.goToRaiseNewInvoice', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
 
-    public function updateCompanyCommand(Request $request){
+    public function updateCompanyCommand(Request $request)
+    {
         $request->validate([
             'cmp_name' => 'required|string|max:255',
             'cmp_short_name' => 'required|string|max:255',
@@ -1045,7 +1114,7 @@ class AdminController extends Controller
             'cmp_logo.mimes' => 'Company Logo must be a jpeg, png, or jpg file.',
             'cmp_logo.max' => 'Company Logo must not exceed 2MB in size.'
         ]);
-        try{
+        try {
             $companyInfo = CompanyInfo::find(1);
             $companyInfo->cmp_name = $request->cmp_name;
             $companyInfo->cmp_short_name = $request->cmp_short_name;
@@ -1072,17 +1141,19 @@ class AdminController extends Controller
                 $file->move(public_path('assets/img/uploads/logos'), $fileName);
                 $companyInfo->cmp_logo = $fileName;
             }
-            if($companyInfo->save()){
+            if ($companyInfo->save()) {
                 return redirect()->back()->with('success', 'Company information updated successfully!');
-            }else{
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong. Please try again later!');
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function updateApprovalLetterCommand(Request $request){
+    public function updateApprovalLetterCommand(Request $request)
+    {
         $request->validate([
             'als_header_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
             'als_footer_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
@@ -1106,7 +1177,7 @@ class AdminController extends Controller
             'als_default_welcome_msg.string' => 'Welcome Message must be valid text.',
             'als_default_welcome_msg.max' => 'Welcome Message must not exceed 1000 characters.',
         ]);
-        try{
+        try {
             $approvalSetting = ApprovalLetterSetting::find(1);
             if ($request->hasFile('als_header_img')) {
                 $file = $request->file('als_header_img');
@@ -1133,17 +1204,19 @@ class AdminController extends Controller
                 $approvalSetting->als_body_img_2 = $fileName;
             }
             $approvalSetting->als_default_welcome_msg = $request->als_default_welcome_msg;
-            if($approvalSetting->save()){
-                return redirect()->back()->with('success','Approval letter settings updated successfully');
-            }else{
-                return redirect()->back()->with('error','Something went wrong. Please try again later!');
+            if ($approvalSetting->save()) {
+                return redirect()->back()->with('success', 'Approval letter settings updated successfully');
             }
-        }catch(Exception $e){
+            else {
+                return redirect()->back()->with('error', 'Something went wrong. Please try again later!');
+            }
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function updateInvoiceCommand(Request $request){
+    public function updateInvoiceCommand(Request $request)
+    {
         $request->validate([
             'ins_header_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
             'ins_footer_img' => 'nullable|file|image|mimes:jpeg,png,jpg|max:2048',
@@ -1170,7 +1243,7 @@ class AdminController extends Controller
             'ins_website.required' => 'Footer URL is required.',
             'ins_website.url' => 'Footer URL must be a valid URL.',
         ]);
-        try{
+        try {
             $invoiceSetting = InvoiceSetting::find(1);
             if ($request->hasFile('ins_header_img')) {
                 $file = $request->file('ins_header_img');
@@ -1203,17 +1276,19 @@ class AdminController extends Controller
                 $invoiceSetting->ins_stamp = $fileName;
             }
             $invoiceSetting->ins_website = $request->ins_website;
-            if($invoiceSetting->save()){
-                return redirect()->back()->with('success','Invoice settings updated successfully!');
-            }else{
-                return redirect()->back()->with('error','Something went wrong. Please try again later!');
+            if ($invoiceSetting->save()) {
+                return redirect()->back()->with('success', 'Invoice settings updated successfully!');
             }
-        }catch(Exception $e){
+            else {
+                return redirect()->back()->with('error', 'Something went wrong. Please try again later!');
+            }
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function updateAdminAccountCommand(Request $request){
+    public function updateAdminAccountCommand(Request $request)
+    {
         $request->validate([
             'adm_first_name' => 'required|string|min:2',
             'adm_last_name' => 'required|string|min:2',
@@ -1235,10 +1310,10 @@ class AdminController extends Controller
             'adm_confirm_new_password.required_with' => 'Confirm New Password is required when setting a new password.',
             'adm_profile_photo.mimes' => 'Profile photo must be an image file (jpeg, png, jpg).',
         ]);
-        
-        try{
+
+        try {
             $admin = Admin::find(Session::get('uid'));
-            if($admin && Hash::check($request->adm_current_password,$admin->adm_password)){
+            if ($admin && Hash::check($request->adm_current_password, $admin->adm_password)) {
                 if ($request->hasFile('adm_profile_photo')) {
                     $file = $request->file('adm_profile_photo');
                     $fileName = time() . '-' . $file->getClientOriginalName();
@@ -1249,24 +1324,155 @@ class AdminController extends Controller
                 $admin->adm_last_name = $request->adm_last_name;
                 $admin->adm_email = $request->adm_email;
                 $admin->adm_mobile = $request->adm_mobile;
-                if($request->adm_new_password != '' && $request->adm_new_password != null){
+                if ($request->adm_new_password != '' && $request->adm_new_password != null) {
                     $admin->adm_password = Hash::make($request->adm_new_password);
                     $admin->adm_visible_password = $request->adm_new_password;
                 }
-                if($admin->save()){
-                    return redirect()->back()->with('success','Account details updated successfully!');
-                }else{
-                    return redirect()->back()->with('error','Something went wrong. Please try again later!');
+                if ($admin->save()) {
+                    return redirect()->back()->with('success', 'Account details updated successfully!');
                 }
-            }else{
-                return redirect()->back()->with('error','Current password is wrong!');
+                else {
+                    return redirect()->back()->with('error', 'Something went wrong. Please try again later!');
+                }
             }
-        }catch(Exception $e){
+            else {
+                return redirect()->back()->with('error', 'Current password is wrong!');
+            }
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function getCompanyInfo(){
+    public function sendReminderCommand(Request $request)
+    {
+        $request->validate([
+            'from_date' => 'required|date|before_or_equal:today',
+            'to_date' => 'nullable|date|after_or_equal:from_date|before_or_equal:today',
+            'rem_type' => 'required|in:1,2',
+            'rem_to' => 'required|in:1,2',
+            'usr_username' => 'required_if:rem_to,1',
+        ], [
+            'from_date.required' => 'Please select a start date.',
+            'from_date.date' => 'The start date must be a valid date.',
+            'from_date.before_or_equal' => 'The start date cannot be a future date.',
+            'to_date.date' => 'The end date must be a valid date.',
+            'to_date.after_or_equal' => 'The end date must be the same or later than the start date.',
+            'to_date.before_or_equal' => 'The end date cannot be a future date.',
+            'rem_type.required' => 'Please select a reminder type.',
+            'rem_type.in' => 'The selected reminder type is invalid.',
+            'rem_to.required' => 'Please select whom to remind.',
+            'rem_to.in' => 'The selected option for whom to remind is invalid.',
+            'usr_username.required_if' => "User's file or mobile number is required when reminding a single person.",
+        ]);
+
+        try {
+            $dateFrom = $request->from_date;
+            $dateTo = $request->to_date ?? today(); 
+            $remindType = $request->rem_type;
+            $remindTo = $request->rem_to;
+            $userFileOrMobile = $request->usr_username;
+
+            if ($remindTo == 1) {
+                $user = WebUser::where('usr_username', '=', $userFileOrMobile)->orWhere('usr_mobile', '=', $userFileOrMobile)->where('usr_profile_status', '!=', 0)->first();
+                // dd($user);
+                $string = $user->usr_username;
+                $parts = explode('/', $string);
+                $lastPart = implode('/', array_slice($parts, -1));
+                if ($user) {
+                    if ($remindType == 1 && $user->usr_verification_status == 0) {
+                        // Due KYC Single
+                        $optMessage = "Dear " . $user->usr_first_name . ", Your registration " . $lastPart . " at BHRTI WEB is successful, Documents received/required for verification are pending Regards ! BHRTI";
+                        $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
+                        return redirect()->back()->with('success', 'KYC Reminder sms sent to the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username);
+                    }else if($remindType == 1 && $user->usr_verification_status == 1){
+                        return redirect()->back()->with('success', 'KYC is already completed for User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username);
+                    }elseif ($remindType == 2) {
+                        // Due Invoice Single
+                        $finalDue = Invoice::where("inv_party_id", $user->usr_id)->whereIn('inv_status', [1, 2, 3, 4])->sum('inv_amount');
+                        if ($finalDue > 0) {
+                            $optMessage = "Dear " . $user->usr_first_name . ", Your registration at BHRTIWEB ".'fee INR '.$finalDue." due for processing, Please make sure to clear your dues timely ".'to avoid closure'.". FISBHT";
+                            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513404119124');
+                            return redirect()->back()->with('success', 'Invoice Reminder sms sent to the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username.", Due Amount: ".$finalDue);
+                        }else{
+                            return redirect()->back()->with('success', 'No Invoice Dues for the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username);
+                        }
+                    }
+                    else {
+                        return redirect()->back()->with("error", "Something went wrong. Please try again later!");
+                    }
+                }
+                else {
+                    return redirect()->back()->with("error", "Something went wrong. Please try again later!");
+                }
+
+            }
+            elseif ($remindTo == 2) {
+                if ($remindType == 1) {
+                    // Due KYC All
+                    $users = WebUser::where('usr_verification_status', '=', 0)
+                        ->where('usr_profile_status', '!=', 0)
+                        ->whereBetween('created_at', [$dateFrom, $dateTo])
+                        ->get();
+                        
+                    if ($users->isEmpty()) {
+                        return redirect()->back()->with('success', 'No users found with pending KYC between the selected dates.');
+                    }
+
+                    $count = 0;
+                    foreach ($users as $user) {
+                        $string = $user->usr_username;
+                        $parts = explode('/', $string);
+                        $lastPart = implode('/', array_slice($parts, -1));
+                        $optMessage = "Dear " . $user->usr_first_name . ", Your registration " . $lastPart . " at BHRTI WEB is successful, Documents received/required for verification are pending Regards ! BHRTI";
+                        $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
+                        $count++;
+                    }
+
+                    return redirect()->back()->with('success', 'KYC Reminder SMS sent to '.$count.' users with pending KYC between the selected dates.');
+
+                }
+                elseif ($remindType == 2) {
+                    // Due Invoice All
+                    $users = WebUser::where('usr_profile_status', '!=', 0)
+                        ->whereBetween('created_at', [$dateFrom, $dateTo])
+                        ->get();
+                        
+                    if ($users->isEmpty()) {
+                        return redirect()->back()->with('success', 'No users with due invoices between the selected dates.');
+                    }
+
+                    $count = 0;
+
+                    foreach ($users as $user) {
+                        $finalDue = Invoice::where("inv_party_id", "=", $user->usr_id)->whereIn('inv_status', [1, 2, 3, 4])->sum('inv_amount');
+
+                        if ($finalDue > 0) {
+                            $optMessage = "Dear " . $user->usr_first_name . ", Your registration at BHRTIWEB has an outstanding fee of INR " . $finalDue . " due. Please clear your dues to avoid closure. Regards, FISBHT";
+                            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513404119124');
+                            $count++;
+                        }
+                    }
+
+                    return redirect()->back()->with('success', 'Invoice Reminder SMS sent to '.$count.' users with due invoices between the selected dates.');
+
+                }
+                else {
+                    return redirect()->back()->with("error", "Something went wrong. Please try again later!");
+                }
+            }
+            else {
+                return redirect()->back()->with("error", "Something went wrong. Please try again later!");
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with("error", $e->getMessage());
+        }
+
+    }
+
+    
+
+    public function getCompanyInfo()
+    {
         $company = CompanyInfo::find(1);
         return response()->json($company);
     }
@@ -1290,7 +1496,8 @@ class AdminController extends Controller
         $admin->adm_visible_password = $adm_visible_password;
         if ($admin->save()) {
             echo "Admin Created Email -> " . $adm_email . " | Password -> " . $adm_visible_password;
-        } else {
+        }
+        else {
             echo "Something went wrong!";
         }
     }

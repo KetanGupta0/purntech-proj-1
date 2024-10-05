@@ -44,7 +44,7 @@
                                         $rejectedDocument = [];
                                         // Count only valid uploaded documents
                                         foreach ($details['documents'] as $document) {
-                                            if ($document->udc_status != '0' && $document->udc_status != '3' && ($document->udc_doc_type == 1 || $document->udc_doc_type == 2 || $document->udc_doc_type == 3 || $document->udc_doc_type == 4 || $document->udc_doc_type == 7)) {
+                                            if ($document->udc_status != '0' && $document->udc_status != '3' && ($document->udc_doc_type == 1 || $document->udc_doc_type == 2 || $document->udc_doc_type == 3 )) {
                                                 $totalDocuments++;
                                             }
                                             if ($document->udc_status == '3') {
@@ -52,7 +52,7 @@
                                             }
                                         }
                                         // Calculate percentage based on total (assuming 7 required documents)
-                                        $percent = ($totalDocuments * 100.0) / 5.0;
+                                        $percent = ($totalDocuments * 100.0) / 3.0;
                                     @endphp
 
                                     {{ sprintf('%.0f', $percent) }}% {{-- ({{ $totalDocuments }} documents) --}}

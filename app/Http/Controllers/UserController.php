@@ -201,7 +201,7 @@ class UserController extends Controller
     {
         try {
             $user = WebUser::find(Session::get('uid'));
-            $userDocs = UserDocuments::where('udc_user_id', '=', $user->usr_id)->get();
+            $userDocs = UserDocuments::where('udc_user_id', '=', $user->usr_id)->where('udc_status','!=',0)->get();
             return response()->json($userDocs);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);

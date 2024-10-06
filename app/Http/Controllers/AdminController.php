@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Admin;
 use App\Models\ApprovalLetterSetting;
+use App\Models\BankList;
+use App\Models\CompanyBankDetail;
 use App\Models\CompanyInfo;
+use App\Models\Downloadable;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
 use App\Models\CompanyService;
@@ -116,7 +119,8 @@ class AdminController extends Controller
     }
     public function userDownloadView()
     {
-        return view('Admin.header') . view('Admin.user_download_page') . view('Admin.footer');
+        $downloadables = Downloadable::where('dwn_status', '!=', 0)->get();
+        return view('Admin.header') . view('Admin.user_download_page', compact('downloadables')) . view('Admin.footer');
     }
     public function remindersView()
     {
@@ -128,13 +132,15 @@ class AdminController extends Controller
     }
     public function adminSettingsView()
     {
-        try {
+        try 
+        {
             $companyInfo = CompanyInfo::where('cmp_id', '=', 1)->where('cmp_status', '=', 1)->first();
+            $companyBankInfo = CompanyBankDetail::find(1);
+            $banks = BankList::orderBy('bnk_name','ASC')->get();
             $approvalInfo = ApprovalLetterSetting::where('als_id', '=', 1)->where('als_status', '=', 1)->first();
             $invoiceInfo = InvoiceSetting::where('ins_id', '=', 1)->where('ins_status', '=', 1)->first();
             $admin = Admin::find(Session::get('uid'));
-            // dd($approvalInfo);
-            return view('Admin.header') . view('Admin.admin_settings', compact('companyInfo', 'approvalInfo', 'invoiceInfo', 'admin')) . view('Admin.footer');
+            return view('Admin.header') . view('Admin.admin_settings', compact('companyInfo','companyBankInfo', 'banks', 'approvalInfo', 'invoiceInfo', 'admin')) . view('Admin.footer');
         } catch (Exception $e) {
             return redirect()->to('/')->with('error', $e->getMessage());
         }
@@ -371,10 +377,6 @@ class AdminController extends Controller
                     }
                     return view('Admin.gotouserViewPage', ['uid' => $request->uid, 'code' => 400, 'msg' => $outError]);
                 }
-                else {
-                    // Proceed with processing the form data
-                    echo "Form is valid!";
-                }
 
                 // dd(date('Y-m-d', strtotime($request->usr_dob)));
 
@@ -415,7 +417,107 @@ class AdminController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return redirect()->to('/')->with('error', $e->getMessage());
+            return view('Admin.gotouserViewPage', ['uid' => $user->usr_id, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    /**
+     * Validate a file manually for type, size, etc.
+     *
+     * @param  \Illuminate\Http\UploadedFile $file
+     * @param  string $fieldName
+     * @throws Exception
+     */
+    private function validateFile($file, $fieldName)
+    {
+        $allowedMimeTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+        $maxFileSize = 2048; // 2MB
+
+        // Check file size
+        if ($file->getSize() > $maxFileSize * 1024) {
+            throw new Exception("The file for {$fieldName} is too large. Maximum allowed size is {$maxFileSize}KB.");
+        }
+
+        // Check file mime type
+        if (!in_array($file->getMimeType(), $allowedMimeTypes)) {
+            throw new Exception("The file for {$fieldName} must be a JPG, PNG, or PDF.");
+        }
+    }
+    public function userDocumentsUpdateCommand(Request $request)
+    {
+        try {
+            $user = WebUser::find($request->uid);
+            if($user){
+                $fileFound = false;
+                if ($request->hasFile('aadharf')) {
+                    $file = $request->file('aadharf');
+                    $this->validateFile($file, 'Aadhar Card Front');
+                    $fileFound = true;
+                }
+                if ($request->hasFile('aadharb')) {
+                    $file = $request->file('aadharb');
+                    $this->validateFile($file, 'Aadhar Card Back');
+                    $fileFound = true;
+                }
+                if ($request->hasFile('pancard')) {
+                    $file = $request->file('pancard');
+                    $this->validateFile($file, 'PAN Card');
+                    $fileFound = true;
+                }
+                if ($request->hasFile('passbook')) {
+                    $file = $request->file('passbook');
+                    $this->validateFile($file, 'Bank Passbook / Cancel Cheque');
+                    $fileFound = true;
+                }
+                if ($request->hasFile('dl')) {
+                    $file = $request->file('dl');
+                    $this->validateFile($file, 'Voter ID / Driving License');
+                    $fileFound = true;
+                }
+                if ($request->hasFile('ld')) {
+                    $file = $request->file('ld');
+                    $this->validateFile($file, 'Land Documents');
+                    $fileFound = true;
+                }
+                if ($request->hasFile('lp')) {
+                    $file = $request->file('lp');
+                    $this->validateFile($file, 'Land Photographs');
+                    $fileFound = true;
+                }
+                if($fileFound){
+                    foreach ($request->allFiles() as $key => $file) {
+                        $userDocument = new UserDocuments();
+                        $fileName = time() . '-' . $file->getClientOriginalName();
+                        $file->move(public_path('assets/img/uploads/documents'), $fileName);
+                        $userDocument->udc_name = $fileName;
+                        $userDocument->udc_user_id = $request->uid;
+                        $userDocument->udc_source = "Uploaded by admin";
+                        switch($key){
+                            case 'aadharf': $userDocument->udc_doc_type = 1;
+                                break;
+                            case 'aadharb': $userDocument->udc_doc_type = 2;
+                                break;
+                            case 'pancard': $userDocument->udc_doc_type = 3;
+                                break;
+                            case 'passbook': $userDocument->udc_doc_type = 4;
+                                break;
+                            case 'dl': $userDocument->udc_doc_type = 5;
+                                break;
+                            case 'ld': $userDocument->udc_doc_type = 6;
+                                break;
+                            case 'lp': $userDocument->udc_doc_type = 7;
+                                break;
+                        }
+                        $userDocument->save();
+                    }
+                    return view('Admin.gotouserViewPage', ['uid' => $request->uid, 'code' => 200, 'msg' => 'Documents updated successfully!']);
+                }else{
+                    return view('Admin.gotouserViewPage', ['uid' => $request->uid, 'code' => 400, 'msg' => 'Please upload at least 1 file!']);
+                }
+            }else{
+                return view('Admin.gotouserViewPage', ['uid' => $request->uid, 'code' => 400, 'msg' => 'User not found. Please try again later!']);
+            }
+        } catch (Exception $e) {
+            return view('Admin.gotouserViewPage', ['uid' => $request->uid, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
     public function viewUserCommand(Request $request)
@@ -1134,7 +1236,7 @@ class AdminController extends Controller
             $companyInfo->cmp_state = $request->cmp_state;
             $companyInfo->cmp_city = $request->cmp_city;
             $companyInfo->cmp_zip = $request->cmp_zip;
-            $companyInfo->cmp_logo = $request->cmp_logo;
+            // $companyInfo->cmp_logo = $request->cmp_logo;
             if ($request->hasFile('cmp_logo')) {
                 $file = $request->file('cmp_logo');
                 $fileName = time() . '-' . $file->getClientOriginalName();
@@ -1148,6 +1250,54 @@ class AdminController extends Controller
                 return redirect()->back()->with('error', 'Something went wrong. Please try again later!');
             }
         } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function updateCompanyBankCommand(Request $request){
+        $request->validate([
+            'cbd_bank_name' => 'required|string|max:255',
+            'cbd_account_number' => 'required|numeric',
+            'cbd_ifsc_code' => 'required|string|max:11',
+            'cbd_branch' => 'nullable|string|max:255',
+            'cbd_upi_name' => 'nullable|string|max:255',
+            'cbd_upi_id' => 'nullable|string',
+            'cbd_qr_code' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cbd_is_hidden' => 'required|numeric'
+        ], [
+            'cbd_bank_name.required' => 'Please select a bank name.',
+            'cbd_account_number.required' => 'Account number is required.',
+            'cbd_account_number.numeric' => 'Account number must be a valid number.',
+            'cbd_ifsc_code.required' => 'IFSC code is required.',
+            'cbd_ifsc_code.max' => 'IFSC code cannot be more than 11 characters.',
+            'cbd_branch.max' => 'Branch name cannot exceed 255 characters.',
+            'cbd_upi_name.max' => 'UPI name cannot exceed 255 characters.',
+            'cbd_qr_code.mimes' => 'QR code must be a file of type: jpeg, png, jpg, gif, svg.',
+            'cbd_qr_code.max' => 'QR code size must not exceed 2MB.',
+            'cbd_is_hidden.required' => 'Please select bank details visibility!',
+            'cbd_is_hidden.numeric' => 'Invalid bank details visibility!'
+        ]);
+        try{
+            $bank = CompanyBankDetail::find(1);
+            $bank->cbd_bank_name = $request->cbd_bank_name;
+            $bank->cbd_account_number = $request->cbd_account_number;
+            $bank->cbd_ifsc_code = $request->cbd_ifsc_code;
+            $bank->cbd_branch = $request->cbd_branch;
+            $bank->cbd_upi_name = $request->cbd_upi_name;
+            $bank->cbd_upi_id = $request->cbd_upi_id;
+            $bank->cbd_is_hidden = $request->cbd_is_hidden;
+            if ($request->hasFile('cbd_qr_code')) {
+                $file = $request->file('cbd_qr_code');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('assets/img/uploads/documents'), $fileName);
+                $bank->cbd_qr_code = $fileName;
+            }
+            if($bank->save()){
+                return redirect()->back()->with('success','Company bank details updated successfully!');
+            }else{
+                return redirect()->back()->with('error','Unable to update company bank details right now. Please try again later!');
+            }
+        }catch(Exception $e){
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -1367,7 +1517,7 @@ class AdminController extends Controller
 
         try {
             $dateFrom = $request->from_date;
-            $dateTo = $request->to_date ?? today(); 
+            $dateTo = $request->to_date ?? today();
             $remindType = $request->rem_type;
             $remindTo = $request->rem_to;
             $userFileOrMobile = $request->usr_username;
@@ -1384,16 +1534,19 @@ class AdminController extends Controller
                         $optMessage = "Dear " . $user->usr_first_name . ", Your registration " . $lastPart . " at BHRTI WEB is successful, Documents received/required for verification are pending Regards ! BHRTI";
                         $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
                         return redirect()->back()->with('success', 'KYC Reminder sms sent to the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username);
-                    }else if($remindType == 1 && $user->usr_verification_status == 1){
+                    }
+                    else if ($remindType == 1 && $user->usr_verification_status == 1) {
                         return redirect()->back()->with('success', 'KYC is already completed for User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username);
-                    }elseif ($remindType == 2) {
+                    }
+                    elseif ($remindType == 2) {
                         // Due Invoice Single
                         $finalDue = Invoice::where("inv_party_id", $user->usr_id)->whereIn('inv_status', [1, 2, 3, 4])->sum('inv_amount');
                         if ($finalDue > 0) {
-                            $optMessage = "Dear " . $user->usr_first_name . ", Your registration at BHRTIWEB ".'fee INR '.$finalDue." due for processing, Please make sure to clear your dues timely ".'to avoid closure'.". FISBHT";
+                            $optMessage = "Dear " . $user->usr_first_name . ", Your registration at BHRTIWEB " . 'fee INR ' . $finalDue . " due for processing, Please make sure to clear your dues timely " . 'to avoid closure' . ". FISBHT";
                             $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513404119124');
-                            return redirect()->back()->with('success', 'Invoice Reminder sms sent to the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username.", Due Amount: ".$finalDue);
-                        }else{
+                            return redirect()->back()->with('success', 'Invoice Reminder sms sent to the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username . ", Due Amount: " . $finalDue);
+                        }
+                        else {
                             return redirect()->back()->with('success', 'No Invoice Dues for the User: ' . $user->usr_first_name . " " . $user->usr_last_name . ", File number: " . $user->usr_username);
                         }
                     }
@@ -1413,7 +1566,7 @@ class AdminController extends Controller
                         ->where('usr_profile_status', '!=', 0)
                         ->whereBetween('created_at', [$dateFrom, $dateTo])
                         ->get();
-                        
+
                     if ($users->isEmpty()) {
                         return redirect()->back()->with('success', 'No users found with pending KYC between the selected dates.');
                     }
@@ -1428,7 +1581,7 @@ class AdminController extends Controller
                         $count++;
                     }
 
-                    return redirect()->back()->with('success', 'KYC Reminder SMS sent to '.$count.' users with pending KYC between the selected dates.');
+                    return redirect()->back()->with('success', 'KYC Reminder SMS sent to ' . $count . ' users with pending KYC between the selected dates.');
 
                 }
                 elseif ($remindType == 2) {
@@ -1436,7 +1589,7 @@ class AdminController extends Controller
                     $users = WebUser::where('usr_profile_status', '!=', 0)
                         ->whereBetween('created_at', [$dateFrom, $dateTo])
                         ->get();
-                        
+
                     if ($users->isEmpty()) {
                         return redirect()->back()->with('success', 'No users with due invoices between the selected dates.');
                     }
@@ -1453,7 +1606,7 @@ class AdminController extends Controller
                         }
                     }
 
-                    return redirect()->back()->with('success', 'Invoice Reminder SMS sent to '.$count.' users with due invoices between the selected dates.');
+                    return redirect()->back()->with('success', 'Invoice Reminder SMS sent to ' . $count . ' users with due invoices between the selected dates.');
 
                 }
                 else {
@@ -1469,36 +1622,150 @@ class AdminController extends Controller
 
     }
 
-    
+    public function uploadFileCommand(Request $request)
+    {
+        $request->validate([
+            'file_title' => 'required',
+            'file_subtitle' => 'required',
+            'file' => 'required|file'
+        ], [
+            'file_title.required' => 'File title is required!',
+            'file_subtitle.required' => 'File subtitle is required!',
+            'file.required' => 'Please upload a file!',
+            'file.file' => 'Invalid file!'
+        ]);
+
+        try {
+            if ($request->hasFile('file')) {
+                $file = $request->file('file');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('downloads'), $fileName);
+
+                $upload = new Downloadable();
+                $upload->dwn_title = $request->file_title;
+                $upload->dwn_subtitle = $request->file_subtitle;
+                $upload->dwn_file = $fileName;
+                if ($upload->save()) {
+                    return redirect()->back()->with('success', 'File uploaded!');
+                }
+                else {
+                    return redirect()->back()->with('error', 'Unable to save files right now. Please try again later!');
+                }
+            }
+            else {
+                return redirect()->back()->with('error', 'Please upload a file!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function hideFileCommand(Request $request)
+    {
+        $request->validate([
+            'file_id' => 'required|numeric'
+        ], [
+            'file_id.required' => 'Unable to process your request right now. Please try again later!',
+            'file_id.numeric' => 'Unable to process your request right now. Please try again later!'
+        ]);
+        try {
+            $file = Downloadable::find($request->file_id);
+            if ($file) {
+                $file->dwn_is_hidden = 1;
+                if ($file->save()) {
+                    return redirect()->back()->with('success', 'File status updated successfully!');
+                }
+                else {
+                    return redirect()->back()->with('error', 'Requested file not found. Please try again later!');
+                }
+            }
+            else {
+                return redirect()->back()->with('error', 'Requested file not found. Please try again later!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function showFileCommand(Request $request)
+    {
+        $request->validate([
+            'file_id' => 'required|numeric'
+        ], [
+            'file_id.required' => 'Unable to process your request right now. Please try again later!',
+            'file_id.numeric' => 'Unable to process your request right now. Please try again later!'
+        ]);
+        try {
+            $file = Downloadable::find($request->file_id);
+            if ($file) {
+                $file->dwn_is_hidden = 0;
+                if ($file->save()) {
+                    return redirect()->back()->with('success', 'File status updated successfully!');
+                }
+                else {
+                    return redirect()->back()->with('error', 'Requested file not found. Please try again later!');
+                }
+            }
+            else {
+                return redirect()->back()->with('error', 'Requested file not found. Please try again later!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function deleteFileCommand(Request $request)
+    {
+        $request->validate([
+            'file_id' => 'required|numeric'
+        ], [
+            'file_id.required' => 'Unable to process your request right now. Please try again later!',
+            'file_id.numeric' => 'Unable to process your request right now. Please try again later!'
+        ]);
+        try {
+            $file = Downloadable::find($request->file_id);
+            if ($file) {
+                $file->dwn_status = 0;
+                if ($file->save()) {
+                    return redirect()->back()->with('success', 'File deleted successfully!');
+                }
+                else {
+                    return redirect()->back()->with('error', 'Requested file not found. Please try again later!');
+                }
+            }
+            else {
+                return redirect()->back()->with('error', 'Requested file not found. Please try again later!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
 
     public function getCompanyInfo()
     {
         $company = CompanyInfo::find(1);
         return response()->json($company);
     }
-    public function makeFirstAdmin()
-    {
-        $adm_first_name = "Super";
-        $adm_last_name = "Admin";
-        $adm_email = "admin@gmail.com";
-        $adm_mobile = "1234567890";
-        $adm_username = "SA16092024";
-        $adm_visible_password = "demo";
+    // public function makeFirstAdmin()
+    // {
+    //     $adm_first_name = "Super";
+    //     $adm_last_name = "Admin";
+    //     $adm_email = "admin@gmail.com";
+    //     $adm_mobile = "1234567890";
+    //     $adm_username = "SA16092024";
+    //     $adm_visible_password = "demo";
 
-        $admin = new Admin();
-        $adm_password = Hash::make($adm_visible_password);
-        $admin->adm_first_name = $adm_first_name;
-        $admin->adm_last_name = $adm_last_name;
-        $admin->adm_email = $adm_email;
-        $admin->adm_mobile = $adm_mobile;
-        $admin->adm_username = $adm_username;
-        $admin->adm_password = $adm_password;
-        $admin->adm_visible_password = $adm_visible_password;
-        if ($admin->save()) {
-            echo "Admin Created Email -> " . $adm_email . " | Password -> " . $adm_visible_password;
-        }
-        else {
-            echo "Something went wrong!";
-        }
-    }
+    //     $admin = new Admin();
+    //     $adm_password = Hash::make($adm_visible_password);
+    //     $admin->adm_first_name = $adm_first_name;
+    //     $admin->adm_last_name = $adm_last_name;
+    //     $admin->adm_email = $adm_email;
+    //     $admin->adm_mobile = $adm_mobile;
+    //     $admin->adm_username = $adm_username;
+    //     $admin->adm_password = $adm_password;
+    //     $admin->adm_visible_password = $adm_visible_password;
+    //     if ($admin->save()) {
+    //         echo "Admin Created Email -> " . $adm_email . " | Password -> " . $adm_visible_password;
+    //     }
+    //     else {
+    //         echo "Something went wrong!";
+    //     }
+    // }
 }

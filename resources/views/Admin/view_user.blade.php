@@ -14,6 +14,7 @@
 </div>
 <div class="card">
     <div class="card-body">
+        <h4>Basic Details</h4>
         @if(isset($user))
             <form action="{{ url('/admin/user-profiles/user-update') }}" method="post">
                 @csrf
@@ -85,17 +86,18 @@
                             <label for="usr_mother">Mother Name</label>
                         </div>
                     </div>
-                    <div class="col-md-12 mt-3">
-                        <div class="form-group mb-3">
-                            <label for="usr_last_name">Full Address</label>
-                            <textarea class="form-control" id="usr_full_address" name="usr_full_address" placeholder="Enter your complete address" rows="3">{{$user->usr_full_address}}</textarea>
+                    <div class="col-md-6 mt-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="usr_full_address" name="usr_full_address"
+                                placeholder="Enter Last Name" value="{{ $user->usr_full_address }}">
+                            <label for="usr_full_address">City, State, Country - Pin</label>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-3">
+                    <div class="col-md-6 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_landmark" name="usr_landmark"
                                 placeholder="Enter Last Name" value="{{ $user->usr_landmark }}">
-                            <label for="usr_landmark">Landmark</label>
+                            <label for="usr_landmark">Village/Street/Colony</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">
@@ -147,6 +149,65 @@
             </form>
         @else
             <h3>Something went wrong. Please contact the site admin!</h3>
+        @endif
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <h4>Documents</h4>
+        @if(isset($user))
+            <form action="{{ url('/admin/user-profiles/user-documents-update') }}" method="POST" enctype="multipart/form-data" class="mt-3">
+                @csrf
+                <input type="hidden" name="uid" value="{{ $user->usr_id }}">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">Aadhar Card Front</label>
+                            <input type="file" name="aadharf" id="aadharf" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">Aadhar Card Back</label>
+                            <input type="file" name="aadharb" id="aadharb" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">PAN Card</label>
+                            <input type="file" name="pancard" id="pancard" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">Bank Passbook / Cancel Cheque</label>
+                            <input type="file" name="passbook" id="passbook" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">Voter ID / Driving License</label>
+                            <input type="file" name="dl" id="dl" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">Land Doucments</label>
+                            <input type="file" name="ld" id="ld" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-control mb-3">
+                            <label for="">Land Photographs</label>
+                            <input type="file" name="lp" id="lp" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
         @endif
     </div>
 </div>

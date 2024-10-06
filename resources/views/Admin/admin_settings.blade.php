@@ -178,6 +178,91 @@
         </div>
     @endif
 
+    @if (isset($companyBankInfo) && isset($banks))
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#companyBankSettings" aria-expanded="false" aria-controls="companyBankSettings">
+                    Company Bank Account Settings
+                </button>
+            </h2>
+            <div id="companyBankSettings" class="accordion-collapse collapse" data-bs-parent="#settingAccordion">
+                <div class="accordion-body">
+                    <section>
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
+                                <form action="{{ url('/admin/settings/update-company-bank') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row mt-3">
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <select name="cbd_bank_name" id="cbd_bank_name" class="form-control">
+                                                    <option value="">Select</option>
+                                                    @foreach ($banks as $bank)
+                                                        <option value="{{ $bank->bnk_name }}" {{ $companyBankInfo->cbd_bank_name == $bank->bnk_name ? 'selected' : '' }}>{{ $bank->bnk_name }}</option>
+                                                    @endforeach
+                                                </select>
+                                                <label for="cbd_bank_name">Bank Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <input type="text" name="cbd_account_number" id="cbd_account_number" placeholder="Account Number" class="form-control" value="{{ $companyBankInfo->cbd_account_number }}">
+                                                <label for="cbd_account_number">Account Number</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <input type="text" name="cbd_ifsc_code" id="cbd_ifsc_code" placeholder="IFSC Code" class="form-control" value="{{ $companyBankInfo->cbd_ifsc_code }}">
+                                                <label for="cbd_ifsc_code">IFSC Code</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <input type="text" name="cbd_branch" id="cbd_branch" placeholder="Branch Name" class="form-control" value="{{ $companyBankInfo->cbd_branch }}">
+                                                <label for="cbd_branch">Branch Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <input type="text" name="cbd_upi_name" id="cbd_upi_name" placeholder="UPI Name" class="form-control" value="{{ $companyBankInfo->cbd_upi_name }}">
+                                                <label for="cbd_upi_name">UPI Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <input type="text" name="cbd_upi_id" id="cbd_upi_id" placeholder="UPI ID" class="form-control" value="{{ $companyBankInfo->cbd_upi_id }}">
+                                                <label for="cbd_upi_id">UPI ID</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group mb-2">
+                                                <label for="cbd_qr_code">QR Code</label>
+                                                <input type="file" name="cbd_qr_code" id="cbd_qr_code"class="form-control">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-floating mb-2">
+                                                <select name="cbd_is_hidden" id="cbd_is_hidden" class="form-control">
+                                                    <option value="">Select</option>
+                                                    <option value="0" {{ $companyBankInfo->cbd_is_hidden == 0 ? 'selected' : '' }}>Show</option>
+                                                    <option value="1" {{ $companyBankInfo->cbd_is_hidden == 1 ? 'selected' : '' }}>Hide</option>
+                                                </select>
+                                                <label for="cbd_is_hidden">Show Bank Details</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="submit" class="btn btn-primary text-center mt-3" value="Update">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if (isset($approvalInfo))
         <div class="accordion-item">
             <h2 class="accordion-header">
@@ -301,84 +386,85 @@
                 </div>
             </div>
         </div>
+    @endif
 
-        @if (isset($admin))
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accountSettings" aria-expanded="false"
-                            aria-controls="accountSettings">
-                        Account Settings
-                    </button>
-                </h2>
-                <div id="accountSettings" class="accordion-collapse collapse" data-bs-parent="#settingAccordion">
-                    <div class="accordion-body">
-                        <section>
-                            <div class="card" style="width: 100%;">
-                                <div class="card-body">
-                                    <form action="{{ url('/admin/settings/admin-account') }}" method="POST" enctype="multipart/form-data">
-                                        @csrf
-                                        <div class="row">
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="adm_first_name" name="adm_first_name"
-                                                        placeholder="Enter Admin First Name" value="{{ $admin->adm_first_name }}">
-                                                    <label for="adm_first_name">Admin First Name</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="adm_last_name" name="adm_last_name"
-                                                        placeholder="Enter Admin Last Name" value="{{ $admin->adm_last_name }}">
-                                                    <label for="adm_last_name">Admin Last Name</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="email" class="form-control" id="adm_email" name="adm_email" placeholder="Enter Admin Email" value="{{ $admin->adm_email }}">
-                                                    <label for="adm_email">Admin Email</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="number" class="form-control" id="adm_mobile" name="adm_mobile" placeholder="Enter Admin Mobile" value="{{ $admin->adm_mobile }}">
-                                                    <label for="adm_mobile">Admin Mobile</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="password" class="form-control" id="adm_current_password" name="adm_current_password" placeholder="Enter Current Password">
-                                                    <label for="adm_current_password">Current Password</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="password" class="form-control" id="adm_new_password" name="adm_new_password" placeholder="Enter Current Password">
-                                                    <label for="adm_new_password">New Password</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-floating mb-3">
-                                                    <input type="password" class="form-control" id="adm_confirm_new_password" name="adm_confirm_new_password" placeholder="Enter Current Password">
-                                                    <label for="adm_confirm_new_password">Confirm New Password</label>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-6 mt-3">
-                                                <div class="form-group mb-3">
-                                                    <label for="adm_profile_photo">Admin Profile Photo</label>
-                                                    <input type="file" class="form-control" id="adm_profile_photo" name="adm_profile_photo" placeholder="Enter Login Email">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <input type="submit" class="btn btn-primary text-center mt-3" id="accountUpdateSubmit" value="Update">
+    @if (isset($admin))
+        <div class="accordion-item">
+            <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#accountSettings" aria-expanded="false"
+                        aria-controls="accountSettings">
+                    Account Settings
+                </button>
+            </h2>
+            <div id="accountSettings" class="accordion-collapse collapse" data-bs-parent="#settingAccordion">
+                <div class="accordion-body">
+                    <section>
+                        <div class="card" style="width: 100%;">
+                            <div class="card-body">
+                                <form action="{{ url('/admin/settings/admin-account') }}" method="POST" enctype="multipart/form-data">
+                                    @csrf
+                                    <div class="row">
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="adm_first_name" name="adm_first_name"
+                                                    placeholder="Enter Admin First Name" value="{{ $admin->adm_first_name }}">
+                                                <label for="adm_first_name">Admin First Name</label>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="adm_last_name" name="adm_last_name"
+                                                    placeholder="Enter Admin Last Name" value="{{ $admin->adm_last_name }}">
+                                                <label for="adm_last_name">Admin Last Name</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="email" class="form-control" id="adm_email" name="adm_email" placeholder="Enter Admin Email" value="{{ $admin->adm_email }}">
+                                                <label for="adm_email">Admin Email</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="number" class="form-control" id="adm_mobile" name="adm_mobile" placeholder="Enter Admin Mobile" value="{{ $admin->adm_mobile }}">
+                                                <label for="adm_mobile">Admin Mobile</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" id="adm_current_password" name="adm_current_password" placeholder="Enter Current Password">
+                                                <label for="adm_current_password">Current Password</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" id="adm_new_password" name="adm_new_password" placeholder="Enter Current Password">
+                                                <label for="adm_new_password">New Password</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-floating mb-3">
+                                                <input type="password" class="form-control" id="adm_confirm_new_password" name="adm_confirm_new_password" placeholder="Enter Current Password">
+                                                <label for="adm_confirm_new_password">Confirm New Password</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mt-3">
+                                            <div class="form-group mb-3">
+                                                <label for="adm_profile_photo">Admin Profile Photo</label>
+                                                <input type="file" class="form-control" id="adm_profile_photo" name="adm_profile_photo" placeholder="Enter Login Email">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <input type="submit" class="btn btn-primary text-center mt-3" id="accountUpdateSubmit" value="Update">
+                                        </div>
+                                    </div>
+                                </form>
                             </div>
-                        </section>
-                    </div>
+                        </div>
+                    </section>
                 </div>
             </div>
-        @endif
+        </div>
+    @endif
 </div>
-@endif
+

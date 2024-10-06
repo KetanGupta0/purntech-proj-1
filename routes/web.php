@@ -30,6 +30,7 @@ Route::middleware([UserAuthCheck::class])->group(function () {
     Route::get('/user/approval-letter', [UserController::class, 'appravalLetterView']);
     Route::get('/user/bank-details', [UserController::class, 'bankDetailsView']);
     Route::get('/user/payments', [UserController::class, 'paymentsView']);
+    Route::get('/user/download', [UserController::class, 'downloadView']);
     Route::get('/user/help', [UserController::class, 'helpView']);
 
     // Normal Calls
@@ -66,6 +67,7 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-profiles/edit-user', [AdminController::class, 'editUserCommand']);
     Route::post('/admin/user-profiles/delete-user', [AdminController::class, 'deleteUserCommand']);
     Route::post('/admin/user-profiles/user-update', [AdminController::class, 'userUpdateCommand']);
+    Route::post('/admin/user-profiles/user-documents-update', [AdminController::class, 'userDocumentsUpdateCommand']);
 
     Route::post('/admin/user-documents/review-verified-documents', [AdminController::class, 'reviewVerifiedDocumentsCommand']);
     Route::post('/admin/user-documents/verify-documents', [AdminController::class, 'verifyDocumentsCommand']);
@@ -89,11 +91,18 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     
     Route::post('admin/send-reminder',[AdminController::class, 'sendReminderCommand']);
 
+    Route::post('/admin/user-download/upload-file',[AdminController::class, 'uploadFileCommand']);
+    Route::post('/admin/user-download/hide-file',[AdminController::class, 'hideFileCommand']);
+    Route::post('/admin/user-download/show-file',[AdminController::class, 'showFileCommand']);
+    Route::post('/admin/user-download/delete-file',[AdminController::class, 'deleteFileCommand']);
+
     // Admin Setting Routs
     Route::post('/admin/settings/update-company',[AdminController::class, 'updateCompanyCommand']);
+    Route::post('/admin/settings/update-company-bank',[AdminController::class, 'updateCompanyBankCommand']);
     Route::post('/admin/settings/update-approval-letter',[AdminController::class, 'updateApprovalLetterCommand']);
     Route::post('/admin/settings/update-invoice',[AdminController::class, 'updateInvoiceCommand']);
     Route::post('/admin/settings/admin-account',[AdminController::class, 'updateAdminAccountCommand']);
+
     
     // AJAX Calls
     
@@ -123,4 +132,4 @@ Route::get('/get-admin-profile-picture', [WebController::class, 'getAdminImageAJ
 Route::get('fetch-company-info',[AdminController::class,'getCompanyInfo']);
 
 // One time route
-Route::get('/make-admin', [AdminController::class, 'makeFirstAdmin']);
+// Route::get('/make-admin', [AdminController::class, 'makeFirstAdmin']);

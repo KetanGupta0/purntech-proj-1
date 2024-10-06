@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\ApprovalLetterSetting;
 use App\Models\BankList;
+use App\Models\CompanyBankDetail;
 use App\Models\CompanyInfo;
 use App\Models\CompanyService;
+use App\Models\Downloadable;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
 use App\Models\InvoiceSetting;
@@ -86,9 +88,11 @@ class UserController extends Controller
         
         $bankDetailsCompletionPercentage = ($filledBankDetailsFields / $totalBankDetailsFields) * 100;
         $bankDetailsCompletionPercentage = round($bankDetailsCompletionPercentage, 2);
+
+        $companyBankDetails = CompanyBankDetail::find(1);
         
         $invoices = Invoice::where('inv_party_id','=', $user->usr_id)->where('inv_status','!=', 0)->orderBy('created_at', 'desc')->get();
-        return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','documentUploadPercentage','bankDetailsCompletionPercentage','invoices')) . view('User.footer');
+        return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','companyBankDetails','documentUploadPercentage','bankDetailsCompletionPercentage','invoices')) . view('User.footer');
     }
     public function profileView()
     {
@@ -146,11 +150,20 @@ class UserController extends Controller
     {
         try{
             $user = WebUser::find(Session::get('uid'));
+            $companyBankDetails = CompanyBankDetail::find(1);
             if($user){
-                return view('User.header') . view('User.payments',compact('user')) . view('User.footer');
+                return view('User.header') . view('User.payments',compact('user','companyBankDetails')) . view('User.footer');
             }else{
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function downloadView(){
+        try{
+            $downloads = Downloadable::where('dwn_is_hidden','=',0)->where('dwn_status','!=',0)->get();
+            return view('User.header') . view('User.download',compact('downloads')) . view('User.footer');
         }catch(Exception $e){
             return redirect()->back()->with('error', $e->getMessage());
         }

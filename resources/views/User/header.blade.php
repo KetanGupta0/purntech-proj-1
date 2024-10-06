@@ -234,6 +234,12 @@
                                     <span data-key="t-widgets">Payments</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link download" href="{{ url('/user/download') }}">
+                                    <i class="ri-refund-2-fill"></i>
+                                    <span data-key="t-widgets">Download</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <!-- Sidebar -->

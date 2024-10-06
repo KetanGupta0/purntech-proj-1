@@ -23,16 +23,11 @@
             <div class="col-md-12">
                 <p class="text-center fs-10">All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
             </div>
-            <div class="col-sm-6">
+            <div class="col-sm-12 text-center">
                 <script>
                     document.write(new Date().getFullYear());
                 </script>
-                © Bharti Infratel Tower.
-            </div>
-            <div class="col-sm-6">
-                <div class="text-sm-end d-none d-sm-block">
-                    Design & Develop by Bharti Infratel
-                </div>
+                © Bharti Infratel Tower. Design & Develop by Bharti Infratel
             </div>
         </div>
     </div>

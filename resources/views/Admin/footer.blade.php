@@ -119,7 +119,7 @@
             return l.toUpperCase();
         });
         
-        if (pageTitle == 'Admin Dashboard View') {
+        if (pageTitle == 'Admin Dashboard') {
             document.title = 'Admin Dashboard - Bharti Infratel Tower';
             $('.dashboard').addClass('active');
         } else {

@@ -48,42 +48,45 @@
                 </div>
                 <div class="col-md-6">
                     @if (isset($companyBankDetails) && $companyBankDetails->cbd_is_hidden == 0)
-                <div class="col-md-12">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card" style="width: 18rem;">
-                                <h5 class="card-title mt-4 mx-3">Payment UPI Details</h5>
-                                <hr>
-                                <img src="{{ asset('public/assets/img/uploads/documents') }}/{{ $companyBankDetails->cbd_qr_code }}" class="card-img-top"
-                                     alt="company bank qr">
-                                <div class="card-body">
-                                    <h5 class="card-title">UPI Name - {{ $companyBankDetails->cbd_upi_name }}</h5>
-                                    <h5 class="card-text">UPI ID - {{ $companyBankDetails->cbd_upi_id }}</h5>
-                                    <div><i>Note: <span class="text-danger">Please contact your customer relationship manager before making any payments.</span></i></div>
-                                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qr">View</button>
-                                    <img src="{{ asset('public/assets/img/bank.png') }}" alt="" style="width: 100%;">
+                        <div class="col-md-12">
+                            <div class="container">
+                                <div class="row justify-content-center">
+                                    <div class="col-lg-5 col-md-6 col-sm-12 mb-4">
+                                        <div class="card mx-auto" style="max-width: 100%;">
+                                            <h5 class="card-title mt-4 mx-3">Payment UPI Details</h5>
+                                            <hr>
+                                            <img src="{{ asset('public/assets/img/uploads/documents') }}/{{ $companyBankDetails->cbd_qr_code }}" 
+                                                 class="card-img-top" alt="company bank qr" style="height: auto; width: 100%;">
+                                            <div class="card-body">
+                                                <h5 class="card-title">UPI Name - {{ $companyBankDetails->cbd_upi_name }}</h5>
+                                                <h5 class="card-text">UPI ID - {{ $companyBankDetails->cbd_upi_id }}</h5>
+                                                <div class="my-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before making any payments.</span></i></div>
+                                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qr">View</button>
+                                                <img src="{{ asset('public/assets/img/bank.png') }}" alt="" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                    </div>
+                            
+                                    <div class="col-lg-5 col-md-6 col-sm-12 mb-4">
+                                        <div class="card mx-auto" style="max-width: 100%;">
+                                            <h5 class="card-title mt-4 mx-3">Payment Bank Details</h5>
+                                            <hr>
+                                            <img src="{{ asset('public/assets/img/neft.jpg') }}" class="card-img-top" alt="company bank demo logo">
+                                            <div class="card-body">
+                                                <h5 class="card-title py-1">Bank Name - {{ $companyBankDetails->cbd_bank_name }}</h5>
+                                                <h5 class="card-title py-1">Account Number - {{ $companyBankDetails->cbd_account_number }}</h5>
+                                                <h5 class="card-title py-1">IFSC Code - {{ $companyBankDetails->cbd_ifsc_code }}</h5>
+                                                <h5 class="card-title py-1">Branch Name - {{ $companyBankDetails->cbd_branch }}</h5>
+                                                <div class="my-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before making any payments.</span></i></div>
+                                                <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#ba">View</button>
+                                                <img src="{{ asset('public/assets/img/bank.png') }}" alt="" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="card" style="width: 18rem;">
-                                <h5 class="card-title mt-4 mx-3">Payment Bank Details</h5>
-                                <hr>
-                                <img src="{{ asset('public/assets/img/neft.jpg') }}" class="card-img-top" alt="company bank demo logo">
-                                <div class="card-body">
-                                    <h5 class="card-title py-3">Bank Name - {{ $companyBankDetails->cbd_bank_name }}</h5>
-                                    <h5 class="card-title py-3">Account Number - {{ $companyBankDetails->cbd_account_number }}</h5>
-                                    <h5 class="card-title py-3">IFSC Code - {{ $companyBankDetails->cbd_ifsc_code }}</h5>
-                                    <h5 class="card-title py-3">Branch Name - {{ $companyBankDetails->cbd_branch }}</h5>
-                                    <div class="mb-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before making any payments.</span></i></div>
-                                    <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#ba">View</button>
-                                    <img src="{{ asset('public/assets/img/bank.png') }}" alt="" style="width: 100%;">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            @endif
+                    @endif
                 </div>
             </div>
         </div>
@@ -91,8 +94,7 @@
 @endif
 @if (isset($companyBankDetails) && $companyBankDetails->cbd_is_hidden == 0)
     <!-- Modal -->
-    <div class="modal fade" id="qr" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qrLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="qr" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qrLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -116,8 +118,7 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="ba" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="baLabel"
-         aria-hidden="true">
+    <div class="modal fade" id="ba" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="baLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">

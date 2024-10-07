@@ -1,5 +1,7 @@
 <!doctype html>
-<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="enabled" data-bs-theme="light">
+<html lang="en" data-layout="vertical" data-topbar="light" data-sidebar="dark" data-sidebar-size="lg" data-sidebar-image="none" data-preloader="enabled"
+      data-bs-theme="light">
+
     <head>
         <meta charset="utf-8" />
         <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -8,8 +10,8 @@
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="Themesbrand" name="author" />
         <!-- App favicon -->
-        <link href="{{asset('public/assets/img/favicon.png')}}" rel="icon">
-        <link href="{{asset('public/assets/img/apple-touch-icon.png')}}" rel="apple-touch-icon">
+        <link href="{{ asset('public/assets/img/favicon.png') }}" rel="icon">
+        <link href="{{ asset('public/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
         <!-- Layout config Js -->
         <script src="{{ asset('public/dashboard/assets/js/layout.js') }}"></script>
         <!-- Bootstrap Css -->
@@ -22,8 +24,8 @@
         <link href="{{ asset('public/dashboard/assets/css/custom.min.css') }}" rel="stylesheet" type="text/css" />
         <!-- Datatable CSS -->
         <link href="{{ asset('public/dashboard/assets/css/dataTables.dataTables.min.css') }}" rel="stylesheet" type="text/css" />
-         <!-- Layout config Js -->
-         
+        <!-- Layout config Js -->
+
         <!-- JQuery CDN -->
         <script src="{{ asset('public/dashboard/assets/js/jquery-3.7.1.min.js') }}"></script>
         <!-- Datatable JS -->
@@ -55,7 +57,7 @@
                         <div class="d-flex">
                             <!-- LOGO -->
                             <div class="navbar-brand-box horizontal-logo">
-                                <a href="{{url('/admin-dashboard')}}" class="logo logo-dark">
+                                <a href="{{ url('/admin-dashboard') }}" class="logo logo-dark">
                                     <span class="logo-sm">
                                         <img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}" alt="" height="22" />
                                     </span>
@@ -64,7 +66,7 @@
                                     </span>
                                 </a>
 
-                                <a href="{{url('/admin-dashboard')}}" class="logo logo-light">
+                                <a href="{{ url('/admin-dashboard') }}" class="logo logo-light">
                                     <span class="logo-sm">
                                         <img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}" alt="" height="22" />
                                     </span>
@@ -91,9 +93,11 @@
                             </div>
 
                             <div class="dropdown ms-sm-3 header-item topbar-user">
-                                <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <button type="button" class="btn" id="page-header-user-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
+                                        aria-expanded="false">
                                     <span class="d-flex align-items-center">
-                                        <img class="rounded-circle header-profile-user" src="{{ asset('public/assets/img/uploads/documents/user.png') }}" alt="Header Avatar" />
+                                        <img class="rounded-circle header-profile-user" src="{{ asset('public/assets/img/uploads/documents/user.png') }}"
+                                             alt="Header Avatar" />
                                         <span class="text-start ms-xl-2">
                                             <span class="d-none d-xl-inline-block ms-1 fw-medium user-name-text">{{ Session::get('fusername') }}
                                                 {{ Session::get('lusername') }}</span>
@@ -108,18 +112,15 @@
                                        href="{{url('/admin/profile')}}"><i class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle">Profile</span></a> --}}
 
-                                    <a class="dropdown-item"
-                                       href="{{url('/admin/settings')}}">
+                                    <a class="dropdown-item" href="{{ url('/admin/settings') }}">
                                         <span class="badge bg-success-subtle text-success mt-1 float-end">New</span><i
                                            class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle">Settings</span></a>
                                     {{-- <a class="dropdown-item"
                                        href="{{url('/admin/help')}}"><i class="mdi mdi-lifebuoy text-muted fs-16 align-middle me-1"></i>
                                         <span class="align-middle">Help</span></a> --}}
-                                    <a class="dropdown-item"
-                                       href="{{url('/logout')}}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
-                                        <span class="align-middle"
-                                              data-key="t-logout">Logout</span></a>
+                                    <a class="dropdown-item" href="{{ url('/logout') }}"><i class="mdi mdi-logout text-muted fs-16 align-middle me-1"></i>
+                                        <span class="align-middle" data-key="t-logout">Logout</span></a>
                                 </div>
                             </div>
                         </div>
@@ -128,24 +129,15 @@
             </header>
 
             <!-- removeNotificationModal -->
-            <div id="removeNotificationModal"
-                 class="modal fade zoomIn"
-                 tabindex="-1"
-                 aria-hidden="true">
+            <div id="removeNotificationModal" class="modal fade zoomIn" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <button type="button"
-                                    class="btn-close"
-                                    data-bs-dismiss="modal"
-                                    aria-label="Close"
-                                    id="NotificationModalbtn-close"></button>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="NotificationModalbtn-close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="mt-2 text-center">
-                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json"
-                                           trigger="loop"
-                                           colors="primary:#f7b84b,secondary:#f06548"
+                                <lord-icon src="https://cdn.lordicon.com/gsqxdxog.json" trigger="loop" colors="primary:#f7b84b,secondary:#f06548"
                                            style="width: 100px; height: 100px"></lord-icon>
                                 <div class="mt-4 pt-2 fs-15 mx-4 mx-sm-5">
                                     <h4>Are you sure ?</h4>
@@ -156,14 +148,10 @@
                                 </div>
                             </div>
                             <div class="d-flex gap-2 justify-content-center mt-4 mb-2">
-                                <button type="button"
-                                        class="btn w-sm btn-light"
-                                        data-bs-dismiss="modal">
+                                <button type="button" class="btn w-sm btn-light" data-bs-dismiss="modal">
                                     Close
                                 </button>
-                                <button type="button"
-                                        class="btn w-sm btn-danger"
-                                        id="delete-notification">
+                                <button type="button" class="btn w-sm btn-danger" id="delete-notification">
                                     Yes, Delete It!
                                 </button>
                             </div>
@@ -179,36 +167,24 @@
                 <!-- LOGO -->
                 <div class="navbar-brand-box">
                     <!-- Dark Logo-->
-                    <a href="{{url('/admin-dashboard')}}"
-                       class="logo logo-dark">
+                    <a href="{{ url('/admin-dashboard') }}" class="logo logo-dark">
                         <span class="logo-sm">
-                            <img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}"
-                                 alt=""
-                                 height="22" />
+                            <img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}" alt="" height="22" />
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ asset('public/dashboard/assets/images/logo-dark.png') }}"
-                                 alt=""
-                                 height="17" />
+                            <img src="{{ asset('public/dashboard/assets/images/logo-dark.png') }}" alt="" height="17" />
                         </span>
                     </a>
                     <!-- Light Logo-->
-                    <a href="{{url('/admin-dashboard')}}"
-                       class="logo logo-light">
+                    <a href="{{ url('/admin-dashboard') }}" class="logo logo-light">
                         <span class="logo-sm">
-                            <img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}"
-                                 alt=""
-                                 height="22" />
+                            <img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}" alt="" height="22" />
                         </span>
                         <span class="logo-lg">
-                            <img src="{{ asset('public/dashboard/assets/images/logo-light.png') }}"
-                                 alt=""
-                                 height="17" />
+                            <img src="{{ asset('public/dashboard/assets/images/logo-light.png') }}" alt="" height="17" />
                         </span>
                     </a>
-                    <button type="button"
-                            class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
-                            id="vertical-hover">
+                    <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover" id="vertical-hover">
                         <i class="ri-record-circle-line"></i>
                     </button>
                 </div>
@@ -216,60 +192,58 @@
                 <div id="scrollbar">
                     <div class="container-fluid">
                         <div id="two-column-menu"></div>
-                        <ul class="navbar-nav"
-                            id="navbar-nav">
+                        <ul class="navbar-nav" id="navbar-nav">
                             <li class="menu-title">
                                 <i class="ri-more-fill"></i>
                                 <span data-key="t-pages">Menu</span>
                             </li>
 
                             <li class="nav-item">
-                                <a class="nav-link menu-link dashboard"
-                                   href="{{ url('/admin-dashboard') }}">
+                                <a class="nav-link menu-link dashboard" href="{{ url('/admin-dashboard') }}">
                                     <i class="ri-dashboard-2-line"></i>
                                     <span data-key="t-widgets">Dashboard</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link user-profiles"
-                                   href="{{ url('/admin/user-profiles') }}">
+                                <a class="nav-link menu-link user-profiles" href="{{ url('/admin/user-profiles') }}">
                                     <i class="ri-account-circle-fill"></i>
                                     <span data-key="t-widgets">User Profiles</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link user-documents"
-                                   href="{{ url('/admin/user-documents') }}">
+                                <a class="nav-link menu-link user-documents" href="{{ url('/admin/user-documents') }}">
                                     <i class="ri-file-fill"></i>
                                     <span data-key="t-widgets">User Doucments</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link user-bank-details"
-                                   href="{{ url('/admin/user-bank-details') }}">
+                                <a class="nav-link menu-link user-bank-details" href="{{ url('/admin/user-bank-details') }}">
                                     <i class="ri-bank-fill"></i>
                                     <span data-key="t-widgets">User Bank Details</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link user-invoices-page"
-                                   href="{{ url('/admin/user-invoices-page') }}">
+                                <a class="nav-link menu-link user-invoices-page" href="{{ url('/admin/user-invoices-page') }}">
                                     <i class="ri-price-tag-2-fill"></i>
                                     <span data-key="t-widgets">User Invoices Page</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link reminders"
-                                   href="{{ url('/admin/reminders') }}">
+                                <a class="nav-link menu-link reminders" href="{{ url('/admin/reminders') }}">
                                     <i class="ri-alarm-fill"></i>
                                     <span data-key="t-widgets">Reminders</span>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link menu-link user-download"
-                                   href="{{ url('/admin/user-download') }}">
+                                <a class="nav-link menu-link user-download" href="{{ url('/admin/user-download') }}">
                                     <i class="ri-download-cloud-fill"></i>
                                     <span data-key="t-widgets">Download Page</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link reports" href="{{ url('/admin/reports') }}">
+                                    <i class="ri-survey-fill"></i>
+                                    <span data-key="t-widgets">Reports</span>
                                 </a>
                             </li>
                         </ul>

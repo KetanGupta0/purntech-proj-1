@@ -51,11 +51,18 @@
                                     @endif
                                 </th>
                                 <th>
-                                    <form method="POST" action="{{ url('/admin/user-bank-details/view-user-bank-details') }}">
-                                        @csrf
-                                        <input type="hidden" name="uid" value="{{ $user->usr_id }}">
-                                        <input type="submit" class="btn btn-sm btn-secondary" value="View">
-                                    </form>
+                                    <div class="d-flex">
+                                        <form method="POST" action="{{ url('/admin/user-bank-details/view-user-bank-details') }}" class="mx-1">
+                                            @csrf
+                                            <input type="hidden" name="uid" value="{{ $user->usr_id }}">
+                                            <input type="submit" class="btn btn-sm btn-secondary" value="View">
+                                        </form>
+                                        <form method="POST" action="{{ url('/admin/user-bank-details/update-view-user-bank-details') }}" class="mx-1">
+                                            @csrf
+                                            <input type="hidden" name="uid" value="{{ $user->usr_id }}">
+                                            <input type="submit" class="btn btn-sm btn-secondary" value="Update">
+                                        </form>
+                                    </div>
                                 </th>
                             </tr>
                         @endforeach

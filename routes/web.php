@@ -54,8 +54,9 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::get('/admin/user-kyc', [AdminController::class, 'userKYCView']);
     Route::get('/admin/user-bank-details', [AdminController::class, 'userBankDetailsView']);
     Route::get('/admin/user-invoices-page', [AdminController::class, 'userInvoicesPageView']);
-    Route::get('/admin/user-download', [AdminController::class, 'userDownloadView']);
     Route::get('/admin/reminders', [AdminController::class, 'remindersView']);
+    Route::get('/admin/user-download', [AdminController::class, 'userDownloadView']);
+    Route::get('/admin/reports', [AdminController::class, 'adminReportsView']);
     Route::get('/admin/profile', [AdminController::class, 'adminProfileView']);
     Route::get('/admin/settings', [AdminController::class, 'adminSettingsView']);
     Route::get('/admin/help', [AdminController::class, 'adminHelpView']);
@@ -76,6 +77,8 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-documents/verify-documents/delete-now', [AdminController::class, 'deleteNowDocumentCommand']);
     
     Route::post('/admin/user-bank-details/view-user-bank-details', [AdminController::class, 'viewUserBankDetailsCommand']);
+    Route::post('/admin/user-bank-details/update-view-user-bank-details', [AdminController::class, 'updateViewUserBankDetailsCommand']);
+    Route::post('/admin/user-bank-details/update-user-bank-details', [AdminController::class, 'updateUserBankDetailsCommand']);
     Route::post('/admin/user-bank-details/update-status', [AdminController::class, 'updateUserBankDetailsKYCCommand']);
 
     Route::post('/admin/user-invoices-page/raise-new-invoice',[AdminController::class, 'raiseNewInvoiceCommand']);
@@ -88,6 +91,7 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-invoices-page/command/refunded',[AdminController::class, 'makeInvoiceRefundedCommand']);
     Route::post('/admin/user-invoices-page/command/unpaid',[AdminController::class, 'makeInvoiceUnpaidCommand']);
     Route::post('/admin/user-invoices-page/command/delete',[AdminController::class, 'makeInvoiceDeleteCommand']);
+    Route::get('/admin/user-invoices-page/command/view/{id}/{inv_id}',[AdminController::class, 'invoiceViewCommand']);
     
     Route::post('admin/send-reminder',[AdminController::class, 'sendReminderCommand']);
 
@@ -102,6 +106,8 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/settings/update-approval-letter',[AdminController::class, 'updateApprovalLetterCommand']);
     Route::post('/admin/settings/update-invoice',[AdminController::class, 'updateInvoiceCommand']);
     Route::post('/admin/settings/admin-account',[AdminController::class, 'updateAdminAccountCommand']);
+
+    Route::get('/admin/view/approval/{id}',[AdminController::class,'viewApprovalLetter']);
 
     
     // AJAX Calls

@@ -56,6 +56,7 @@
                                 </th>
                                 <th>
                                     <div class="d-flex justify-content-center">
+                                        <a href="{{ url('/admin/user-invoices-page/command/view') }}/{{ $invoice->inv_party_id }}/{{ $invoice->inv_id }}" class="me-1 btn btn-sm btn-info">View</a>
                                         @if ($invoice->inv_status == 1)
                                             <form class="me-1" action="{{ url('/admin/user-invoices-page/command/paid') }}" method="POST">
                                                 @csrf

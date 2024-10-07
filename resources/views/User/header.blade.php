@@ -236,7 +236,7 @@
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link menu-link download" href="{{ url('/user/download') }}">
-                                    <i class="ri-refund-2-fill"></i>
+                                    <i class="ri-download-cloud-fill"></i>
                                     <span data-key="t-widgets">Download</span>
                                 </a>
                             </li>

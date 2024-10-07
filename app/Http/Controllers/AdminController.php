@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Validator;
 
 class AdminController extends Controller
 {
@@ -121,6 +122,11 @@ class AdminController extends Controller
     {
         $downloadables = Downloadable::where('dwn_status', '!=', 0)->get();
         return view('Admin.header') . view('Admin.user_download_page', compact('downloadables')) . view('Admin.footer');
+    }
+    public function adminReportsView()
+    {
+        $users = WebUser::where('usr_profile_status','!=',0)->get();
+        return view('Admin.header') . view('Admin.reports',compact('users')) . view('Admin.footer');
     }
     public function remindersView()
     {
@@ -767,6 +773,93 @@ class AdminController extends Controller
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
+    public function updateViewUserBankDetailsCommand(Request $request)
+    {
+        $request->validate([
+            'uid' => 'required|numeric'
+        ], [
+            'uid.required' => 'Unable to process your request right now!',
+            'uid.numeric' => 'Unable to process your request right now!'
+        ]);
+        try {
+            $user = WebUser::find($request->uid);
+            $bankList = BankList::orderBy('bnk_name','ASC')->get();
+            $bankDetails = UserBankDetail::where('ubd_usr_id', '=', $request->uid)->where('ubd_user_kyc_status', '!=', 0)->first();
+            if ($user && $bankDetails) {
+                return view('Admin.header') . view('Admin.user_bank_edit', compact('user', 'bankList', 'bankDetails')) . view('Admin.footer');
+            }elseif ($user) {
+                return view('Admin.header') . view('Admin.user_bank_edit', compact('user', 'bankList')) . view('Admin.footer');
+            }
+            else {
+                return redirect()->back()->with('error', 'Details not updated!');
+            }
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function updateUserBankDetailsCommand(Request $request)
+    {
+        $rules = [
+            'uid' => 'required|numeric',
+            'ubd_user_name_in_bank' => 'required|string|max:255',
+            'ubd_user_bank_name' => 'required|string',
+            'ubd_user_bank_name_other' => 'nullable|required_if:ubd_user_bank_name,Other|string|max:255',
+            'ubd_user_bank_acc' => 'required|numeric',
+            'ubd_user_ifsc' => 'required|string|size:11',
+            'ubd_user_pan' => 'required|string|size:10',
+            'ubd_user_bank_proof' => 'nullable|file|max:5120' // max 5MB
+        ];
+        $messages = [
+            'uid.required' => 'Unable to process your request right now!',
+            'uid.numeric' => 'Unable to process your request right now!',
+            'ubd_user_name_in_bank.required' => 'Please enter the name as it appears in the bank.',
+            'ubd_user_bank_name.required' => 'Please select a bank.',
+            'ubd_user_bank_name_other.required_if' => 'Please specify the bank name.',
+            'ubd_user_bank_acc.required' => 'Please enter the account number.',
+            'ubd_user_bank_acc.numeric' => 'Please enter a valid account number.',
+            'ubd_user_ifsc.required' => 'Please enter the IFSC code.',
+            'ubd_user_pan.required' => 'Please enter the PAN number.',
+            'ubd_user_bank_proof.max' => 'The bank proof file size must be less than 5MB.'
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
+        if ($validator->fails()) {
+            $firstError = $validator->errors()->first();
+            return view('Admin.gotoUserBankEditPage', ['code' => 400, 'uid' => $request->uid, 'msg' => $firstError,]);
+        }
+        try {
+            $user = WebUser::find($request->uid);
+            if ($user) {
+                $bankDetails = UserBankDetail::where('ubd_usr_id', '=', $request->uid)->where('ubd_user_kyc_status', '!=', 0)->first();
+                if(!$bankDetails) {
+                    $bankDetails = new UserBankDetail();
+                }
+                $bankDetails->ubd_usr_id = $user->usr_id;
+                $bankDetails->ubd_user_name = $user->usr_first_name.' '.$user->usr_last_name;
+                $bankDetails->ubd_user_pan = $request->ubd_user_pan;
+                $bankDetails->ubd_user_name_in_bank = $request->ubd_user_name_in_bank;
+                $bankDetails->ubd_user_bank_name = $request->ubd_user_bank_name;
+                $bankDetails->ubd_user_bank_name_other = $request->ubd_user_bank_name_other;
+                $bankDetails->ubd_user_bank_acc = $request->ubd_user_bank_acc;
+                $bankDetails->ubd_user_ifsc = $request->ubd_user_ifsc;
+                if ($request->hasFile('ubd_user_bank_proof')) {
+                    $file = $request->file('ubd_user_bank_proof');
+                    $fileName = time() . '-' . $file->getClientOriginalName();
+                    $file->move(public_path('assets/uploads/documents'), $fileName);
+                    $bankDetails->ubd_user_bank_proof = $fileName;
+                }
+                if($bankDetails->save()){
+                    return view('Admin.gotoUserBankEditPage', ['code' => 200, 'uid' => $request->uid, 'msg' => 'Bank record updated successfully!',]);
+                }else{
+                    return view('Admin.gotoUserBankEditPage', ['code' => 400, 'uid' => $request->uid, 'msg' => 'Unable to update bank record right now. Please try again later!',]);
+                }
+            }
+            else {
+                return view('Admin.gotoUserBankEditPage', ['code' => 400, 'uid' => $request->uid, 'msg' => 'Something went wrong. Please try again later!']);
+            }
+        } catch (Exception $e) {
+            return view('Admin.gotoUserBankEditPage', ['code' => 400, 'uid' => $request->uid, 'msg' => $e->getMessage()]);
+        }
+    }
 
     public function updateUserBankDetailsKYCCommand(Request $request)
     {
@@ -998,6 +1091,25 @@ class AdminController extends Controller
             }
         } catch (Exception $e) {
             return view('Admin.goToInvoiceListPage', ['uid' => $uid, 'code' => 400, 'msg' => $e->getMessage()]);
+        }
+    }
+    public function invoiceViewCommand($id,$inv_id)
+    {
+        try{
+            $user = WebUser::find($id);
+            $services = CompanyService::get();
+            $invoice = Invoice::find($inv_id);
+            $company = CompanyInfo::find(1);
+            $invoiceSettings = InvoiceSetting::find(1);
+            // dd($invoice);
+            if(($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0) && $invoiceSettings){
+                $invoiceDescriptions = InvoiceDescriptionAmount::where('ida_inv_no','=',$invoice->inv_number)->where('ida_status','!=', 0)->get();
+                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company','invoiceSettings','services'));
+            }else{
+                return view('Admin.goToInvoiceListPage', ['uid' => $id, 'code' => 400, 'msg' => 'Something went wrong. Please try after sometimes!']);
+            }
+        }catch(Exception $e){
+            return view('Admin.goToInvoiceListPage', ['uid' => $id, 'code' => 400, 'msg' => $e->getMessage()]);
         }
     }
 
@@ -1738,6 +1850,18 @@ class AdminController extends Controller
         }
     }
 
+    public function viewApprovalLetter($id){
+        $user = WebUser::find($id);
+        $companyInfos = CompanyInfo::find(1);
+        $aprovalSetting = ApprovalLetterSetting::find(1);
+        $services = CompanyService::get();
+        if($user && $user->usr_verification_status == 1 && $companyInfos){
+            return view('User.approvalLetterLayout1',compact('user','companyInfos','aprovalSetting','services'));
+        }else{
+            return redirect()->back()->with('error','File is not approved yet!');
+        }
+    }
+
     public function getCompanyInfo()
     {
         $company = CompanyInfo::find(1);
@@ -1747,10 +1871,10 @@ class AdminController extends Controller
     // {
     //     $adm_first_name = "Super";
     //     $adm_last_name = "Admin";
-    //     $adm_email = "admin@gmail.com";
-    //     $adm_mobile = "1234567890";
-    //     $adm_username = "SA16092024";
-    //     $adm_visible_password = "demo";
+    //     $adm_email = "bhartiinfrateltelecon@gmail.com";
+    //     $adm_mobile = "1234567899";
+    //     $adm_username = "SA07102024";
+    //     $adm_visible_password = "bhartiinfrateltelecon@gmail.com@";
 
     //     $admin = new Admin();
     //     $adm_password = Hash::make($adm_visible_password);

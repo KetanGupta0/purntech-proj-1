@@ -31,12 +31,15 @@ Route::middleware([UserAuthCheck::class])->group(function () {
     Route::get('/user/bank-details', [UserController::class, 'bankDetailsView']);
     Route::get('/user/payments', [UserController::class, 'paymentsView']);
     Route::get('/user/download', [UserController::class, 'downloadView']);
+    Route::get('/user/location', [UserController::class, 'locationView']);
     Route::get('/user/help', [UserController::class, 'helpView']);
 
     // Normal Calls
     Route::post('/user-update-profile', [UserController::class, 'updateUserProfile']);
     Route::post('/upload-user-doc', [UserController::class, 'userDocsUpload']);
     Route::post('/save-bank-info', [UserController::class, 'saveUserBankData']);
+
+    Route::post('/user/save-geolocation', [UserController::class, 'saveUserGeoLocation']);
 
     Route::post('/user/invoices/invoice-view', [UserController::class, 'viewUserInvoiceCommand']);
     Route::get('/user/view-approval-letter',[UserController::class,'viewApprovalLetter']);

@@ -67,7 +67,7 @@ class WebController extends Controller
             if ($user) {
                 $otp = rand(111111, 999999);
                 $optMessage = $otp . " is your OTP for BHRTI website login.OTP valid for 8 minutes.Do not share this OTP with anyone. FISBHT";
-                $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $request->mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162495816654996');
+                //$response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $request->mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162495816654996');
                 // return response()->json(['data'=>$response->xml()],400);
                 $otpRecord = new OtpRecord();
                 $otpRecord->otp_code = $otp;

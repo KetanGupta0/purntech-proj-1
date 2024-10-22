@@ -11,6 +11,7 @@ use App\Models\Downloadable;
 use App\Models\Invoice;
 use App\Models\InvoiceDescriptionAmount;
 use App\Models\InvoiceSetting;
+use App\Models\Location;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
 use App\Models\WebUser;
@@ -374,5 +375,48 @@ class UserController extends Controller
     private function revokeUserAccess(){
         Session::flush();
         return redirect('/');
+    }
+
+    public function locationView(){
+        $location = Location::where('loc_user_id', '=', Session::get('uid'))->where('loc_status','!=',0)->first();
+        if($location){
+            return view('User.header').view('User.location',compact('location')).view('User.footer');
+        }else{
+            return view('User.header').view('User.location').view('User.footer');
+        }
+    }
+
+    public function saveUserGeoLocation(Request $request){
+        $request->validate([
+            'latitude' => 'required',
+            'longitude' => 'required'
+        ],[
+            'latitude.required' => 'Latitude is required!',
+            'longitude.required' => 'Longitude is required!'
+        ]);
+
+        try{
+            $oldLocation = Location::where('loc_user_id', '=', Session::get('uid'))->where('loc_status','!=',0)->first();
+            if($oldLocation){
+                $oldLocation->loc_latitude = $request->latitude;
+                $oldLocation->loc_longitude = $request->longitude;
+                if($oldLocation->save()){
+                    Session::flash('location', 'Location updated successfully!');
+                }
+            }else{
+                $saveLocation = Location::create([
+                    'loc_user_id' => Session::get('uid'),
+                    'loc_latitude' => $request->latitude,
+                    'loc_longitude' => $request->longitude
+                ]);
+                if($saveLocation){
+                    Session::flash('location', 'Location saved successfully!');
+                }
+            }
+            return redirect()->back();
+        }
+        catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
+        }
     }
 }

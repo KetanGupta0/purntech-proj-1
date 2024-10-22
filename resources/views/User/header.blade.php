@@ -240,6 +240,12 @@
                                     <span data-key="t-widgets">Download</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link location" href="{{ url('/user/location') }}">
+                                    <i class="ri-user-location-fill"></i>
+                                    <span data-key="t-widgets">Location</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <!-- Sidebar -->

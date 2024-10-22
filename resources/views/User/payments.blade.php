@@ -55,18 +55,19 @@
                                         <div class="card mx-auto" style="max-width: 100%;">
                                             <h5 class="card-title mt-4 mx-3">Payment UPI Details</h5>
                                             <hr>
-                                            <img src="{{ asset('public/assets/img/uploads/documents') }}/{{ $companyBankDetails->cbd_qr_code }}" 
+                                            <img src="{{ asset('public/assets/img/uploads/documents') }}/{{ $companyBankDetails->cbd_qr_code }}"
                                                  class="card-img-top" alt="company bank qr" style="height: auto; width: 100%;">
                                             <div class="card-body">
                                                 <h5 class="card-title">UPI Name - {{ $companyBankDetails->cbd_upi_name }}</h5>
                                                 <h5 class="card-text">UPI ID - {{ $companyBankDetails->cbd_upi_id }}</h5>
-                                                <div class="my-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before making any payments.</span></i></div>
+                                                <div class="my-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before
+                                                            making any payments.</span></i></div>
                                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#qr">View</button>
                                                 <img src="{{ asset('public/assets/img/bank.png') }}" alt="" style="width: 100%;">
                                             </div>
                                         </div>
                                     </div>
-                            
+
                                     <div class="col-lg-5 col-md-6 col-sm-12 mb-4">
                                         <div class="card mx-auto" style="max-width: 100%;">
                                             <h5 class="card-title mt-4 mx-3">Payment Bank Details</h5>
@@ -77,7 +78,8 @@
                                                 <h5 class="card-title py-1">Account Number - {{ $companyBankDetails->cbd_account_number }}</h5>
                                                 <h5 class="card-title py-1">IFSC Code - {{ $companyBankDetails->cbd_ifsc_code }}</h5>
                                                 <h5 class="card-title py-1">Branch Name - {{ $companyBankDetails->cbd_branch }}</h5>
-                                                <div class="my-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before making any payments.</span></i></div>
+                                                <div class="my-2"><i>Note: <span class="text-danger">Please contact your customer relationship manager before
+                                                            making any payments.</span></i></div>
                                                 <button class="btn btn-primary mt-4" data-bs-toggle="modal" data-bs-target="#ba">View</button>
                                                 <img src="{{ asset('public/assets/img/bank.png') }}" alt="" style="width: 100%;">
                                             </div>
@@ -92,9 +94,74 @@
         </div>
     </div>
 @endif
+<div class="card">
+    <div class="card-body">
+        <!-- Button trigger modal -->
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+            Submit Payment Details
+        </button>
+
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel"
+     aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Submit Payment Details</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="{{ url('/user/submit-payment-details') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" name="tnx_id" id="tnx_id" class="form-control" placeholder="Transaction ID" required>
+                                <label for="tnx_id">Transaction ID</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="number" name="tnx_amt" id="tnx_amt" class="form-control" placeholder="Paid Amount" required>
+                                <label for="tnx_amt">Paid Amount</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" name="tnx_mode" id="tnx_mode" class="form-control" placeholder="Payment Mode" required>
+                                <label for="tnx_mode">Payment Mode</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" data-provider="flatpickr" id="tnx_date" name="tnx_date" data-enable-time="true" data-date-format="Y-m-d H:i:S" value="{{ date('Y-m-d H:i:S') }}" placeholder="Payment Date & Time" required />
+                                <label for="tnx_date">Payment Date & Time</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="form-group">
+                                <label for="tnx_proof">Payment Screenshot (JPEG/JPG/PNG only)</label>
+                                <input type="file" name="tnx_proof" id="tnx_proof" class="form-control" accept=".jpeg,.jpg,.png" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 mb-3">
+                        <input type="submit" value="Submit" class="btn btn-primary">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @if (isset($companyBankDetails) && $companyBankDetails->cbd_is_hidden == 0)
     <!-- Modal -->
-    <div class="modal fade" id="qr" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qrLabel" aria-hidden="true">
+    <div class="modal fade" id="qr" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="qrLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -118,7 +185,8 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="ba" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="baLabel" aria-hidden="true">
+    <div class="modal fade" id="ba" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="baLabel"
+         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
@@ -159,6 +227,13 @@
                     title: info.event.extendedProps.paymentStatus
                 });
             }
+        });
+        // Initialize flatpickr for Date and Time selection
+        flatpickr("#tnx_date", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i:S",
+            defaultDate: new Date(), // Set default to current date and time
+            maxDate: "today",
         });
 
         calendar.render();

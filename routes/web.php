@@ -41,6 +41,8 @@ Route::middleware([UserAuthCheck::class])->group(function () {
 
     Route::post('/user/save-geolocation', [UserController::class, 'saveUserGeoLocation']);
 
+    Route::post('/user/submit-payment-details', [UserController::class, 'submitPaymentDetails']);
+
     Route::post('/user/invoices/invoice-view', [UserController::class, 'viewUserInvoiceCommand']);
     Route::get('/user/view-approval-letter',[UserController::class,'viewApprovalLetter']);
 
@@ -57,6 +59,7 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::get('/admin/user-kyc', [AdminController::class, 'userKYCView']);
     Route::get('/admin/user-bank-details', [AdminController::class, 'userBankDetailsView']);
     Route::get('/admin/user-invoices-page', [AdminController::class, 'userInvoicesPageView']);
+    Route::get('/admin/user-insurance', [AdminController::class, 'userInsurancePageView']);
     Route::get('/admin/reminders', [AdminController::class, 'remindersView']);
     Route::get('/admin/user-download', [AdminController::class, 'userDownloadView']);
     Route::get('/admin/reports', [AdminController::class, 'adminReportsView']);
@@ -71,6 +74,8 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/user-profiles/edit-user', [AdminController::class, 'editUserCommand']);
     Route::post('/admin/user-profiles/delete-user', [AdminController::class, 'deleteUserCommand']);
     Route::post('/admin/user-profiles/user-update', [AdminController::class, 'userUpdateCommand']);
+    Route::post('/admin/user-profiles/user-approve', [AdminController::class, 'userApprove']);
+    Route::post('/admin/user-profiles/user-reject', [AdminController::class, 'userReject']);
     Route::post('/admin/user-profiles/user-documents-update', [AdminController::class, 'userDocumentsUpdateCommand']);
 
     Route::post('/admin/user-documents/review-verified-documents', [AdminController::class, 'reviewVerifiedDocumentsCommand']);
@@ -112,10 +117,8 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
 
     Route::get('/admin/view/approval/{id}',[AdminController::class,'viewApprovalLetter']);
 
-    
     // AJAX Calls
-    
-
+    Route::post('/admin/user-insurance/fetch-user-by-phone-ajax',[AdminController::class,'fetchUserByPhone']);
 });
 
 // Login Pages

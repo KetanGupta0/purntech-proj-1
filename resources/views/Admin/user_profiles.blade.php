@@ -82,6 +82,19 @@
                                                 <input type="submit" class="btn btn-sm btn-success" value="Unblock">
                                             </form>
                                         @endif
+                                        @if($user->usr_verification_status == 0)
+                                            <form action="{{url('/admin/user-profiles/user-approve')}}" class="mx-1" method="post">
+                                                @csrf
+                                                <input type="hidden" name="uid" value="{{$user->usr_id}}">
+                                                <input type="submit" class="btn btn-sm btn-success" value="Approve">
+                                            </form>
+                                        @elseif($user->usr_verification_status == 1)
+                                            <form action="{{url('/admin/user-profiles/user-reject')}}" class="mx-1" method="post">
+                                                @csrf
+                                                <input type="hidden" name="uid" value="{{$user->usr_id}}">
+                                                <input type="submit" class="btn btn-sm btn-warning" value="Reject">
+                                            </form>
+                                        @endif
                                     </div>
                                 </th>
                             </tr>

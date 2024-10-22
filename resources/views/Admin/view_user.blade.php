@@ -23,35 +23,35 @@
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_first_name" name="usr_first_name"
-                                placeholder="Enter First Name" value="{{ $user->usr_first_name }}">
+                                placeholder="First Name" value="{{ $user->usr_first_name }}">
                             <label for="usr_first_name">First Name</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_last_name" name="usr_last_name"
-                                placeholder="Enter Last Name" value="{{ $user->usr_last_name }}">
+                                placeholder="Last Name" value="{{ $user->usr_last_name }}">
                             <label for="usr_last_name">Last Name</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="email" class="form-control" id="usr_email" name="usr_email"
-                                placeholder="Enter Email" value="{{ $user->usr_email }}">
+                                placeholder="Email" value="{{ $user->usr_email }}">
                             <label for="usr_email">Email</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="number" class="form-control" id="usr_mobile" name="usr_mobile"
-                                placeholder="Enter Email" value="{{ $user->usr_mobile }}">
+                                placeholder="Primary Phone" value="{{ $user->usr_mobile }}">
                             <label for="usr_mobile">Primary Phone</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="number" class="form-control" id="usr_alt_mobile" name="usr_alt_mobile"
-                                placeholder="Enter Email" value="{{ $user->usr_alt_mobile }}">
+                                placeholder="Secondary Phone" value="{{ $user->usr_alt_mobile }}">
                             <label for="usr_alt_mobile">Secondary Phone</label>
                         </div>
                     </div>
@@ -75,29 +75,43 @@
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_father" name="usr_father"
-                                placeholder="Enter Last Name" value="{{ $user->usr_father }}">
+                                placeholder="Father Name" value="{{ $user->usr_father }}">
                             <label for="usr_father">Father Name</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_mother" name="usr_mother"
-                                placeholder="Enter Last Name" value="{{ $user->usr_mother }}">
+                                placeholder="Mother Name" value="{{ $user->usr_mother }}">
                             <label for="usr_mother">Mother Name</label>
                         </div>
                     </div>
                     <div class="col-md-6 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_full_address" name="usr_full_address"
-                                placeholder="Enter Last Name" value="{{ $user->usr_full_address }}">
+                                placeholder="City, State, Country - Pin" value="{{ $user->usr_full_address }}">
                             <label for="usr_full_address">City, State, Country - Pin</label>
                         </div>
                     </div>
                     <div class="col-md-6 mt-3">
                         <div class="form-floating mb-3">
                             <input type="text" class="form-control" id="usr_landmark" name="usr_landmark"
-                                placeholder="Enter Last Name" value="{{ $user->usr_landmark }}">
+                                placeholder="Village/Street/Colony" value="{{ $user->usr_landmark }}">
                             <label for="usr_landmark">Village/Street/Colony</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="latitude" name="latitude"
+                                placeholder="Latitude" value="@if(isset($location)) {{$location->loc_latitude}} @endif">
+                            <label for="latitude">Latitude</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control" id="longitude" name="longitude"
+                                placeholder="Longitude" value="@if(isset($location)) {{$location->loc_longitude}} @endif">
+                            <label for="longitude">Longitude</label>
                         </div>
                     </div>
                     <div class="col-md-4 mt-3">

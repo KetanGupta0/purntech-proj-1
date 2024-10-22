@@ -11,17 +11,23 @@
 <footer class="footer" style="height: unset!important;">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-md-12" >
+            <div class="col-md-12">
                 <marquee behavior="infinit" direction="left" style="border: 0px solid rgb(189, 189, 189);">
-                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/airtel_new.jpg') }}" alt="logo"></div>
-                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/bsnl_new.jpg') }}" alt="logo"></div>
-                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/jio_new.jpg') }}" alt="logo"></div>
-                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/MTNL-logo-1200x750.jpg') }}" alt="logo"></div>
-                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;" src="{{ asset('public/dashboard/assets/footer_logo/Vi-1.png') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;"
+                             src="{{ asset('public/dashboard/assets/footer_logo/airtel_new.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;"
+                             src="{{ asset('public/dashboard/assets/footer_logo/bsnl_new.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;"
+                             src="{{ asset('public/dashboard/assets/footer_logo/jio_new.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;"
+                             src="{{ asset('public/dashboard/assets/footer_logo/MTNL-logo-1200x750.jpg') }}" alt="logo"></div>
+                    <div class="me-1" style="display: inline-block"><img style="max-height: 60px; max-width: 60px;"
+                             src="{{ asset('public/dashboard/assets/footer_logo/Vi-1.png') }}" alt="logo"></div>
                 </marquee>
             </div>
             <div class="col-md-12">
-                <p class="text-center fs-10">All trademarks, logos and brand names are the property of their respective owners. All company, product and service names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
+                <p class="text-center fs-10">All trademarks, logos and brand names are the property of their respective owners. All company, product and service
+                    names used in this website are for identification purposes only. Use of these names,trademarks and brands does not imply endorsement.</p>
             </div>
             <div class="col-sm-12 text-center">
                 <script>
@@ -38,18 +44,52 @@
 <!-- END layout-wrapper -->
 
 <!--start back-to-top-->
-<button onclick="topFunction()"
-        class="btn btn-danger btn-icon"
-        id="back-to-top">
+<button onclick="topFunction()" class="btn btn-danger btn-icon" id="back-to-top">
     <i class="ri-arrow-up-line"></i>
 </button>
 <!--end back-to-top-->
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        @if ($errors->any())
+            Swal.fire({
+                title: 'Error!',
+                icon: 'error',
+                html: `<ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>`,
+                confirmButtonText: 'OK'
+            });
+        @endif
+    });
+</script>
+@if (Session::has('success'))
+    <script>
+        $(document).ready(function() {
+            Swal.fire({
+                icon: "success",
+                title: "{{ Session::get('success') }}"
+            });
+        });
+    </script>
+@elseif(Session::has('error'))
+    <script>
+        $(document).ready(function() {
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                html: "{{ Session::get('error') }}"
+            });
+        });
+    </script>
+@endif
+
 <!--preloader-->
 <div id="preloader">
     <div id="status">
-        <div class="spinner-border text-primary avatar-sm"
-             role="status">
+        <div class="spinner-border text-primary avatar-sm" role="status">
             <span class="visually-hidden">Loading...</span>
         </div>
     </div>
@@ -80,14 +120,14 @@
         var pageTitle = lastSegment.replace(/-/g, ' ').replace(/\b\w/g, function(l) {
             return l.toUpperCase();
         });
-        
+
         if (pageTitle == 'User Dashboard') {
             document.title = 'User Dashboard - Bharti Infratel Tower';
             $('.dashboard').addClass('active');
             $('.pg-title').html('Dashboard');
         } else {
             // Set the page title
-            document.title = 'User '+pageTitle+' - Bharti Infratel Tower';
+            document.title = 'User ' + pageTitle + ' - Bharti Infratel Tower';
             $('.' + lastSegment).addClass('active');
             // Set the content of the #page-title div
             $('.pg-title').html(pageTitle);
@@ -95,30 +135,35 @@
             $('#pg-title-second-main').html(pageTitle.toUpperCase());
 
         }
-        function updateCompanyDetails(){
-            $.get("{{ url('fetch-company-info') }}",function(res){
-                console.log(res);
-                if(res.cmp_logo == "" || res.cmp_logo == null || res.cmp_logo == undefined){
+
+        function updateCompanyDetails() {
+            $.get("{{ url('fetch-company-info') }}", function(res) {
+                // console.log(res);
+                if (res.cmp_logo == "" || res.cmp_logo == null || res.cmp_logo == undefined) {
                     $(".logo-lg").html(`<img src="{{ asset('public/dashboard/assets/images/logo-light.png') }}" alt="" height="17" />`);
                     $(".logo-sm").html(`<img src="{{ asset('public/dashboard/assets/images/logo-sm.png') }}" alt="" height="22" />`);
-                }else{
-                    $(".logo-lg").html(`<img src="{{ asset('public/assets/img/uploads/logos') }}/${res.cmp_logo}" alt="" height="29" /> <span class="text-light fs-5">${res.cmp_name}</span>`);
+                } else {
+                    $(".logo-lg").html(
+                        `<img src="{{ asset('public/assets/img/uploads/logos') }}/${res.cmp_logo}" alt="" height="29" /> <span class="text-light fs-5">${res.cmp_name}</span>`
+                        );
                     $(".logo-sm").html(`<img src="{{ asset('public/assets/img/uploads/logos') }}/${res.cmp_logo}" alt="" height="22" />`);
                 }
-            }).fail(function(err){console.log(err);
+            }).fail(function(err) {
+                console.log(err);
             });
         }
         updateCompanyDetails();
 
     });
-    function fetchUserProfilePicture(){
-        $.get("{{url('/get-user-profile-picture')}}",function(res){
-            if($.isEmptyObject(res) || res == null || res == undefined || res == '' || res.length == 0){
+
+    function fetchUserProfilePicture() {
+        $.get("{{ url('/get-user-profile-picture') }}", function(res) {
+            if ($.isEmptyObject(res) || res == null || res == undefined || res == '' || res.length == 0) {
                 //
-            }else{
-                $('.header-profile-user').attr('src',"{{asset('public/assets/img/uploads/documents')}}/"+res);
+            } else {
+                $('.header-profile-user').attr('src', "{{ asset('public/assets/img/uploads/documents') }}/" + res);
             }
-        }).fail(function(err){
+        }).fail(function(err) {
             console.log(err);
         });
     }

@@ -14,6 +14,7 @@ use App\Models\InvoiceSetting;
 use App\Models\Location;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
+use App\Models\UserTransaction;
 use App\Models\WebUser;
 use Carbon\Carbon;
 use DateTime;
@@ -68,8 +69,8 @@ class UserController extends Controller
         $documentUploadPercentage = ($uploadedDocuments / $totalDocuments) * 100;
         $documentUploadPercentage = round($documentUploadPercentage, 2);
 
-        $ignoredTypes = [0,4];
-        $bankDetails = UserBankDetail::where('ubd_usr_id','=',Session::get('uid'))->whereNotIn('ubd_user_kyc_status',$ignoredTypes)->first();
+        $ignoredTypes = [0, 4];
+        $bankDetails = UserBankDetail::where('ubd_usr_id', '=', Session::get('uid'))->whereNotIn('ubd_user_kyc_status', $ignoredTypes)->first();
         $bankDetailsFields = [
             'ubd_user_name',
             'ubd_user_pan',
@@ -86,14 +87,14 @@ class UserController extends Controller
                 $filledBankDetailsFields++;
             }
         }
-        
+
         $bankDetailsCompletionPercentage = ($filledBankDetailsFields / $totalBankDetailsFields) * 100;
         $bankDetailsCompletionPercentage = round($bankDetailsCompletionPercentage, 2);
 
         $companyBankDetails = CompanyBankDetail::find(1);
-        
-        $invoices = Invoice::where('inv_party_id','=', $user->usr_id)->where('inv_status','!=', 0)->orderBy('created_at', 'desc')->get();
-        return view('User.header') . view('User.dashboard',compact('user','profileCompletionPercentage','companyBankDetails','documentUploadPercentage','bankDetailsCompletionPercentage','invoices')) . view('User.footer');
+
+        $invoices = Invoice::where('inv_party_id', '=', $user->usr_id)->where('inv_status', '!=', 0)->orderBy('created_at', 'desc')->get();
+        return view('User.header') . view('User.dashboard', compact('user', 'profileCompletionPercentage', 'companyBankDetails', 'documentUploadPercentage', 'bankDetailsCompletionPercentage', 'invoices')) . view('User.footer');
     }
     public function profileView()
     {
@@ -121,7 +122,7 @@ class UserController extends Controller
         }
         $profileCompletionPercentage = ($filledProfileFields / $totalProfileFields) * 100;
         $profileCompletionPercentage = round($profileCompletionPercentage, 2);
-        return view('User.header') . view('User.profile', compact('user','profileCompletionPercentage')) . view('User.footer');
+        return view('User.header') . view('User.profile', compact('user', 'profileCompletionPercentage')) . view('User.footer');
     }
     public function documentsView()
     {
@@ -129,43 +130,46 @@ class UserController extends Controller
     }
     public function invoicesView()
     {
-        $data = Invoice::where('inv_party_id','=', Session::get('uid'))->where('inv_status','!=',0)->get();
-        return view('User.header') . view('User.invoices',compact('data')) . view('User.footer');
+        $data = Invoice::where('inv_party_id', '=', Session::get('uid'))->where('inv_status', '!=', 0)->get();
+        return view('User.header') . view('User.invoices', compact('data')) . view('User.footer');
     }
     public function appravalLetterView()
     {
         $user = WebUser::find(Session::get('uid'));
-        return view('User.header') . view('User.approvalLetter',compact('user')) . view('User.footer');
+        return view('User.header') . view('User.approvalLetter', compact('user')) . view('User.footer');
     }
     public function bankDetailsView()
     {
-        $data = UserBankDetail::where('ubd_usr_id','=',Session::get('uid'))->where('ubd_user_kyc_status','!=',0)->first();
-        $banks = BankList::where('bnk_status','=',1)->orderBy('bnk_name','ASC')->get();
-        if($data){
-            return view('User.header') . view('User.bank_details',compact('data','banks')) . view('User.footer');
-        }else{
-            return view('User.header') . view('User.bank_details',compact('banks')) . view('User.footer');
+        $data = UserBankDetail::where('ubd_usr_id', '=', Session::get('uid'))->where('ubd_user_kyc_status', '!=', 0)->first();
+        $banks = BankList::where('bnk_status', '=', 1)->orderBy('bnk_name', 'ASC')->get();
+        if ($data) {
+            return view('User.header') . view('User.bank_details', compact('data', 'banks')) . view('User.footer');
+        }
+        else {
+            return view('User.header') . view('User.bank_details', compact('banks')) . view('User.footer');
         }
     }
     public function paymentsView()
     {
-        try{
+        try {
             $user = WebUser::find(Session::get('uid'));
             $companyBankDetails = CompanyBankDetail::find(1);
-            if($user){
-                return view('User.header') . view('User.payments',compact('user','companyBankDetails')) . view('User.footer');
-            }else{
+            if ($user) {
+                return view('User.header') . view('User.payments', compact('user', 'companyBankDetails')) . view('User.footer');
+            }
+            else {
                 return redirect()->back()->with('error', 'Something went wrong!');
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
-    public function downloadView(){
-        try{
-            $downloads = Downloadable::where('dwn_is_hidden','=',0)->where('dwn_status','!=',0)->get();
-            return view('User.header') . view('User.download',compact('downloads')) . view('User.footer');
-        }catch(Exception $e){
+    public function downloadView()
+    {
+        try {
+            $downloads = Downloadable::where('dwn_is_hidden', '=', 0)->where('dwn_status', '!=', 0)->get();
+            return view('User.header') . view('User.download', compact('downloads')) . view('User.footer');
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
@@ -198,8 +202,8 @@ class UserController extends Controller
                 $request->validate([
                     "usr_dob" => "date"
                 ]);
-            
-            $user->usr_dob = date('Y/m/d',strtotime($request->usr_dob));
+
+            $user->usr_dob = date('Y/m/d', strtotime($request->usr_dob));
             $user->usr_father = $request->usr_father;
             $user->usr_mother = $request->usr_mother;
             $user->usr_full_address = $request->usr_full_address;
@@ -215,7 +219,7 @@ class UserController extends Controller
     {
         try {
             $user = WebUser::find(Session::get('uid'));
-            $userDocs = UserDocuments::where('udc_user_id', '=', $user->usr_id)->where('udc_status','!=',0)->get();
+            $userDocs = UserDocuments::where('udc_user_id', '=', $user->usr_id)->where('udc_status', '!=', 0)->get();
             return response()->json($userDocs);
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
@@ -225,7 +229,7 @@ class UserController extends Controller
     private function uploadUserDocument(Request $request, $fileInputName, $userId, $source, $docType)
     {
         if ($request->hasFile($fileInputName)) {
-            
+
             $file = $request->file($fileInputName);
             $fileName = time() . '-' . $file->getClientOriginalName();
             $file->move(public_path('assets/img/uploads/documents'), $fileName);
@@ -251,12 +255,13 @@ class UserController extends Controller
         ]);
         try {
             $user = WebUser::find(Session::get('uid'));
-            $docStatus = [1,2];
-            $checkOldDoc = UserDocuments::where('udc_user_id','=',$user->usr_id)->where('udc_doc_type', '=', $request->doc_type)->whereIn('udc_status', $docStatus)->first();
+            $docStatus = [1, 2];
+            $checkOldDoc = UserDocuments::where('udc_user_id', '=', $user->usr_id)->where('udc_doc_type', '=', $request->doc_type)->whereIn('udc_status', $docStatus)->first();
             // dd($checkOldDoc);
             if ($checkOldDoc) {
                 return redirect()->back()->with('error', 'Document is already uploaded!');
-            } else {
+            }
+            else {
                 $this->uploadUserDocument($request, 'doc_name', $user->usr_id, 'User Document Page', $request->doc_type);
                 return redirect()->back()->with('success', 'Document uploaded successfully!');
             }
@@ -298,11 +303,13 @@ class UserController extends Controller
         ]);
         try {
             $user = WebUser::find(Session::get('uid'));
-            if(!$user) $this->revokeUserAccess();
-            else{
-                if(UserBankDetail::where('ubd_usr_id','=',$user->usr_id)->where('ubd_user_kyc_status','!=', 0)->exists()){
-                    $userBankDetail = UserBankDetail::where('ubd_usr_id','=',$user->usr_id)->where('ubd_user_kyc_status','!=', 0)->first();
-                }else{
+            if (!$user)
+                $this->revokeUserAccess();
+            else {
+                if (UserBankDetail::where('ubd_usr_id', '=', $user->usr_id)->where('ubd_user_kyc_status', '!=', 0)->exists()) {
+                    $userBankDetail = UserBankDetail::where('ubd_usr_id', '=', $user->usr_id)->where('ubd_user_kyc_status', '!=', 0)->first();
+                }
+                else {
                     $userBankDetail = new UserBankDetail();
                 }
                 $userBankDetail->ubd_usr_id = Session::get('uid');
@@ -319,13 +326,15 @@ class UserController extends Controller
                     $fileName = time() . '-' . $file->getClientOriginalName();
                     $file->move(public_path('assets/uploads/documents'), $fileName);
                     $userBankDetail->ubd_user_bank_proof = $fileName;
-                }else{
+                }
+                else {
                     return redirect()->back()->with('error', 'Please upload bank proof!');
                 }
-                if($userBankDetail->save()){
-                    return redirect()->back()->with('success','Bank Record Updated!');
-                }else{
-                    return redirect()->back()->with('error','Something went wrong! Please try again later!');
+                if ($userBankDetail->save()) {
+                    return redirect()->back()->with('success', 'Bank Record Updated!');
+                }
+                else {
+                    return redirect()->back()->with('error', 'Something went wrong! Please try again later!');
                 }
             }
         } catch (Exception $e) {
@@ -333,90 +342,134 @@ class UserController extends Controller
         }
     }
 
-    public function viewUserInvoiceCommand(Request $request){
+    public function viewUserInvoiceCommand(Request $request)
+    {
         $request->validate([
             'uid' => 'required|numeric',
             'inv_id' => 'required|numeric'
-        ],[
+        ], [
             'uid.required' => 'Something went wrong. Please try again later!',
             'uid.numeric' => 'Something went wrong. Please try again later!',
             'inv_id.required' => 'Something went wrong. Please try again later!',
             'inv_id.numeric' => 'Something went wrong. Please try again later!'
         ]);
-        try{
+        try {
             $user = WebUser::find($request->uid);
             $services = CompanyService::get();
             $invoice = Invoice::find($request->inv_id);
             $company = CompanyInfo::find(1);
             $invoiceSettings = InvoiceSetting::find(1);
-            if(($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0) && $invoiceSettings){
-                $invoiceDescriptions = InvoiceDescriptionAmount::where('ida_inv_no','=',$invoice->inv_number)->where('ida_status','!=', 0)->get();
-                return view('User.invoiceLayout1',compact('user','invoice', 'invoiceDescriptions','company','invoiceSettings','services'));
-            }else{
-                return redirect()->back()->with('error','Ssomething went wrong. Please try after sometimes!');
+            if (($user && $user->usr_profile_status != 0) && ($invoice && $invoice->inv_status != 0) && ($company && $company->cmp_status != 0) && $invoiceSettings) {
+                $invoiceDescriptions = InvoiceDescriptionAmount::where('ida_inv_no', '=', $invoice->inv_number)->where('ida_status', '!=', 0)->get();
+                return view('User.invoiceLayout1', compact('user', 'invoice', 'invoiceDescriptions', 'company', 'invoiceSettings', 'services'));
             }
-        }catch(Exception $e){
+            else {
+                return redirect()->back()->with('error', 'Ssomething went wrong. Please try after sometimes!');
+            }
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
-    public function viewApprovalLetter(){
+    public function viewApprovalLetter()
+    {
         $user = WebUser::find(Session::get('uid'));
         $companyInfos = CompanyInfo::find(1);
         $aprovalSetting = ApprovalLetterSetting::find(1);
         $services = CompanyService::get();
-        if($user && $user->usr_verification_status == 1 && $companyInfos){
-            return view('User.approvalLetterLayout1',compact('user','companyInfos','aprovalSetting','services'));
-        }else{
-            return redirect()->back()->with('error','Your file is not approved yet!');
+        if ($user && $user->usr_verification_status == 1 && $companyInfos) {
+            return view('User.approvalLetterLayout1', compact('user', 'companyInfos', 'aprovalSetting', 'services'));
+        }
+        else {
+            return redirect()->back()->with('error', 'Your file is not approved yet!');
         }
     }
 
-    private function revokeUserAccess(){
+    private function revokeUserAccess()
+    {
         Session::flush();
         return redirect('/');
     }
 
-    public function locationView(){
-        $location = Location::where('loc_user_id', '=', Session::get('uid'))->where('loc_status','!=',0)->first();
-        if($location){
-            return view('User.header').view('User.location',compact('location')).view('User.footer');
-        }else{
-            return view('User.header').view('User.location').view('User.footer');
+    public function locationView()
+    {
+        $location = Location::where('loc_user_id', '=', Session::get('uid'))->where('loc_status', '!=', 0)->first();
+        if ($location) {
+            return view('User.header') . view('User.location', compact('location')) . view('User.footer');
+        }
+        else {
+            return view('User.header') . view('User.location') . view('User.footer');
         }
     }
 
-    public function saveUserGeoLocation(Request $request){
+    public function saveUserGeoLocation(Request $request)
+    {
         $request->validate([
             'latitude' => 'required',
             'longitude' => 'required'
-        ],[
+        ], [
             'latitude.required' => 'Latitude is required!',
             'longitude.required' => 'Longitude is required!'
         ]);
 
-        try{
-            $oldLocation = Location::where('loc_user_id', '=', Session::get('uid'))->where('loc_status','!=',0)->first();
-            if($oldLocation){
+        try {
+            $oldLocation = Location::where('loc_user_id', '=', Session::get('uid'))->where('loc_status', '!=', 0)->first();
+            if ($oldLocation) {
                 $oldLocation->loc_latitude = $request->latitude;
                 $oldLocation->loc_longitude = $request->longitude;
-                if($oldLocation->save()){
+                if ($oldLocation->save()) {
                     Session::flash('location', 'Location updated successfully!');
                 }
-            }else{
+            }
+            else {
                 $saveLocation = Location::create([
                     'loc_user_id' => Session::get('uid'),
                     'loc_latitude' => $request->latitude,
                     'loc_longitude' => $request->longitude
                 ]);
-                if($saveLocation){
+                if ($saveLocation) {
                     Session::flash('location', 'Location saved successfully!');
                 }
             }
             return redirect()->back();
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
+        }
+    }
+    public function submitPaymentDetails(Request $request)
+    {
+        // Validate the request with custom error messages
+        $request->validate([
+            'tnx_id' => 'required|unique:user_transactions,tnx_id',
+            'tnx_amt' => 'required|numeric',
+            'tnx_mode' => 'required',
+            'tnx_date' => 'required|date|before_or_equal:today',
+            'tnx_proof' => 'required|mimes:jpeg,jpg,png|max:2048'
+        ], [
+            'tnx_id.required' => 'Transaction ID is required!',
+            'tnx_id.unique' => 'This Transaction ID already exists!',
+            'tnx_amt.required' => 'Transaction amount is required!',
+            'tnx_amt.numeric' => 'Transaction amount must be a number!',
+            'tnx_mode.required' => 'Payment mode is required!',
+            'tnx_date.required' => 'Transaction date is required!',
+            'tnx_date.before_or_equal' => 'Transaction date cannot be in the future!',
+            'tnx_proof.required' => 'Payment proof (screenshot) is required!',
+            'tnx_proof.mimes' => 'Payment proof must be a file of type: jpeg, jpg, png!',
+            'tnx_proof.max' => 'Payment proof file size cannot exceed 2MB!'
+        ]);
+
+        try {
+            UserTransaction::create([
+                'tnx_user_id' => Session::get('uid'),
+                'tnx_id' => $request->tnx_id,
+                'tnx_amt' => $request->tnx_amt,
+                'tnx_mode' => $request->tnx_mode,
+                'tnx_date' => $request->tnx_date,
+                'tnx_proof' => $request->file('tnx_proof')->store('transaction/proofs', 'public'),
+            ]);
+            return redirect()->back()->with('success', 'Payment details submitted successfully!');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Failed to submit payment details: ' . $e->getMessage());
         }
     }
 }

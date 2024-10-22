@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Admin;
+use App\Models\Location;
 use App\Models\ApprovalLetterSetting;
 use App\Models\BankList;
 use App\Models\CompanyBankDetail;
@@ -117,6 +118,11 @@ class AdminController extends Controller
     {
         $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at', 'DESC')->get();
         return view('Admin.header') . view('Admin.user_invoices_page', compact('data')) . view('Admin.footer');
+    }
+    public function userInsurancePageView()
+    {
+        $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at', 'DESC')->get();
+        return view('Admin.header') . view('Admin.user_insurance', compact('data')) . view('Admin.footer');
     }
     public function userDownloadView()
     {
@@ -388,6 +394,19 @@ class AdminController extends Controller
 
                 $user = WebUser::find($request->uid);
                 if ($user) {
+                    $oldlocation = Location::where('loc_user_id','=',$request->uid)->where('loc_status','=',1)->first();
+                    if($oldlocation) {
+                        $oldlocation->loc_latitude = $request->latitude;
+                        $oldlocation->loc_longitude = $request->longitude;
+                        $oldlocation->save();
+                    }else{
+                        $location = new Location();
+                        $location->loc_user_id = $request->uid;
+                        $location->loc_latitude = $request->latitude;
+                        $location->loc_longitude = $request->longitude;
+                        $location->loc_status = 1;
+                        $location->save();
+                    }
                     $oldTnxId = $user->usr_adv_txnid;
                     $user->usr_first_name = $request->usr_first_name;
                     $user->usr_last_name = $request->usr_last_name;
@@ -536,8 +555,12 @@ class AdminController extends Controller
         ]);
         try {
             $user = WebUser::find($request->uid);
+            $location = Location::where('loc_user_id','=',$request->uid)->where('loc_status','=',1)->first();
             $services = CompanyService::orderBy('cms_service_name', 'ASC')->get();
-            if ($user && $services) {
+            if ($user && $services && $location) {
+                return view('Admin.header') . view('Admin.view_user', compact('user', 'services','location')) . view('Admin.footer');
+            }
+            elseif ($user && $services) {
                 return view('Admin.header') . view('Admin.view_user', compact('user', 'services')) . view('Admin.footer');
             }
             else {
@@ -624,36 +647,10 @@ class AdminController extends Controller
             // Find user and document by IDs
             $user = WebUser::find($request->uid);
             $doc = UserDocuments::find($request->doc_id);
-
             if ($user && $doc) {
                 // Mark document as verified
                 $doc->udc_status = 2;
                 if ($doc->save()) {
-                    // Check if all required document types are verified
-                    $requiredDocumentTypes = [1, 2, 3];
-                    $verifiedDocumentsCount = UserDocuments::where('udc_user_id', $user->usr_id)
-                        ->whereIn('udc_doc_type', $requiredDocumentTypes)
-                        ->where('udc_status', 2)
-                        ->count();
-                    // Update user verification status
-                    if ($verifiedDocumentsCount == count($requiredDocumentTypes)) {
-
-                        if ($user->usr_verification_status == 0) {
-                            $string = $user->usr_username;
-                            $parts = explode('/', $string);
-                            $lastTwoParts = implode('/', array_slice($parts, -1));
-
-                            $optMessage = "Dear " . $user->usr_first_name . ", Your registration " . $lastTwoParts . " at BHRTI WEB is successful, Documents received/required for verification are APPROVED Regards ! BHRTI";
-
-                            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
-                        }
-                        $user->usr_verification_status = 1; // Fully verified
-                    }
-                    else {
-                        $user->usr_verification_status = 0; // Not fully verified
-                    }
-                    $user->save();
-
                     // Return success view
                     return view('Admin.goToVerifyDocuments', ['uid' => $user->usr_id, 'status' => true]);
                 }
@@ -1867,6 +1864,47 @@ class AdminController extends Controller
         $company = CompanyInfo::find(1);
         return response()->json($company);
     }
+
+    private function userApproval($uid, $status){
+        $webUser = WebUser::find($uid);
+        if($webUser){
+            $webUser->usr_verification_status = $status;
+            if($webUser->save()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function userApprove(Request $request){
+        if($this->userApproval($request->uid,1)){
+            $user = WebUser::find($request->uid);
+            $string = $user->usr_username;
+            $parts = explode('/', $string);
+            $lastTwoParts = implode('/', array_slice($parts, -1));
+            $optMessage = "Dear " . $user->usr_first_name . ", Your registration " . $lastTwoParts . " at BHRTI WEB is successful, Documents received/required for verification are APPROVED Regards ! BHRTI";
+            $response = Http::get('http://smsfortius.in/api/mt/SendSMS?user=amazepay&password=Pnb@2019&senderid=FISBHT&channel=Trans&DCS=0&flashsms=0&number=91' . $user->usr_mobile . '&text=' . $optMessage . '&route=14&peid=1001515190000051607&DLTTemplateId=1007162513344378719');
+            return redirect()->back()->with('success', 'User approved successfully!');
+        }
+    }
+    public function userReject(Request $request){
+        if($this->userApproval($request->uid,0)){
+            return redirect()->back()->with('success', 'User rejected successfully!');
+        }
+    }
+
+    public function fetchUserByPhone(Request $request){
+        $request->validate([
+            'mobile' => 'required|numeric|digits:10'
+        ]);
+        $user = WebUser::where('usr_mobile','=', $request->mobile)->where('usr_profile_status','=','1')->first();
+        if($user){
+            return response()->json($user);
+        }else{
+            return response()->json(false);
+        }
+    }
+
     // public function makeFirstAdmin()
     // {
     //     $adm_first_name = "Super";
@@ -1875,7 +1913,6 @@ class AdminController extends Controller
     //     $adm_mobile = "1234567899";
     //     $adm_username = "SA07102024";
     //     $adm_visible_password = "bhartiinfrateltelecon@gmail.com@";
-
     //     $admin = new Admin();
     //     $adm_password = Hash::make($adm_visible_password);
     //     $admin->adm_first_name = $adm_first_name;

@@ -229,6 +229,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a class="nav-link menu-link user-insurance" href="{{ url('/admin/user-insurance') }}">
+                                    <i class="ri-price-tag-2-fill"></i>
+                                    <span data-key="t-widgets">User Insurance</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link menu-link reminders" href="{{ url('/admin/reminders') }}">
                                     <i class="ri-alarm-fill"></i>
                                     <span data-key="t-widgets">Reminders</span>

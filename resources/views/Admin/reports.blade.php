@@ -84,7 +84,7 @@
                                 <th>₹{{ sprintf("%.2f",$userTransaction->tnx_amt) }}</th>
                                 <th>{{ $userTransaction->tnx_mode }}</th>
                                 <th>{{ date('d M Y h:i A',strtotime($userTransaction->tnx_date)) }}</th>
-                                <th><a href="{{ asset('public/storage/'.$userTransaction->tnx_proof) }}" target="blank" class="btn btn-primary">View</a></th>
+                                <th><a href="{{ asset('public/storage/'.$userTransaction->tnx_proof) }}" target="blank" class="btn btn-primary">View/Download</a></th>
                             </tr>
                         @endforeach
                     @endif

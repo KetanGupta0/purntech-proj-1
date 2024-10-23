@@ -132,7 +132,7 @@ class AdminController extends Controller
     }
     public function adminReportsView()
     {
-        $userTransactions = UserTransaction::where('tnx_status','=',1)->get();
+        $userTransactions = UserTransaction::where('tnx_status','=',1)->latest()->get();
         $users = WebUser::where('usr_profile_status','!=',0)->get();
         return view('Admin.header') . view('Admin.reports',compact('users','userTransactions')) . view('Admin.footer');
     }

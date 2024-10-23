@@ -15,6 +15,7 @@ use App\Models\CompanyService;
 use App\Models\InvoiceSetting;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
+use App\Models\UserTransaction;
 use App\Models\WebUser;
 use Exception;
 use Illuminate\Http\Request;
@@ -131,8 +132,9 @@ class AdminController extends Controller
     }
     public function adminReportsView()
     {
+        $userTransactions = UserTransaction::where('tnx_status','=',1)->get();
         $users = WebUser::where('usr_profile_status','!=',0)->get();
-        return view('Admin.header') . view('Admin.reports',compact('users')) . view('Admin.footer');
+        return view('Admin.header') . view('Admin.reports',compact('users','userTransactions')) . view('Admin.footer');
     }
     public function remindersView()
     {

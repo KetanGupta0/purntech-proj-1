@@ -52,8 +52,50 @@
         </div>
     </div>
 </div>
+<div class="card">
+    <h5 class="card-header">User Transactions</h5>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table" id="transactionTable">
+                <thead>
+                    <tr>
+                        <th>S. No.</th>
+                        <th>User Name</th>
+                        <th>Invoice No</th>
+                        <th>Amount</th>
+                        <th>Payment Mode</th>
+                        <th>Payment Date</th>
+                        <th>Payment Proof</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (isset($userTransactions) && isset($users))
+                        @foreach ($userTransactions as $userTransaction)
+                            <tr>
+                                <th>{{ $loop->index+1 }}</th>
+                                <th>
+                                    @foreach ($users as $user)
+                                        @if ($user->usr_id == $userTransaction->tnx_user_id)
+                                            {{$user->usr_first_name}} {{$user->usr_last_name}}
+                                        @endif
+                                    @endforeach
+                                </th>
+                                <th>{{ $userTransaction->tnx_id }}</th>
+                                <th>₹{{ sprintf("%.2f",$userTransaction->tnx_amt) }}</th>
+                                <th>{{ $userTransaction->tnx_mode }}</th>
+                                <th>{{ date('d M Y h:i A',strtotime($userTransaction->tnx_date)) }}</th>
+                                <th><a href="{{ asset('public/storage/'.$userTransaction->tnx_proof) }}" target="blank" class="btn btn-primary">View</a></th>
+                            </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 <script>
     $(document).ready(function(){
         $('#approvalTable').dataTable();
+        $('#transactionTable').dataTable();
     });
 </script>

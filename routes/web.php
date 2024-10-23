@@ -32,6 +32,7 @@ Route::middleware([UserAuthCheck::class])->group(function () {
     Route::get('/user/payments', [UserController::class, 'paymentsView']);
     Route::get('/user/download', [UserController::class, 'downloadView']);
     Route::get('/user/location', [UserController::class, 'locationView']);
+    Route::get('/user/insurance', [UserController::class, 'insuranceView']);
     Route::get('/user/help', [UserController::class, 'helpView']);
 
     // Normal Calls
@@ -45,6 +46,7 @@ Route::middleware([UserAuthCheck::class])->group(function () {
 
     Route::post('/user/invoices/invoice-view', [UserController::class, 'viewUserInvoiceCommand']);
     Route::get('/user/view-approval-letter',[UserController::class,'viewApprovalLetter']);
+    Route::get('user/view/insurance-{id}',[UserController::class,'viewInsuranceLetter']);
 
     // AJAX Calls
     Route::get('/fetch-user-documents', [UserController::class, 'getUserDocsAJAX']);
@@ -102,6 +104,7 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::get('/admin/user-invoices-page/command/view/{id}/{inv_id}',[AdminController::class, 'invoiceViewCommand']);
     
     Route::post('admin/send-reminder',[AdminController::class, 'sendReminderCommand']);
+    Route::get('admin/view/insurance-{id}',[UserController::class,'viewInsuranceLetter']);
 
     Route::post('/admin/user-download/upload-file',[AdminController::class, 'uploadFileCommand']);
     Route::post('/admin/user-download/hide-file',[AdminController::class, 'hideFileCommand']);
@@ -116,6 +119,8 @@ Route::middleware([AdminAuthCheck::class])->group(function () {
     Route::post('/admin/settings/admin-account',[AdminController::class, 'updateAdminAccountCommand']);
 
     Route::get('/admin/view/approval/{id}',[AdminController::class,'viewApprovalLetter']);
+
+    Route::post('/admin/insurance/submit-insurance-form',[AdminController::class,'submitInsuranceForm']);
 
     // AJAX Calls
     Route::post('/admin/user-insurance/fetch-user-by-phone-ajax',[AdminController::class,'fetchUserByPhone']);

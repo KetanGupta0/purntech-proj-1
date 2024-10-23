@@ -246,6 +246,12 @@
                                     <span data-key="t-widgets">Location</span>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link menu-link insurance" href="{{ url('/user/insurance') }}">
+                                    <i class="ri-user-location-fill"></i>
+                                    <span data-key="t-widgets">Insurance</span>
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <!-- Sidebar -->

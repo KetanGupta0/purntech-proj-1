@@ -14,6 +14,7 @@ use App\Models\InvoiceSetting;
 use App\Models\Location;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
+use App\Models\UserInsurance;
 use App\Models\UserTransaction;
 use App\Models\WebUser;
 use Carbon\Carbon;
@@ -384,6 +385,16 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Your file is not approved yet!');
         }
     }
+    public function viewInsuranceLetter($id)
+    {
+        $insurance = UserInsurance::find($id);
+        if ($insurance) {
+            return view('insuranceLetter', compact('insurance'));
+        }
+        else {
+            return redirect()->back()->with('error', 'Data not found!');
+        }
+    }
 
     private function revokeUserAccess()
     {
@@ -399,6 +410,16 @@ class UserController extends Controller
         }
         else {
             return view('User.header') . view('User.location') . view('User.footer');
+        }
+    }
+    public function insuranceView()
+    {
+        $insurance = UserInsurance::where('uin_insured_id','=', Session::get('uid'))->where('uin_status', '=', 1)->get();
+        if ($insurance) {
+            return view('User.header') . view('User.insurance', compact('insurance')) . view('User.footer');
+        }
+        else {
+            return view('User.header') . view('User.insurance') . view('User.footer');
         }
     }
 

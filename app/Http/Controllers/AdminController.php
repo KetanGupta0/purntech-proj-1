@@ -15,8 +15,10 @@ use App\Models\CompanyService;
 use App\Models\InvoiceSetting;
 use App\Models\UserBankDetail;
 use App\Models\UserDocuments;
+use App\Models\UserInsurance;
 use App\Models\UserTransaction;
 use App\Models\WebUser;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -123,7 +125,8 @@ class AdminController extends Controller
     public function userInsurancePageView()
     {
         $data = WebUser::where('usr_profile_status', '!=', 0)->orderBy('created_at', 'DESC')->get();
-        return view('Admin.header') . view('Admin.user_insurance', compact('data')) . view('Admin.footer');
+        $insurance = UserInsurance::where('uin_status','=',1)->latest()->get();
+        return view('Admin.header') . view('Admin.user_insurance', compact('data','insurance')) . view('Admin.footer');
     }
     public function userDownloadView()
     {
@@ -1904,6 +1907,60 @@ class AdminController extends Controller
             return response()->json($user);
         }else{
             return response()->json(false);
+        }
+    }
+
+    public function submitInsuranceForm(Request $request){
+        $request->validate([
+            'mobile' => 'required|numeric|digits:10',
+            'policy'=> 'required',
+            'customerName' => 'required',
+            'nomineeName' => 'required',
+            'sumAssured' => 'required|numeric',
+            'insurancePremium' => 'required|numeric',
+            'paidTill' => 'required|date',
+            'balanceAmount' => 'required|numeric'
+        ],[
+            'mobile.required' => 'Mobile number is required!',
+            'mobile.numeric' => 'Invalid mobile number!',
+            'mobile.digits' => 'Invalid mobile number!',
+            'policy.required' => 'policy number is required!',
+            'customerName.required' => 'Customer name is required!',
+            'nomineeName.required' => 'Nominee name is required!',
+            'sumAssured.required' => 'Sum assured is required!',
+            'sumAssured.numeric' => 'Invalid sum assured!',
+            'insurancePremium.required' => 'Insurance premium is required!',
+            'insurancePremium.numeric' => 'Invalid insurance premium!',
+            'paidTill.required' => 'Paid till is required!',
+            'paidTill.date' => 'Invalid paid till value!',
+            'balanceAmount.required' => 'Balance amount is required!',
+            'balanceAmount.numeric' => 'Invalid balance amount!'
+        ]);
+        try{
+            $user = WebUser::where('usr_mobile','=',$request->mobile)->first();
+            if($user){
+                $paidTill = Carbon::createFromFormat('d M Y', $request->paidTill)->format('Y-m-d');
+                $insurance = UserInsurance::create([
+                    'uin_policy_number' => $request->policy,
+                    'uin_insured_id' => $user->usr_id,
+                    'uin_insured_name' => $request->customerName,
+                    'uin_nominee' => $request->nomineeName,
+                    'uin_sum_assured' => $request->sumAssured,
+                    'uin_insurance_premium' => $request->insurancePremium,
+                    'uin_paid_till' => $paidTill,
+                    'uin_balance_amount' => $request->balanceAmount,
+                    'uin_status' => 1
+                ]);
+                if($insurance){
+                    return redirect()->back()->with('success','Insurance issued successfully to '.$request->customerName);
+                }else{
+                    return redirect()->back()->with('error', 'Unable to issue insurance right now! Please try again later!');
+                }
+            }else{
+                return redirect()->back()->with('error', 'User not found!');
+            }
+        }catch(Exception $e){
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 

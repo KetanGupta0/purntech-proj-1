@@ -480,13 +480,20 @@ class UserController extends Controller
         ]);
 
         try {
+            $documentProof = '';
+            if ($request->hasFile('tnx_proof')) {
+                $file = $request->file('tnx_proof');
+                $fileName = time() . '-' . $file->getClientOriginalName();
+                $file->move(public_path('transaction/proofs'), $fileName);
+                $documentProof = $fileName;
+            }
             UserTransaction::create([
                 'tnx_user_id' => Session::get('uid'),
                 'tnx_id' => $request->tnx_id,
                 'tnx_amt' => $request->tnx_amt,
                 'tnx_mode' => $request->tnx_mode,
                 'tnx_date' => $request->tnx_date,
-                'tnx_proof' => $request->file('tnx_proof')->store('transaction/proofs', 'public'),
+                'tnx_proof' => $documentProof,
             ]);
             return redirect()->back()->with('success', 'Payment details submitted successfully!');
         } catch (Exception $e) {

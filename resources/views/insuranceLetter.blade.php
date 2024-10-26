@@ -97,7 +97,20 @@
                 font-weight: bold;
                 font-size: 22px;
                 border-radius: 8px;
-                ;
+            }
+
+            #printButton{
+                position: fixed;
+                bottom: 15px;
+                right: 25px;
+                padding: 15px 35px;
+                font-weight: bold;
+                cursor: pointer;
+                font-size: 18px;
+                background-color: red;
+                color: white;
+                border-color: unset;
+                border-radius: 12px;
             }
         </style>
     </head>
@@ -226,8 +239,8 @@
                 </table>
             </div>
             <p>You can raise a claim on the Rapido app or by visiting <a href="https://www.acko.com" target="_blank" class="theme-link">www.acko.com</a>. You
-                can also send an email at <a href="mailto:insurancecare@bhartiinfratelltd.com"
-                   style="font-weight: bold; color: black;">insurancecare@bhartiinfratelltd.com</a> for any concerns. You can add a nominee to your Policy by
+                can also send an email at <a href="mailto:insurancecare@bharti.world"
+                   style="font-weight: bold; color: black;">insurancecare@bharti.world</a> for any concerns. You can add a nominee to your Policy by
                 clicking on the following button.</p>
             <div class="flex center-y">
                 <a href="https://www.acko.com/policy/?pid=-%09BHRT2405LENDON676812&source=null" class="center-button">Add nominee</a>
@@ -259,6 +272,25 @@
                     Floor, F Wing, Lotus Corporate Park, Goregaon(E), Mumbai 400063</a>
             </div>
         </div>
+        <!-- Print Button -->
+    <button id="printButton" onclick="printPage()">Print</button>
+
+    <script>
+        // JavaScript function to print the page
+        function printPage() {
+            // Hide the button manually before printing
+            const printButton = document.getElementById('printButton');
+            printButton.style.display = 'none';
+
+            // Trigger the print dialog
+            window.print();
+
+            // Show the button again after a delay, allowing the print dialog to close
+            setTimeout(() => {
+                printButton.style.display = 'inline'; // or 'block' depending on your layout
+            }, 1000);
+        }
+    </script>
     </body>
 
 </html>
